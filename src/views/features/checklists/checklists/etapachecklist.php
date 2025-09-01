@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Etapa</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+    
     <style>
+        
         body {
             background-color: #f8f9fa;
         }
@@ -41,7 +43,9 @@
         }
     </style>
 </head>
+
 <?php
+
     // Inicializa a variável de observação
     $observacao = isset($_POST['observacao']) ? $_POST['observacao'] : "";    
     $url = $_SERVER['REQUEST_URI'];
