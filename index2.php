@@ -137,9 +137,9 @@
         <!-- Checklist veicular pendente -->
         <?php if (isset($existeChecklist) && $existeChecklist) { ?>
             <div class="bg-gradient-to-br from-gray-800 to-gray-700 p-6 rounded-2xl shadow-2xl hover:scale-105 transform transition animate-fadeIn text-center max-w-md w-full">
-                <h2 class="text-xl font-semibold mb-3">Checklist Anterior</h2>
-                <p class="text-gray-300 mb-4">Iniciar o checklist do <?= $objeto->getDescricaoObjeto() ?></p>
-                <a href="/syscheck/etapaschecklist/etapa/<?= $checklistPendente->getIdChecklist() ?>/<?= $checklistPendente->getFkTipo() ?>/1" class="bg-yellow-500 hover:bg-yellow-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">Iniciar o checklist</a>
+                <h2 class="text-xl font-semibold mb-3">Finalizar Etapas Do Checklist</h2>
+                <p class="text-gray-300 mb-4"> Checklist <?= $objeto->getDescricaoObjeto() ?></p>
+                <a href="/syscheck/etapaschecklist/etapa/<?= $checklistPendente->getIdChecklist() ?>/<?= $checklistPendente->getFkTipo() ?>/1" class="bg-yellow-500 hover:bg-yellow-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">Continuar checklist</a>
             </div>
         <?php } ?>
 
