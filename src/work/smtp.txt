@@ -1,0 +1,5 @@
+Configuração SMTP
+Usuário: udlog
+Senha: Ti2020@#
+Endereço SMTP: smtplw.com.br
+portas: TLS: 587 | SSL: 465

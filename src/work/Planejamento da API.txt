@@ -1,0 +1,17 @@
+Planejamento da API
+
+Cadastro de checklist
+	- Cadastro de tipos de checklist
+	Exmeplo de tipos de checklist: Empilhadeira elétroica / Empilhadeira / veículo / Sala de departamento
+
+	- Cadastro das etapas do checklist - amandando com o tipo 
+	Exemplo: Seguir etapas de modelo de checklist de empilhadeiras
+
+	- Cadastra objetos checados atribuindo a eles um tipo de checklist
+	Exemplo: cadastrar as empilhadeiras utilizando os dados delas
+
+
+	-Cadastro dos usuários
+
+Condução dos checklists
+	

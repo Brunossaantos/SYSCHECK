@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentação - Testes no Syscheck</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Testes Unitários no Syscheck</h1>
+    <p>Este documento descreve como os testes são realizados diretamente na produção utilizando o controlador <code>TesteUnitarioController</code>.</p>
+
+    <h2>Objetivo</h2>
+    <p>Facilitar a validação de classes e funções do sistema, instanciando objetos e verificando seu comportamento sem alterar a lógica principal.</p>
+
+    <h2>Estrutura do Controlador</h2>
+    <p>O controlador <code>TesteUnitarioController</code> possui um método <code>index()</code> que pode ser acessado para executar testes.</p>
+
+    <h2>Exemplo de Uso</h2>
+    <p>Para testar uma funcionalidade específica, basta acessar a URL correspondente no navegador:</p>
+    <pre>
+    /syscheck/testeunitario/index
+    </pre>
+    <p>Dentro do controlador, os testes podem ser implementados da seguinte forma:</p>
+    <pre>
+    public function index() {
+        // Instanciação de classes
+        $objeto = new MinhaClasse();
+        
+        // Chamada de métodos
+        $resultado = $objeto->meuMetodo();
+        
+        // Exibição do resultado
+        echo "Resultado: " . $resultado;
+    }
+    </pre>
+
+    <h2>Cuidados</h2>
+    <ul>
+        <li>Evite testes que alterem dados sensíveis no banco de dados.</li>
+        <li>Se possível, implemente verificações para não afetar processos críticos.</li>
+        <li>Após os testes, remova ou restrinja o acesso ao controlador para evitar uso indevido.</li>
+    </ul>
+
+    <h2>Conclusão</h2>
+    <p>O <code>TesteUnitarioController</code> fornece uma abordagem prática para validar funcionalidades em produção, mas deve ser utilizado com cautela.</p>
+</body>
+</html>

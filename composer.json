@@ -1,0 +1,23 @@
+{
+    "require":{
+        "phpmailer/phpmailer": "^6.9"
+    },
+
+    "autoload":{
+        "psr-4": {
+            "models\\": "src/models/",
+            "views\\": "src/views/",
+            "controllers\\": "src/controllers/",
+            "DAO\\": "src/DAO/",
+            "Util\\": "src/Util/",
+            "teste\\": "src/testeunitario/",
+            "database\\": "src/database/",
+            "rn\\": "src/rn/",
+            "constantes\\": "src/constantes/",
+            "testern\\": "src/testeunitario/testesrn/",
+            "session\\": "src/sessao/",
+            "lista\\": "src/lista/"       
+        }
+    }
+
+}
