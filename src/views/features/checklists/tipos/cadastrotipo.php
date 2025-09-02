@@ -1,55 +1,86 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página de Cadastro</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/syscheck/src/views/public/css/styles.css">
+    <title>Cadastro de Tipos de Checklist</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <?php include __DIR__ .'/../../../public/components/navbar.php'; ?>
 
-    <div class="container mt-5">
-        <h2>Cadastro de tipos de checklist</h2>
-        <form action="/syscheck/tiposchecklist/cadastrarnovotipo" method="POST">
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
 
-            <div class="form-group">
-                <label for="descricao">Descrição</label>
-                <input type="text" class="form-control" name="descricao" placeholder="Digite a descrição do tipo">
-            </div>
+    <!-- Botões de navegação -->
+    <div class="w-full flex justify-center gap-6 p-6">
+        <a href="/syscheck/checklist"
+            class="bg-gray-500 hover:bg-gray-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+            Voltar
+        </a>
 
-            <div class="form-group">
-                <label for="statustipochecklist">Status</label>
-                <select class="form-control" name="statustipochecklist" id="">
-                    <option value="--" selected disabled>Selecione o status do tipo</option>
-                    <option value="1">Ativo</option>
-                    <option value="0">Inativo</option>
-                </select>
-            </div>
+        <a href="/syscheck/index2.php"
+            class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+            Home
+        </a>
 
-            <div class="form-group">
-                <label for="responsavel">Responsável</label>
-                <select class="form-control" name="responsavel" id="">
-                    <option value="--" selected disabled>Selecione o responsavel por esse tipo de checklist</option>
-                    <?php                        
-                        foreach($listaResposaveis as $responsavel){
-                    ?>
-                        <option value="<?=$responsavel->getIdResponsavel()?>"><?=$responsavel->getNomeResponsavel()?></option>
-                    <?php
-                        }
-                    ?>
-                </select>
-            </div>            
-
-            <button type="submit" class="btn btn-primary">Cadastrar tipo do checklist</button>
-        </form>
-
+        <a href="/syscheck/usuario/logout"
+            class="bg-red-500 hover:bg-red-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+            Logout
+        </a>
     </div>
 
+    <!-- Conteúdo principal -->
+    <main class="flex-grow flex justify-center items-start p-6">
+        <div class="bg-gray-800 p-8 rounded-2xl shadow-lg w-full max-w-2xl">
+            <h2 class="text-2xl font-bold mb-8 text-center">Cadastro de Tipos de Checklist</h2>
+
+            <form action="/syscheck/tiposchecklist/cadastrarnovotipo" method="POST" class="space-y-6">
+
+                <!-- Descrição -->
+                <div>
+                    <label for="descricao" class="block mb-2 font-medium">Descrição</label>
+                    <input type="text" name="descricao" placeholder="Digite a descrição do tipo"
+                        class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 
+                               text-white placeholder-gray-400 focus:outline-none focus:ring-2 
+                               focus:ring-blue-500">
+                </div>
+
+                <!-- Status -->
+                <div>
+                    <label for="statustipochecklist" class="block mb-2 font-medium">Status</label>
+                    <select name="statustipochecklist"
+                        class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 
+                               text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="--" selected disabled>Selecione o status do tipo</option>
+                        <option value="1">Ativo</option>
+                        <option value="0">Inativo</option>
+                    </select>
+                </div>
+
+                <!-- Responsável -->
+                <div>
+                    <label for="responsavel" class="block mb-2 font-medium">Responsável</label>
+                    <select name="responsavel"
+                        class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 
+                               text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="--" selected disabled>Selecione o responsável</option>
+                        <?php foreach($listaResposaveis as $responsavel){ ?>
+                            <option value="<?=$responsavel->getIdResponsavel()?>"><?=$responsavel->getNomeResponsavel()?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+
+                <!-- Botão -->
+                <div class="flex justify-center">
+                    <button type="submit"
+                        class="bg-green-600 hover:bg-green-700 px-8 py-3 rounded-lg font-semibold 
+                               transition transform hover:scale-105">
+                        Cadastrar Tipo de Checklist
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
     <?php include __DIR__ .'/../../../public/components/footer.php'; ?>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 </body>
 </html>

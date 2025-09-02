@@ -3,68 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página de Cadastro</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/syscheck/src/views/public/css/styles.css">
+    <title>Cadastro de Usuário - SYSCHECK</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+    </style>
 </head>
-<body>
-    <?php include __DIR__ .'/../../public/components/navbar.php'; ?>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-8">
 
-    <div class="container mt-5">
-        <h2>Cadastro de usuários</h2>
-        <form action="/syscheck/usuario/cadastrarUsuario" method="POST">
-            <div class="form-group">
-                <label for="nome">Nome</label>
-                <input type="text" class="form-control" id="nome" name="nome" placeholder="Digite o nome do usuário" autocomplete="off">
+    <?php include_once __DIR__ . '/../../public/components/navbar.php'; ?>
+
+    <div class="w-full flex justify-between items-center  mb-8 max-w-6xl mx-auto">
+
+        <a href="/syscheck/usuario/"
+            class="bg-gray-500 hover:bg-gray-600 w-20 h-12 flex items-center justify-center text-center rounded-lg text-white font-medium transition transform hover:scale-105 mt-2">
+            Voltar
+        </a>
+
+        <!-- Home -->
+        <a href="/syscheck/index2.php" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg font-medium transition transform hover:scale-105">
+            Home
+        </a>
+
+        <!-- Logout -->
+        <a href="/syscheck/usuario/logout" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg font-medium transition transform hover:scale-105">
+            Logout
+        </a>
+
+    </div>
+
+    <h1 class="text-3xl font-bold mb-8 text-center">Cadastro de Usuário - SYSCHECK</h1>
+    
+
+    <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md animate-fadeIn">
+        <form action="/syscheck/usuario/cadastrarUsuario" method="POST" class="flex flex-col gap-4">
+
+            <!-- Nome -->
+            <div class="flex flex-col">
+                <label for="nome" class="mb-1">Nome</label>
+                <input type="text" name="nome" id="nome" placeholder="Digite o nome do usuário"
+                       class="p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" autocomplete="off">
             </div>
 
-            <div class="form-group">
-                <label for="departamento">Departamento</label>                
-                 <select name="departamento" class="form-control" id="">
+            <!-- Departamento -->
+            <div class="flex flex-col">
+                <label for="departamento" class="mb-1">Departamento</label>
+                <select name="departamento" id="departamento"
+                        class="p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="--" selected disabled>Selecione um departamento</option>
-                    <?php foreach($listaDepartamentos as $departamento){?>
+                    <?php foreach($listaDepartamentos as $departamento){ ?>
                         <option value="<?=$departamento->getIdDepartamento()?>"><?=$departamento->getDescricaoDepartamento()?></option>
                     <?php } ?>
-                 </select>
-            </div>
-
-            <div class="form-group">
-                <label for="cargo">Cargo</label>                
-                <select name="cargo" class="form-control">
-                    <option value="--" selected disabled>Selecione o cargo do usuario</option>
                 </select>
             </div>
 
-            <div class="form-group">
-                <label for="nomeusuario">Nome de usuário</label>
-                <input type="text" class="form-control" id="email" name="nomeusuario" placeholder="Login para acesso" autocomplete="off">
+            <!-- Cargo -->
+            <div class="flex flex-col">
+                <label for="cargo" class="mb-1">Cargo</label>
+                <select name="cargo" id="cargo"
+                        class="p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="--" selected disabled>Selecione o cargo do usuário</option>
+                </select>
             </div>
 
-            <div class="form-group">
-                <label for="statususuario">Status do usuário</label>
-                <select class="form-control" name="statususuario" id="">
-                    <option value="--" selected disabled>Status do usuários</option>
+            <!-- Nome de usuário -->
+            <div class="flex flex-col">
+                <label for="nomeusuario" class="mb-1">Nome de usuário</label>
+                <input type="text" name="nomeusuario" id="nomeusuario" placeholder="Login para acesso"
+                       class="p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" autocomplete="off">
+            </div>
+
+            <!-- Status do usuário -->
+            <div class="flex flex-col">
+                <label for="statususuario" class="mb-1">Status do usuário</label>
+                <select name="statususuario" id="statususuario"
+                        class="p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="--" selected disabled>Status do usuário</option>
                     <option value="1">Ativo</option>
                     <option value="0">Inativo</option>
                 </select>
             </div>
 
-            <div class="form-group">
-                <label for="checklistVeicular">Checklist veícular
-                    <input type="checkbox" class="form-group" name="checklistveicular" value="1">
-                </label>
+            <!-- Checklist veicular -->
+            <div class="flex items-center gap-2 mt-2">
+                <input type="checkbox" name="checklistveicular" id="checklistveicular" value="1" class="rounded text-blue-500 focus:ring-blue-500">
+                <label for="checklistveicular">Checklist veicular</label>
             </div>
 
-            <button type="submit" class="btn btn-primary">Cadastrar</button>
+            <!-- Botão Cadastrar -->
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105 mt-4">
+                Cadastrar
+            </button>
+
         </form>
-
-        <hr>
-
     </div>
 
-    <?php include __DIR__ .'/../../public/components/footer.php'; ?>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <?php include_once __DIR__ . '/../../public/components/footer.php'; ?>
+
 </body>
 </html>

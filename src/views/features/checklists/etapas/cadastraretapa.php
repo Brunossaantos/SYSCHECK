@@ -1,98 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página de Cadastro</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/syscheck/src/views/public/css/styles.css">
+    <title>Cadastro de Etapas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-8">
 
-<body>
-    <?php include __DIR__ . '/../../../public/components/navbar.php'; ?>
+    <?php
+        use rn\RnUsuario;
+        use Util\Util;
+        include __DIR__ . '/../../../public/components/navbar.php';
+    ?>
 
-    <div class="container mt-5">
-        <h2>Cadastro de etapas</h2>
-        <form onsubmit="return verificarCampos()" action="/syscheck/etapaschecklist/cadastrarnovaetapa" method="POST">
+    <!-- Botões superiores -->
+    <div class="w-full flex justify-between items-center mb-8 max-w-6xl mx-auto">
+        <a href="/syscheck/checklist"
+           class="bg-gray-500 hover:bg-gray-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+            Voltar
+        </a>
 
-            <div class="form-group">
-                <label for="tipochecklist">Checklist</label>
-                <select class="form-control" id="fktipo" name="fktipo" id="tipochecklist">
+        <a href="/syscheck/index2.php"
+           class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+            Home
+        </a>
+
+        <a href="/syscheck/usuario/logout"
+           class="bg-red-500 hover:bg-red-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+            Logout
+        </a>
+    </div>
+
+    <!-- Conteúdo principal -->
+    <div class="bg-gray-800 p-8 rounded-2xl shadow-lg w-full max-w-4xl">
+        <h2 class="text-2xl font-bold mb-6 text-center">Cadastro de Etapas</h2>
+
+        <form onsubmit="return verificarCampos()" action="/syscheck/etapaschecklist/cadastrarnovaetapa" method="POST" class="space-y-6">
+            
+            <!-- Tipo de checklist -->
+            <div>
+                <label for="fktipo" class="block mb-2 font-medium">Checklist</label>
+                <select id="fktipo" name="fktipo"
+                        class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="--" selected disabled>Selecione o tipo do checklist</option>
                     <?php foreach ($listaTipos as $tipo) { ?>
                         <option value="<?= $tipo->getIdTipoChecklist() ?>"><?= $tipo->getDescricaoTipoChecklist() ?></option>
                     <?php } ?>
                 </select>
             </div>
-            
-            <div class="form-group">
-                <label for="titulo">Título da etapa</label>
-                <input type="text" class="form-control" name="titulo" placeholder="Título da etapa" require>
+
+            <!-- Título da etapa -->
+            <div>
+                <label for="titulo" class="block mb-2 font-medium">Título da etapa</label>
+                <input type="text" name="titulo" placeholder="Título da etapa" required
+                       class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
 
-            <div class="form-group">
-                <label for="conteudo">Conteúdo da etapa</label>
-                <textarea class="form-control" name="conteudo" id="" rows="5" cols="5" require></textarea>
+            <!-- Conteúdo da etapa -->
+            <div>
+                <label for="conteudo" class="block mb-2 font-medium">Conteúdo da etapa</label>
+                <textarea name="conteudo" rows="5" required
+                          class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
             </div>
 
-            <div class="form-group">
-                <label for="numero">Número da etapa</label>
-                <input type="text" class="form-control" name="numero" value="1" readonly>
+            <!-- Número da etapa -->
+            <div>
+                <label for="numero" class="block mb-2 font-medium">Número da etapa</label>
+                <input type="text" name="numero" value="1" readonly
+                       class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none">
             </div>
 
-            <div class="form-group">
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="fotoobrigatoria" name="fotoobrigatoria">
-                    <label for="fotoobrigatoria" class="form-check-label">Foto obrigatória</label>
-                </div>
+            <!-- Foto obrigatória -->
+            <div class="flex items-center gap-2">
+                <input type="checkbox" id="fotoobrigatoria" name="fotoobrigatoria" class="form-checkbox h-5 w-5 text-blue-500">
+                <label for="fotoobrigatoria" class="font-medium">Foto obrigatória</label>
             </div>
 
-            <div class="form-group">
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="campoadicional" name="campoadicional">
-                    <label for="campoadicional" class="form-check-label">Campo adicional</label>
-                </div>
+            <!-- Campo adicional -->
+            <div class="flex items-center gap-2">
+                <input type="checkbox" id="campoadicional" name="campoadicional" class="form-checkbox h-5 w-5 text-blue-500">
+                <label for="campoadicional" class="font-medium">Campo adicional</label>
             </div>
 
-            <div class="form-group">
-                <label for="status">Status da etapa</label>
-                <select name="status" id="status" class="form-control">
+            <!-- Status -->
+            <div>
+                <label for="status" class="block mb-2 font-medium">Status da etapa</label>
+                <select id="status" name="status"
+                        class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="--" selected disabled>Status</option>
                     <option value="1">Ativo</option>
                     <option value="0">Inativo</option>
                 </select>
             </div>
 
-            <button type="submit" class="btn btn-primary">Salvar etapa</button>
-            <a class="btn btn-danger" href="/syscheck/etapaschecklist/finalizarcadastro">Finalizar cadastro de etapas</a>
-        </form>
+            <!-- Botões -->
+            <div class="flex gap-4">
+                <button type="submit"
+                        class="bg-green-500 hover:bg-green-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+                    Salvar etapa
+                </button>
+                <a href="/syscheck/etapaschecklist/finalizarcadastro"
+                   class="bg-red-500 hover:bg-red-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+                    Finalizar cadastro de etapas
+                </a>
+            </div>
 
+        </form>
     </div>
 
     <?php include __DIR__ . '/../../../public/components/footer.php'; ?>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 </body>
 
 <script>
-    function verificarCampos() {
-        var fktipo = document.getElementById('fktipo').value;
-        var status = document.getElementById('status').value;
+function verificarCampos() {
+    var fktipo = document.getElementById('fktipo').value;
+    var status = document.getElementById('status').value;
 
-        if (fktipo == '--') {
-            alert('Selecione o tipo do checklist.');
-            return false;
-        }
-
-        if (status == '--') {
-            alert('Selecione o status da etapa');
-            return false;
-        }
-
-        return true;
+    if (fktipo == '--') {
+        alert('Selecione o tipo do checklist.');
+        return false;
     }
-</script>
 
+    if (status == '--') {
+        alert('Selecione o status da etapa');
+        return false;
+    }
+
+    return true;
+}
+</script>
 </html>
