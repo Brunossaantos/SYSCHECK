@@ -90,9 +90,9 @@ require_once __DIR__ . '/../../../../../vendor/autoload.php';
             <thead>
                 <tr>
                     <th>Horimetro inicial</th>                    
-                    <th><?=(isset($listaHorimetros[0]['horimetro']) ? $listaHorimetros[1]['horimetro']."horas" : "Horimetro inicial não preenchido.")?></th>                
+                    <th><?=(isset($listaHorimetros[0]['horimetro']) ? $listaHorimetros[0]['horimetro']."horas" : "Horimetro inicial não preenchido.")?></th>                
                 </tr>
-                <tr>
+                <tr>    
                     <th>Horimetro final</th>
                     <th><?=(isset($listaHorimetros[1])) ? $listaHorimetros[1]['horimetro']."horas" : "Horimetro final não preechido."?></th>                    
                 </tr>

@@ -1,130 +1,126 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página de Cadastro</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/syscheck/src/views/public/css/styles.css">
+    <title>Abertura de Chamados</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body>
-    <?php include __DIR__ . '/../../public/components/navbar.php'; ?>
 
-    <div class="container mt-5">
-        <h2>Abertura de chamados</h2>
-        <form action="/syscheck/chamado/abrirchamado" method="POST" enctype="multipart/form-data">
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
 
-            <div class="form-group">
-                <label for="nome">Usuario</label>
-                <input type="text" class="form-control" id="nome" name="nome" value="<?= $usuario->getNome() ?>" readonly>
-                <input type="hidden" name="fkusuario" value="<?=$usuario->getIdUsuario()?>">
-            </div>
+   
+        <!-- Barra superior -->
+      <div class="w-full flex justify-between items-center mb-8 max-w-6xl mt-20 mx-auto">
+        <a href="/syscheck/index2.php"
+            class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+            Home
+        </a>
 
-            <div class="form-group">
-                <label for="departamento">Tipo do chamado</label>
-                <select class="form-control" name="fktipo" id="">
-                    <option value="--" selected disabled>Selecione o tipo do chamado</option>
-                    <?php foreach($listaTipos as $tipo){?>
-                        <option value="<?=$tipo->getIdTipoChecklist()?>"><?=$tipo->getDescricaoTipoChecklist()?></option>
-                    <?php } ?>
-                </select>
-            </div>
+        <a href="/syscheck/usuario/logout"
+            class="bg-red-500 hover:bg-red-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+            Logout
+        </a>
+    </div>
 
-            <div class="form-group">
-                <label for="cargo">Equipamento</label>
-                <select class="form-control" name="fkequipamento" id="">
-                    <option value="--" selected disabled>Selecione o equipamento</option>
-                    <?php foreach($listaEquipamentos as $equipamento){?>
-                        <option value="<?=$equipamento->getIdObjeto()?>"><?=$equipamento->getDescricaoObjeto()?></option>
-                    <?php }?>
-                </select>
-            </div>
+    <main class="flex-grow flex items-center justify-center p-6">
+        <div class="bg-gray-800 rounded-2xl shadow-lg p-8 w-full max-w-2xl">
 
-            <div class="form-group">
-                <label for="nomeusuario">Descrição do chamado</label>
-                <textarea class="form-control" name="deschamado" id=""></textarea>
-            </div>
+            <h2 class="text-2xl font-bold text-center mb-6">📋 Abertura de Chamados</h2>
 
-            <!--<div class="form-group">
-                <div class="mb-3">
-                    <label for="foto" class="form-label">Foto</label>
-                    <div class="input-group">
-                        <input type="file" class="form-control d-none" id="foto" name="foto">
-                        <label class="input-group-text btn btn-primary" for="foto">Selecionar</label>
-                        <input type="text" class="form-control" id="file-name" placeholder="Nenhum arquivo selecionado" readonly>
+            <form action="/syscheck/chamado/abrirchamado" method="POST" enctype="multipart/form-data" class="space-y-4">
+
+                <!-- Usuário -->
+                <div>
+                    <label for="nome" class="block mb-1 text-gray-300">Usuário</label>
+                    <input type="text" id="nome" name="nome" value="<?= $usuario->getNome() ?>" readonly
+                        class="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white" />
+                    <input type="hidden" name="fkusuario" value="<?= $usuario->getIdUsuario() ?>">
+                </div>
+
+                <!-- Tipo do chamado -->
+                <div>
+                    <label for="tipo" class="block mb-1 text-gray-300">Tipo do Chamado</label>
+                    <select name="fktipo" id="tipo"
+                        class="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white">
+                        <option value="--" disabled selected>Selecione o tipo do chamado</option>
+                        <?php foreach($listaTipos as $tipo){?>
+                            <option value="<?=$tipo->getIdTipoChecklist()?>"><?=$tipo->getDescricaoTipoChecklist()?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+
+                <!-- Equipamento -->
+                <div>
+                    <label for="equipamento" class="block mb-1 text-gray-300">Equipamento</label>
+                    <select name="fkequipamento" id="equipamento"
+                        class="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white">
+                        <option value="--" disabled selected>Selecione o equipamento</option>
+                        <?php foreach($listaEquipamentos as $equipamento){?>
+                            <option value="<?=$equipamento->getIdObjeto()?>"><?=$equipamento->getDescricaoObjeto()?></option>
+                        <?php }?>
+                    </select>
+                </div>
+
+                <!-- Descrição -->
+                <div>
+                    <label for="deschamado" class="block mb-1 text-gray-300">Descrição do Chamado</label>
+                    <textarea name="deschamado" id="deschamado" rows="3"
+                        class="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white"></textarea>
+                </div>
+
+                <!-- Upload de Fotos -->
+                <div>
+                    <label for="foto" class="block mb-1 text-gray-300">Fotos</label>
+                    <div class="flex items-center space-x-2">
+                        <label for="foto"
+                            class="cursor-pointer bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white">
+                            Selecionar
+                        </label>
+                        <input type="file" id="foto" name="fotos[]" multiple class="hidden">
+                        <input type="text" id="file-name" placeholder="Nenhum arquivo selecionado" readonly
+                            class="flex-1 px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white">
                     </div>
                 </div>
-            </div>-->
 
-            <div class="form-group">
-                <label for="foto" class="form-label">Fotos</label>
-                <div class="input-group">
-                    <input type="file" class="form-control d-none" id="foto" name="fotos[]" multiple>
-                    <label class="input-group-text btn btn-primary" for="foto">Selecionar</label>
-                    <input type="text" class="form-control" id="file-name" placeholder="Nenhum arquivo selecionado" readonly>
+                <!-- Data e hora -->
+                <div>
+                    <label class="block mb-1 text-gray-300">Data e Hora de Abertura</label>
+                    <input type="text" name="datahora" value="<?= $dataHora ?>" readonly
+                        class="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white" />
                 </div>
-            </div>
 
-            <div class="form-group">
-                <label for="statususuario">Data e hora de abertura do</label>
-                <input type="text" class="form-control" name="datahora" value="<?= $dataHora ?>" readonly>
-            </div>
-
-            <button type="submit" class="btn btn-danger">Salvar cadastro</button>
-        </form>
-
-        <hr>
-
-    </div>
+                <!-- Botão -->
+                <div class="text-center">
+                    <button type="submit"
+                        class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg font-semibold">
+                        Salvar Cadastro
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
 
     <?php include __DIR__ . '/../../public/components/footer.php'; ?>
 
-    <!--<script>
-        document.getElementById("foto").addEventListener("change", function() {
-            var file = this.files[0];
-            var fileNameInput = document.getElementById("file-name");
-            var errorDiv = document.getElementById("file-error");
-
-            if (file) {
-                var fileName = file.name;
-                var fileExtension = fileName.split('.').pop().toLowerCase();
-                var validExtensions = ["jpg", "jpeg", "png", "gif"];
-
-                if (validExtensions.includes(fileExtension)) {
-                    fileNameInput.value = fileName; // Exibe o nome do arquivo
-                    errorDiv.style.display = "none"; // Oculta mensagem de erro
-                } else {
-                    alert("Apenas fotos podem ser enviadas.");
-                    fileNameInput.value = ""; // Limpa o campo
-                    errorDiv.style.display = "block"; // Exibe mensagem de erro
-                    this.value = ""; // Reseta o input file
-                }
-            } else {
-                fileNameInput.value = "Nenhum arquivo selecionado"; // Caso o usuário remova a seleção
-                errorDiv.style.display = "none"; // Oculta mensagem de erro
-            }
-        });
-    </script>-->
-
     <script>
-        document.getElementById("foto").addEventListener("change", function() {
-            var files = this.files;
-            var fileNameInput = document.getElementById("file-name");
-            var errorDiv = document.getElementById("file-error");
-            var validExtensions = ["jpg", "jpeg", "png", "gif"];
-            var fileNames = [];
+        document.getElementById("foto").addEventListener("change", function () {
+            const files = this.files;
+            const fileNameInput = document.getElementById("file-name");
+            const validExtensions = ["jpg", "jpeg", "png", "gif"];
+            let fileNames = [];
 
-            for (var i = 0; i < files.length; i++) {
-                var file = files[i];
-                var fileExtension = file.name.split('.').pop().toLowerCase();
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const fileExtension = file.name.split('.').pop().toLowerCase();
 
                 if (validExtensions.includes(fileExtension)) {
                     fileNames.push(file.name);
                 } else {
                     alert("Apenas fotos podem ser enviadas.");
-                    this.value = ""; // Reseta o input file
+                    this.value = "";
                     fileNameInput.value = "";
                     return;
                 }
@@ -134,9 +130,5 @@
         });
     </script>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
-
 </html>
