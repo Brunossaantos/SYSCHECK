@@ -20,12 +20,12 @@
     <?php 
         use Util\Sessao;
         include_once __DIR__ . '/../../../../../vendor/autoload.php';
-        include __DIR__ . '/../../../public/components/navbar.php'; 
+ 
         Sessao::mostrarMensagem();    
     ?>
 
     <!-- Botões de navegação -->
-    <div class="w-full flex justify-between items-center mb-8 max-w-6xl mx-auto">
+    <div class="w-full flex justify-center items-center space-x-10 mb-8 max-w-6xl mx-auto">
         <a href="/syscheck/etapaschecklist/consultarChecklists"
             class="bg-gray-500 hover:bg-gray-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
             Voltar

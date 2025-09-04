@@ -9,13 +9,12 @@
 <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-8">
     <?php 
         use Util\Sessao;
-        include_once __DIR__ . '/../../../public/components/navbar.php'; 
         $idUsuario = Sessao::idusuario();
         $data = (new DateTime())->format('d/m/y H:i:s');
     ?>
 
     <!-- Barra superior -->
-      <div class="w-full flex justify-between items-center mb-8 max-w-6xl mx-auto">
+      <div class="w-full flex justify-center space-x-60 gap-6 p-6">
         <a href="/syscheck/checklist"
             class="bg-gray-500 hover:bg-gray-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
             Voltar

@@ -8,14 +8,8 @@
 </head>
 <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-8">
 
-    <?php
-        use rn\RnUsuario;
-        use Util\Util;
-        include __DIR__ . '/../../../public/components/navbar.php';
-    ?>
-
     <!-- Botões superiores -->
-    <div class="w-full flex justify-between items-center mb-8 max-w-6xl mx-auto">
+    <div class="w-full flex justify-center space-x-5 gap-6 p-6">
         <a href="/syscheck/checklist"
            class="bg-gray-500 hover:bg-gray-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
             Voltar
@@ -102,7 +96,7 @@
                 </button>
                 <a href="/syscheck/etapaschecklist/finalizarcadastro"
                    class="bg-red-500 hover:bg-red-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
-                    Finalizar cadastro de etapas
+                    Finalizar cadastro
                 </a>
             </div>
 

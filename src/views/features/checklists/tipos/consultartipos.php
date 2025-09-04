@@ -21,7 +21,6 @@
         use Util\Util;
         use Util\Sessao;
         use rn\RnEtapasChecklist;
-        include __DIR__ .'/../../../public/components/navbar.php'; 
     ?>
 
     <!-- Botões de navegação -->

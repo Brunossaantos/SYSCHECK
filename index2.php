@@ -33,7 +33,7 @@
 
         
     <?php
-    include_once __DIR__ . '/src/views/public/components/navbar.php';
+ 
     use rn\RnObjeto;
     use rn\RnusuarioEmpilhadeira;
     use Util\Sessao;
@@ -43,6 +43,7 @@
 
     $rnUsuarioEmpilhadeira = new RnusuarioEmpilhadeira(Sessao::idusuario());
     $status = $rnUsuarioEmpilhadeira->verificarChecklistAberto(Sessao::idusuario());
+    
 
     Sessao::mostrarMensagem();
 
@@ -54,7 +55,7 @@
     $usuario = Sessao::retornarUsuarioLogado();
     ?>
 
-    <h1 class="text-3xl font-bold mb-12 text-center">Página Inicial - SYSCHECK</h1>
+    
     <!-- Topo fixo com Home e Logout -->
     <div class="w-full flex justify-end  items-center  mb-8 max-w-6xl mx-auto">
 
@@ -63,6 +64,8 @@
             Logout
         </a>
     </div>
+
+    <h1 class="text-2xl font-bold mb-12 text-center">Página Inicial - SYSCHECK</h1>
 
 
 

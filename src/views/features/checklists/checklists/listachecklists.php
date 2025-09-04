@@ -19,7 +19,6 @@
 
 <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-8">
 
-    <?php include __DIR__ . '/../../../public/components/navbar.php'; ?>
 
     <!-- Topo fixo com Home e Logout -->
 <div class="w-full flex justify-between items-center  mb-8 max-w-6xl mx-auto">

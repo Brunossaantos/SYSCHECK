@@ -17,9 +17,7 @@
 </head>
 <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-8">
 
-    <?php include_once __DIR__ . '/../../public/components/navbar.php'; ?>
-
-    <div class="w-full flex justify-between items-center  mb-8 max-w-6xl mx-auto">
+    <div class="w-full flex justify-center items-center space-x-20 mb-8 max-w-6xl mx-auto">
 
         <a href="/syscheck/usuario/gerenciarUsuarios"
             class="bg-gray-500 hover:bg-gray-600 w-20 h-12 flex items-center justify-center text-center rounded-lg text-white font-medium transition transform hover:scale-105 mt-2">

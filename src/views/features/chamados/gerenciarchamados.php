@@ -9,7 +9,7 @@
 <body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
    
     <!-- Barra superior -->
-      <div class="w-full flex justify-between items-center mb-8 max-w-6xl mt-16 mx-auto">
+      <div class="w-full flex justify-center items-center space-x-20 max-w-6xl mt-16 mx-auto">
         <a href="/syscheck/index2.php"
             class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
             Home

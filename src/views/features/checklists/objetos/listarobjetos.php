@@ -10,7 +10,6 @@
 <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-8">
     <?php 
         use Util\Util;
-        include_once __DIR__ . '/../../../public/components/navbar.php'; 
     ?>
 
     <!-- Barra superior -->

@@ -24,7 +24,6 @@
     <?php
         use rn\RnUsuario;
         use Util\Util;
-        include_once __DIR__ . '/../../public/components/navbar.php'; 
     ?>
 
     <div class="w-full flex justify-between items-center mb-8 max-w-6xl mx-auto">
@@ -58,7 +57,7 @@
             <input type="search" name="pesquisa" placeholder="Pesquisar"
                    class="flex-1 p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
             <button type="submit" class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
-                Pesquisar
+                🔍
             </button>
         </form>
 
