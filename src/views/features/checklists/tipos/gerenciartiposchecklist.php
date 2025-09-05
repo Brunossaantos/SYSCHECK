@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,19 +8,29 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
+
         .animate-fadeIn {
             animation: fadeIn 0.5s ease-in-out;
         }
     </style>
 </head>
+
 <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-8">
 
-    <?php 
-        use Util\Util;
-       
+    <?php
+
+    use Util\Util;
+
     ?>
 
     <!-- Botões de navegação -->
@@ -47,7 +58,7 @@
         <!-- Formulário de pesquisa -->
         <form class="flex gap-2 mb-6">
             <input type="search" name="pesquisa" placeholder="Pesquisar"
-                   class="flex-1 p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                class="flex-1 p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
             <button type="submit" class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
                 Pesquisar
             </button>
@@ -64,14 +75,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach($listaTipos as $tipoChecklist){ ?>
+                    <?php foreach ($listaTipos as $tipoChecklist) { ?>
                         <tr class="border-t border-gray-700 hover:bg-gray-700">
                             <td class="px-4 py-2">
-                                <a href="/syscheck/tiposchecklist/alterartipo/<?=$tipoChecklist->getIdTipoChecklist()?>" class="text-blue-400 hover:underline">
-                                    <?=$tipoChecklist->getDescricaoTipoChecklist()?>
+                                <a href="/syscheck/tiposchecklist/alterartipo/<?= $tipoChecklist->getIdTipoChecklist() ?>" class="text-blue-400 hover:underline">
+                                    <?= $tipoChecklist->getDescricaoTipoChecklist() ?>
                                 </a>
                             </td>
-                            <td class="px-4 py-2"><?=Util::status($tipoChecklist->getStatusTipoChecklist())?></td>
+                            <td class="px-4 py-2"><?= Util::status($tipoChecklist->getStatusTipoChecklist()) ?></td>
                             <td class="px-4 py-2 flex gap-2">
                                 <button class="bg-yellow-500 hover:bg-yellow-600 px-3 py-1 rounded text-white text-sm">Editar</button>
                                 <button class="bg-red-500 hover:bg-red-600 px-3 py-1 rounded text-white text-sm">Excluir</button>
@@ -84,7 +95,8 @@
 
     </div>
 
-    <?php include __DIR__ .'/../../../public/components/footer.php'; ?>
+    <?php include __DIR__ . '/../../../public/components/footer.php'; ?>
 
 </body>
+
 </html>

@@ -15,13 +15,13 @@
     <div class="container mt-5">
         <h2>Cadastro de etapas</h2>
         <form onsubmit="return verificarCampos()" action="/syscheck/etapaschecklist/cadastrarnovaetapa" method="POST">
-            <input type="hidden" name="fktipo" value="<?=$fkTipo?>">
+            <input type="hidden" name="fktipo" value="<?= $fkTipo ?>">
 
             <div class="form-group">
                 <label for="tipochecklist">Checklist</label>
-                <input type="text" class="form-control" name="tipo" value="<?=$tipoChecklist->getDescricaoTipoChecklist()?>" disabled>
+                <input type="text" class="form-control" name="tipo" value="<?= $tipoChecklist->getDescricaoTipoChecklist() ?>" disabled>
             </div>
-            
+
             <div class="form-group">
                 <label for="titulo">Título da etapa</label>
                 <input type="text" class="form-control" name="titulo" placeholder="Título da etapa" require>
@@ -34,7 +34,7 @@
 
             <div class="form-group">
                 <label for="numero">Número da etapa</label>
-                <input type="text" class="form-control" name="numero" value="<?=$quantidadeEtapas?>" readonly>
+                <input type="text" class="form-control" name="numero" value="<?= $quantidadeEtapas ?>" readonly>
             </div>
 
             <div class="form-group">
@@ -61,7 +61,7 @@
             </div>
 
             <button type="submit" class="btn btn-primary">Salvar etapa</button>
-            <a class="btn btn-danger" href="/syscheck/etapaschecklist/finalizarcadastro/<?=$fkTipo?>">Finalizar cadastro de etapas</a>
+            <a class="btn btn-danger" href="/syscheck/etapaschecklist/finalizarcadastro/<?= $fkTipo ?>">Finalizar cadastro de etapas</a>
         </form>
 
     </div>
@@ -73,7 +73,7 @@
 </body>
 
 <script>
-    function verificarCampos() {        
+    function verificarCampos() {
         var status = document.getElementById('status').value;
 
         if (status == '--') {

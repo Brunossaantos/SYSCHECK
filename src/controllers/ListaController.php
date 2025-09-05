@@ -10,48 +10,51 @@ use rn\RnObjeto;
 use rn\RnChecklist;
 use Util\Sessao;
 
-class ListaController{
+class ListaController
+{
 
     private $rnLista;
 
-    function __construct(RnLista $rnLista){
+    function __construct(RnLista $rnLista)
+    {
         $this->rnLista = $rnLista;
     }
 
-    function index(){
+    function index()
+    {
 
         $nome = "";
         $data = (new DateTime())->format('d/m/y H:i:s');
         $fkUsuario = 0;
 
-        if(isset($_GET['tagdec'])){
+        if (isset($_GET['tagdec'])) {
             $colaborador = (new RnLista())->selecionarColaborador($_GET['tagdec']);
 
             //echo "<pre>";
             //var_dump($colaborador);
 
-            if(empty($colaborador)){
+            if (empty($colaborador)) {
                 Sessao::salvarMensagemNaSessao("Usuário não encontrado na base do eTreinamento, contate a TI para verificar o cadastro.");
-                header("Location:/syscheck/lista");                
+                header("Location:/syscheck/lista");
             }
 
             $usuario = (new RnLista())->selecionarFkUsuario($colaborador['nome']);
 
-            if($usuario == null){
+            if ($usuario == null) {
                 Sessao::salvarMensagemNaSessao("Usuário não encontrado na base do Syscheck, contate a TI para verificar o cadastro.");
                 header("Location:/syscheck/lista");
             }
-            
+
             $nome = $usuario->getNome();
-            $fkUsuario = $usuario->getIdUsuario();            
+            $fkUsuario = $usuario->getIdUsuario();
         }
-        
+
         $listaCarros = (new RnObjeto(Sessao::idusuario()))->listarObjetosPeloTipo(1);
 
         $listaChecklists = (new RnChecklist(Sessao::idusuario()))->listarChecklistsVeiculares();
 
-        foreach($listaChecklists as $checklist){
-            switch($checklist->getStatusChecklist()){
+        foreach ($listaChecklists as $checklist) {
+            switch ($checklist->getStatusChecklist()) {
                 case 1:
                     $checklist->setStatusChecklist("Pendente");
                     break;
@@ -66,22 +69,21 @@ class ListaController{
         require_once __DIR__ . '/../views/features/lista/retiradadevolucao.php';
     }
 
-    function verificarStatusVeiculo($fkVeiculo){
+    function verificarStatusVeiculo($fkVeiculo)
+    {
         echo (new RnLista())->verificarStatus($fkVeiculo);
     }
 
-    function selvarMovimentacao($fkUsuario, $fkVeiculo, $status){
-        
+    function selvarMovimentacao($fkUsuario, $fkVeiculo, $status)
+    {
+
         $movimentacao = [
             'usuario' => $fkUsuario,
             'veiculo' => $fkVeiculo,
             'data' => (new DateTime())->format('d/m/Y H:i:s'),
             'status' => $status
         ];
-        
+
         (new RnLista())->salvarMovimentacao($movimentacao);
     }
-
 }
-
-?>

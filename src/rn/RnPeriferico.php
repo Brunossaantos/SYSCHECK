@@ -8,17 +8,17 @@ use database\Conexao;
 
 require __DIR__ . '/../../vendor/autoload.php';
 
-class RnPeriferico{
+class RnPeriferico
+{
     private $idUsuarioSessao;
 
-    function __construct($idUsuarioSessao){
+    function __construct($idUsuarioSessao)
+    {
         $this->idUsuarioSessao = $idUsuarioSessao;
     }
 
-    function listarPerifericos(){
+    function listarPerifericos()
+    {
         return (new DaoPerifericoBateria((new Conexao())->conectar(), $this->idUsuarioSessao))->listaPerifericos();
     }
 }
-
-
-?>

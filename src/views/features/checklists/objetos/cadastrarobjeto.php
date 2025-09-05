@@ -1,30 +1,31 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cadastrar Objeto - SYSCHECK</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-8">
-    
+
 
     <!-- Barra superior -->
     <div class="w-full flex justify-center space-x-5 gap-6 p-6">
-        <a href="/syscheck/checklist" 
-           class="bg-gray-500 hover:bg-gray-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
-           Voltar
+        <a href="/syscheck/checklist"
+            class="bg-gray-500 hover:bg-gray-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+            Voltar
         </a>
 
-        <a href="/syscheck/index2.php" 
-           class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
-           Home
+        <a href="/syscheck/index2.php"
+            class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+            Home
         </a>
 
-        <a href="/syscheck/usuario/logout" 
-           class="bg-red-500 hover:bg-red-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
-           Logout
+        <a href="/syscheck/usuario/logout"
+            class="bg-red-500 hover:bg-red-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+            Logout
         </a>
     </div>
 
@@ -36,30 +37,28 @@
             <!-- Descrição -->
             <div>
                 <label for="descricao" class="block mb-2 font-medium">Descrição</label>
-                <input 
-                    type="text" 
-                    id="descricao" 
-                    name="descricao" 
-                    placeholder="Digite a descrição do objeto" 
-                    autocomplete="off" 
+                <input
+                    type="text"
+                    id="descricao"
+                    name="descricao"
+                    placeholder="Digite a descrição do objeto"
+                    autocomplete="off"
                     required
-                    class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                    class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
 
             <!-- Tipo do checklist -->
             <div>
                 <label for="tipo" class="block mb-2 font-medium">Tipo do checklist</label>
-                <select 
-                    id="tipo" 
-                    name="fktipo" 
+                <select
+                    id="tipo"
+                    name="fktipo"
                     required
-                    class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
+                    class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="" disabled selected>Selecione o tipo do item</option>
-                    <?php foreach ($listaTipos as $tipoChecklist){ ?>
-                        <option value="<?=$tipoChecklist->getIdTipoChecklist()?>">
-                            <?=$tipoChecklist->getDescricaoTipoChecklist()?>
+                    <?php foreach ($listaTipos as $tipoChecklist) { ?>
+                        <option value="<?= $tipoChecklist->getIdTipoChecklist() ?>">
+                            <?= $tipoChecklist->getDescricaoTipoChecklist() ?>
                         </option>
                     <?php } ?>
                 </select>
@@ -68,12 +67,11 @@
             <!-- Status do item -->
             <div>
                 <label for="statusitem" class="block mb-2 font-medium">Status do item</label>
-                <select 
-                    id="statusitem" 
-                    name="statusitem" 
+                <select
+                    id="statusitem"
+                    name="statusitem"
                     required
-                    class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
+                    class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="" disabled selected>Status do item</option>
                     <option value="1">Ativo</option>
                     <option value="0">Inativo</option>
@@ -82,10 +80,9 @@
 
             <!-- Ações -->
             <div class="flex justify-end gap-3 pt-2">
-                <button 
+                <button
                     type="submit"
-                    class="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg font-semibold transition transform hover:scale-105"
-                >
+                    class="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg font-semibold transition transform hover:scale-105">
                     Cadastrar
                 </button>
             </div>
@@ -94,4 +91,5 @@
 
     <?php include_once __DIR__ . '/../../../public/components/footer.php'; ?>
 </body>
+
 </html>

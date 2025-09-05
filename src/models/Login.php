@@ -2,30 +2,34 @@
 
 namespace models;
 
-class Login{
+class Login
+{
     private $nomeUsuario;
     private $senha;
 
-    function __construct($nomeUsuario, $senha){
+    function __construct($nomeUsuario, $senha)
+    {
         $this->setNomeUsuario($nomeUsuario);
         $this->setSenha($senha);
     }
 
-    function setNomeUsuario($nomeUsuario){
+    function setNomeUsuario($nomeUsuario)
+    {
         $this->nomeUsuario = $nomeUsuario;
     }
 
-    function setSenha($senha){
+    function setSenha($senha)
+    {
         $this->senha = $senha;
     }
 
-    function getNomeUsuario(){
+    function getNomeUsuario()
+    {
         return $this->nomeUsuario;
     }
 
-    function getSenha(){
+    function getSenha()
+    {
         return $this->senha;
     }
 }
-
-?>

@@ -8,18 +8,21 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 use Exception;
 use Util\Util;
 
-class DaoHorimetro {
+class DaoHorimetro
+{
     private \mysqli $conexao;
     private int $idUsuarioSessao;
     private string $tbl_horimetro = TBL_HORIMETRO;
     private string $v_checklist_horimetro = V_CHECKLISTS_HORIMETRO;
 
-    public function __construct(\mysqli $conexao, int $idUsuarioSessao) {
+    public function __construct(\mysqli $conexao, int $idUsuarioSessao)
+    {
         $this->conexao = $conexao;
         $this->idUsuarioSessao = $idUsuarioSessao;
     }
 
-    public function salvarHorimetro(int $fkChecklist, int $fkEmpilhadeira, float $horimetro): int {
+    public function salvarHorimetro(int $fkChecklist, int $fkEmpilhadeira, float $horimetro): int
+    {
         try {
             $stmt = $this->conexao->prepare(
                 "INSERT INTO {$this->tbl_horimetro} (FK_CHECKLIST, FK_EQUIPAMENTO, HORIMETRO) VALUES (?,?,?)"
@@ -36,7 +39,8 @@ class DaoHorimetro {
         }
     }
 
-    public function selecionarHorimetro(int $fkChecklist): array {
+    public function selecionarHorimetro(int $fkChecklist): array
+    {
         try {
             $stmt = $this->conexao->prepare(
                 "SELECT ID_HORIMETRO, FK_CHECKLIST, FK_EQUIPAMENTO, HORIMETRO 
@@ -62,7 +66,8 @@ class DaoHorimetro {
         }
     }
 
-    public function recuperarHorimetros(int $fkChecklist): array {
+    public function recuperarHorimetros(int $fkChecklist): array
+    {
         $listaHorimetros = [];
         try {
             $stmt = $this->conexao->prepare(
@@ -89,7 +94,8 @@ class DaoHorimetro {
         return $listaHorimetros;
     }
 
-    public function recuperarHorimetroPorEquipamento(int $fkEmpilhadeira): array {
+    public function recuperarHorimetroPorEquipamento(int $fkEmpilhadeira): array
+    {
         $listaHorimetros = [];
         try {
             $stmt = $this->conexao->prepare(
@@ -116,7 +122,8 @@ class DaoHorimetro {
         return $listaHorimetros;
     }
 
-    public function salvarHorimetroFinal(int $fkChecklist, int $fkEmpilhadeira, float $horimetroFinal): bool {
+    public function salvarHorimetroFinal(int $fkChecklist, int $fkEmpilhadeira, float $horimetroFinal): bool
+    {
         try {
             $stmt = $this->conexao->prepare(
                 "UPDATE {$this->tbl_horimetro} 
@@ -131,7 +138,8 @@ class DaoHorimetro {
         }
     }
 
-    public function listaChecklistsEmpilhadeiras(int $fkChecklist): array {
+    public function listaChecklistsEmpilhadeiras(int $fkChecklist): array
+    {
         $listaHorimetros = [];
         try {
             $stmt = $this->conexao->prepare(
@@ -163,4 +171,3 @@ class DaoHorimetro {
         return $listaHorimetros;
     }
 }
-?>

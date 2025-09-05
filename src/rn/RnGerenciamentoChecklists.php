@@ -7,18 +7,17 @@ use database\Conexao;
 
 require __DIR__ . '/../../vendor/autoload.php';
 
-class RnGerenciamentoChecklists{
+class RnGerenciamentoChecklists
+{
     private $idUsuarioSessao;
 
-    function __construct($idUsuarioSessao){
+    function __construct($idUsuarioSessao)
+    {
         $this->idUsuarioSessao = $idUsuarioSessao;
     }
 
-    function listaChecklists(){
+    function listaChecklists()
+    {
         return (new DaoHorimetro((new Conexao())->conectar(), $this->idUsuarioSessao))->listaChecklistsEmpilhadeiras(600);
     }
-    
-
 }
-
-?>

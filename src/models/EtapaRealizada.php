@@ -2,7 +2,8 @@
 
 namespace models;
 
-class EtapaRealizada{
+class EtapaRealizada
+{
     private $idEtapaRealizada;
     private $fkChecklist;
     private $fkEtapa;
@@ -10,7 +11,8 @@ class EtapaRealizada{
     private $acao;
     private $observacao;
 
-    function __construct($idEtapaRealizada, $fkCheklist, $fkEtapa, $numeroEtapa, $acao, $observacao){
+    function __construct($idEtapaRealizada, $fkCheklist, $fkEtapa, $numeroEtapa, $acao, $observacao)
+    {
         $this->setIdEtapaRealizada($idEtapaRealizada);
         $this->setFkChecklist($fkCheklist);
         $this->setFkEtapa($fkEtapa);
@@ -20,55 +22,64 @@ class EtapaRealizada{
     }
 
     //set
-    function setIdEtapaRealizada($idEtapaRealizada){
+    function setIdEtapaRealizada($idEtapaRealizada)
+    {
         $this->idEtapaRealizada = $idEtapaRealizada;
     }
 
-    function setFkChecklist($fkChecklist){
+    function setFkChecklist($fkChecklist)
+    {
         $this->fkChecklist = $fkChecklist;
     }
 
-    function setFkEtapa($fkEtapa){
+    function setFkEtapa($fkEtapa)
+    {
         $this->fkEtapa = $fkEtapa;
     }
 
-    function setNumeroEtapa($numeroEtapa){
+    function setNumeroEtapa($numeroEtapa)
+    {
         $this->numeroEtapa = $numeroEtapa;
     }
 
-    function setAcao($acao){
+    function setAcao($acao)
+    {
         $this->acao = $acao;
     }
 
-    function setObservacao($observacao){
+    function setObservacao($observacao)
+    {
         $this->observacao = $observacao;
     }
 
     //get
-    function getIdEtapa(){
+    function getIdEtapa()
+    {
         return $this->idEtapaRealizada;
     }
 
-    function getFkChecklist(){
+    function getFkChecklist()
+    {
         return $this->fkChecklist;
     }
 
-    function getFkEtapa(){
+    function getFkEtapa()
+    {
         return $this->fkEtapa;
     }
 
-    function getNumeroEtapa(){
+    function getNumeroEtapa()
+    {
         return $this->numeroEtapa;
     }
 
-    function getAcao(){
+    function getAcao()
+    {
         return $this->acao;
     }
 
-    function getObservacao(){
+    function getObservacao()
+    {
         return $this->observacao;
     }
 }
-
-
-?>

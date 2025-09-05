@@ -2,7 +2,7 @@
 
 namespace rn;
 
-require __DIR__ .'/../../vendor/autoload.php';
+require __DIR__ . '/../../vendor/autoload.php';
 
 use models\Checklist;
 use models\Erro;
@@ -10,49 +10,57 @@ use DAO\DaoErro;
 use DAO\DaoChecklist;
 use database\Conexao;
 
-class RnChecklist{
+class RnChecklist
+{
     private $idUsuarioSessao;
 
-    function __construct($idUsuarioSessao){
+    function __construct($idUsuarioSessao)
+    {
         $this->idUsuarioSessao = $idUsuarioSessao;
     }
 
-    function iniciarChecklist(Checklist $checklist){
+    function iniciarChecklist(Checklist $checklist)
+    {
         return (new DaoChecklist((new Conexao())->conectar(), $this->idUsuarioSessao))->iniciarCheckList($checklist);
     }
 
-    function selecionarChecklist($idChecklist){
+    function selecionarChecklist($idChecklist)
+    {
         return (new DaoChecklist((new Conexao())->conectar(), $this->idUsuarioSessao))->selecionarChecklist($idChecklist);
     }
 
-    function atualizarChecklist(Checklist $checklist){
+    function atualizarChecklist(Checklist $checklist)
+    {
         return (new DaoChecklist((new Conexao())->conectar(), $this->idUsuarioSessao))->atualizarChecklist($checklist);
     }
 
-    function listarChecklists(){
+    function listarChecklists()
+    {
         return (new DaoChecklist((new Conexao())->conectar(), $this->idUsuarioSessao))->listaChecklists();
     }
 
-    function listarComFiltros($filtros){
+    function listarComFiltros($filtros)
+    {
         return (new DaoChecklist((new Conexao())->conectar(), $this->idUsuarioSessao))->filtrarChecklists($filtros);
     }
 
-    function listarChecklistsVeiculares(){
+    function listarChecklistsVeiculares()
+    {
         return (new DaoChecklist((new Conexao())->conectar(), $this->idUsuarioSessao))->listarChecklistVeicular();
-    }  
-    
-    function verificarChecklistPendente($fkUsuario){
+    }
+
+    function verificarChecklistPendente($fkUsuario)
+    {
         return (new DaoChecklist((new Conexao())->conectar(), $this->idUsuarioSessao))->verificarChecklistPorUsuario($fkUsuario);
     }
 
-    function verificarPendencia($fkUsuario){
-        return (new DaoChecklist((new Conexao())->conectar(), $this->idUsuarioSessao))->verificarChecklistPendente($fkUsuario); 
+    function verificarPendencia($fkUsuario)
+    {
+        return (new DaoChecklist((new Conexao())->conectar(), $this->idUsuarioSessao))->verificarChecklistPendente($fkUsuario);
     }
-    
-    function recuperarHorimetrosPorChecklist($fkUsuario){
+
+    function recuperarHorimetrosPorChecklist($fkUsuario)
+    {
         return (new DaoChecklist((new Conexao())->conectar(), $this->idUsuarioSessao))->recuperarHorimetrosPorChecklist($fkUsuario);
     }
-
 }
-
-?>

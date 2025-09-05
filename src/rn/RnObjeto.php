@@ -8,32 +8,37 @@ use models\Objeto;
 use DAO\DaoObjeto;
 use database\Conexao;
 
-class RnObjeto{
+class RnObjeto
+{
     private $idUsuarioSessao;
 
-    function __construct($idUsuarioSessao){
+    function __construct($idUsuarioSessao)
+    {
         $this->idUsuarioSessao = $idUsuarioSessao;
     }
 
-    function cadastraNovoObjeto(Objeto $objeto){
+    function cadastraNovoObjeto(Objeto $objeto)
+    {
         return (new DaoObjeto((new Conexao())->conectar(), $this->idUsuarioSessao))->inserirObjeto($objeto);
     }
 
-    function selecionarObjeto($idObjeto){
+    function selecionarObjeto($idObjeto)
+    {
         return (new DaoObjeto((new Conexao())->conectar(), $this->idUsuarioSessao))->selecionarObjeto($idObjeto);
     }
 
-    function alterarObjeto(Objeto $objeto){
+    function alterarObjeto(Objeto $objeto)
+    {
         return (new DaoObjeto((new Conexao())->conectar(), $this->idUsuarioSessao))->alterarObjeto($objeto);
     }
 
-    function listarObjetosPeloTipo($fkTipo){
+    function listarObjetosPeloTipo($fkTipo)
+    {
         return (new DaoObjeto((new Conexao())->conectar(), $this->idUsuarioSessao))->listarObjetosPeloTipo($fkTipo);
     }
 
-    function listarObejetos(){
+    function listarObejetos()
+    {
         return (new DaoObjeto((new Conexao())->conectar(), $this->idUsuarioSessao))->listarObjetos();
     }
 }
-
-?>

@@ -22,7 +22,7 @@
 
     <div class="container mt-5">
         <h2>Gerenciamento de checklists de empilhadeiras</h2>
-        <h3><?=$qtdChecklists?> checklists de empilhadeiras com horimetro em aberto</h3>
+        <h3><?= $qtdChecklists ?> checklists de empilhadeiras com horimetro em aberto</h3>
 
         <table class="table">
             <thead>
@@ -49,7 +49,7 @@
                             <td><?= $checklist['empilhadeira']->getDescricaoObjeto() ?></td>
                             <td><?= $checklist['dataInicio'] ?></td>
                             <td><?= $checklist['horimetroInicial'] ?></td>
-                            <td><a href="/syscheck/gerenciamentochecklists/finalizarhorimetro/<?=$checklist['idChecklist']?>" class="btn btn-danger">Finalizar horímetro</a></td>
+                            <td><a href="/syscheck/gerenciamentochecklists/finalizarhorimetro/<?= $checklist['idChecklist'] ?>" class="btn btn-danger">Finalizar horímetro</a></td>
                             <td><?= ($checklist['status'] == 3) ? "Checklist finalizado " . $checklist['dataFim'] : "Checklist pendente" ?></td>
                         </tr>
                 <?php

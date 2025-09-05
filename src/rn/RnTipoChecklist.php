@@ -8,39 +8,42 @@ use models\TipoChecklist;
 use DAO\DaoTiposChecklist;
 use database\Conexao;
 
-class RnTipoChecklist{
+class RnTipoChecklist
+{
     private $idUsuarioSessao;
 
-    function __construct($idUsuarioSessao){
+    function __construct($idUsuarioSessao)
+    {
         $this->idUsuarioSessao = $idUsuarioSessao;
     }
 
-    function cadastrarNovoTipoChecklist(TipoChecklist $tipoChecklist){
+    function cadastrarNovoTipoChecklist(TipoChecklist $tipoChecklist)
+    {
         return (new DaoTiposChecklist((new Conexao())->conectar(), $this->idUsuarioSessao))->inserirTipoChecklist($tipoChecklist);
     }
 
-    function selecionarTipoChecklist($idTipoChecklist){
+    function selecionarTipoChecklist($idTipoChecklist)
+    {
         return (new DaoTiposChecklist((new Conexao())->conectar(), $this->idUsuarioSessao))->selecionarTipoChecklist($idTipoChecklist);
     }
 
-    function alterarTipoChecklist(TipoChecklist $tipoChecklist){
+    function alterarTipoChecklist(TipoChecklist $tipoChecklist)
+    {
         return (new DaoTiposChecklist((new Conexao())->conectar(), $this->idUsuarioSessao))->alteraTipoChecklist($tipoChecklist);
     }
 
-    function retornarListaTiposChecklist(){
+    function retornarListaTiposChecklist()
+    {
         return (new DaoTiposChecklist((new Conexao())->conectar(), $this->idUsuarioSessao))->retornarListaTiposChecklist();
     }
 
-    function retornarResponsavel(int $idTipoChecklist){
+    function retornarResponsavel(int $idTipoChecklist)
+    {
         return (new DaoTiposChecklist((new Conexao())->conectar(), $this->idUsuarioSessao))->verificarResponsavel($idTipoChecklist);
     }
 
-    function verificarTipoEmpilhadeira(int $fkTipoChecklist){
+    function verificarTipoEmpilhadeira(int $fkTipoChecklist)
+    {
         return (new DaoTiposChecklist((new Conexao())->conectar(), $this->idUsuarioSessao))->verificarTipoEmpilhadeira($fkTipoChecklist);
     }
-
-
-
 }
-
-?>

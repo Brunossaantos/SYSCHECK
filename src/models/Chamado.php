@@ -2,7 +2,8 @@
 
 namespace models;
 
-class Chamado{
+class Chamado
+{
     private $idChamado;
     private $fkItemChamado;
     private $descricaoChamado;
@@ -11,7 +12,8 @@ class Chamado{
     private $fkUsuario;
     private $statusChamado;
 
-    function __construct($idChamado = 0, $fkItemChamado, $descricaoChamado, $dataAberturaChamado, $dataFinalizacaoChamado, $fkUsuario, $statusChamado){
+    function __construct($idChamado = 0, $fkItemChamado, $descricaoChamado, $dataAberturaChamado, $dataFinalizacaoChamado, $fkUsuario, $statusChamado)
+    {
         $this->setIdChamado($idChamado);
         $this->setFkItemChamado($fkItemChamado);
         $this->setDescricaoChamado($descricaoChamado);
@@ -20,61 +22,73 @@ class Chamado{
         $this->setStatusChamado($statusChamado);
     }
 
-    function setIdChamado($idChamado){
+    function setIdChamado($idChamado)
+    {
         $this->idChamado = $idChamado;
     }
 
-    function setFkItemChamado($fkItemChamado){
+    function setFkItemChamado($fkItemChamado)
+    {
         $this->fkItemChamado = $fkItemChamado;
     }
 
-    function setDescricaoChamado($descricaoChamado){
+    function setDescricaoChamado($descricaoChamado)
+    {
         $this->descricaoChamado = $descricaoChamado;
     }
 
-    function setDataAberturaChamado($dataAberturaChamado){
+    function setDataAberturaChamado($dataAberturaChamado)
+    {
         $this->dataAberturaChamado = $dataAberturaChamado;
     }
 
-    function setDataFinalizacaoChamado($dataFinalizacaoChamado){
+    function setDataFinalizacaoChamado($dataFinalizacaoChamado)
+    {
         $this->dataFinalizacaoChamado = $dataFinalizacaoChamado;
     }
 
-    function setFkUsuario($fkUsuario){
+    function setFkUsuario($fkUsuario)
+    {
         $this->fkUsuario = $fkUsuario;
     }
 
-    function setStatusChamado($statusChamado){
+    function setStatusChamado($statusChamado)
+    {
         $this->statusChamado = $statusChamado;
     }
 
-    function getIdChamado(){
+    function getIdChamado()
+    {
         return $this->idChamado;
     }
 
-    function getFkItemChamado(){
+    function getFkItemChamado()
+    {
         return $this->fkItemChamado;
     }
 
-    function getDescricaoChamado(){
+    function getDescricaoChamado()
+    {
         return $this->descricaoChamado;
     }
 
-    function getDataAberturaChamado(){
+    function getDataAberturaChamado()
+    {
         return $this->dataAberturaChamado;
     }
 
-    function getDataFinalizacaoChamado(){
+    function getDataFinalizacaoChamado()
+    {
         return $this->dataFinalizacaoChamado;
     }
 
-    function getFkUsuario(){
+    function getFkUsuario()
+    {
         return $this->fkUsuario;
     }
 
-    function getStatusChamado(){
+    function getStatusChamado()
+    {
         return $this->statusChamado;
     }
 }
-
-?>

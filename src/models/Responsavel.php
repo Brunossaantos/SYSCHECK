@@ -2,12 +2,14 @@
 
 namespace models;
 
-class Responsavel{
+class Responsavel
+{
     private $idResponsavel;
     private $nomeResponsavel;
     private $emailResponsavel;
 
-    function __construct($idResponsavel, $nomeResponsavel, $emailResponsavel){
+    function __construct($idResponsavel, $nomeResponsavel, $emailResponsavel)
+    {
         $this->setIdResponsavel($idResponsavel);
         $this->setNomeResponsavel($nomeResponsavel);
         $this->setEmailResponsavel($emailResponsavel);
@@ -15,31 +17,35 @@ class Responsavel{
 
     //set
 
-    function setIdResponsavel($idResponsavel){
+    function setIdResponsavel($idResponsavel)
+    {
         $this->idResponsavel = $idResponsavel;
     }
 
-    function setNomeResponsavel($nomeResponsavel){
+    function setNomeResponsavel($nomeResponsavel)
+    {
         $this->nomeResponsavel = $nomeResponsavel;
     }
 
-    function setEmailResponsavel($emailResponsavel){
+    function setEmailResponsavel($emailResponsavel)
+    {
         $this->emailResponsavel = $emailResponsavel;
     }
 
     //get
 
-    function getIdResponsavel(){
+    function getIdResponsavel()
+    {
         return $this->idResponsavel;
     }
 
-    function getNomeResponsavel(){
+    function getNomeResponsavel()
+    {
         return $this->nomeResponsavel;
     }
 
-    function getEmailResponsavel(){
+    function getEmailResponsavel()
+    {
         return $this->emailResponsavel;
     }
-
 }
-?>

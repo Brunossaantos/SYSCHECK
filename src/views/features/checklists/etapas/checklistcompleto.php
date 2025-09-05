@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,21 +8,32 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
+
         .animate-fadeIn {
             animation: fadeIn 0.5s ease-in-out;
         }
     </style>
 </head>
+
 <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-8">
 
-    <?php 
-        use Util\Sessao;
-        include_once __DIR__ . '/../../../../../vendor/autoload.php';
- 
-        Sessao::mostrarMensagem();    
+    <?php
+
+    use Util\Sessao;
+
+    include_once __DIR__ . '/../../../../../vendor/autoload.php';
+
+    Sessao::mostrarMensagem();
     ?>
 
     <!-- Botões de navegação -->
@@ -45,7 +57,7 @@
     <div class="w-full max-w-5xl animate-fadeIn">
 
         <h1 class="text-3xl font-bold mb-6">Checklist</h1>
-        <h2 class="text-xl mb-6"><?=$tipoChecklist->getDescricaoTipoChecklist()?></h2>
+        <h2 class="text-xl mb-6"><?= $tipoChecklist->getDescricaoTipoChecklist() ?></h2>
 
         <div class="overflow-x-auto">
             <table class="min-w-full bg-gray-800 rounded-lg overflow-hidden">
@@ -60,17 +72,17 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach($listaEtapas as $etapa){ ?>
+                    <?php foreach ($listaEtapas as $etapa) { ?>
                         <tr class="border-b border-gray-700 hover:bg-gray-700">
                             <td class="p-3">
-                                <a href="/syscheck/etapaschecklist/gerenciaretapa/<?=$etapa->getIdEtapaChecklist()?>"
-                                   class="text-blue-400 hover:underline">
-                                    <?=$etapa->getNumeroEtapa()?>
+                                <a href="/syscheck/etapaschecklist/gerenciaretapa/<?= $etapa->getIdEtapaChecklist() ?>"
+                                    class="text-blue-400 hover:underline">
+                                    <?= $etapa->getNumeroEtapa() ?>
                                 </a>
                             </td>
-                            <td class="p-3"><?=$etapa->getTituloEtapa()?></td>
-                            <td class="p-3"><?=$etapa->getConteudoEtapa()?></td>
-                            <td class="p-3"><?= ($etapa->getFotoObrigatoria() == 1) ? 'Foto obrigatória' : ''?></td>
+                            <td class="p-3"><?= $etapa->getTituloEtapa() ?></td>
+                            <td class="p-3"><?= $etapa->getConteudoEtapa() ?></td>
+                            <td class="p-3"><?= ($etapa->getFotoObrigatoria() == 1) ? 'Foto obrigatória' : '' ?></td>
                             <td class="p-3"><?= ($etapa->getCampoAdicional() == 1) ? 'Campo obrigatório' : '' ?></td>
                             <td class="p-3"><?= ($etapa->getStatusEtapa() == 1) ? 'Ativo' : 'Inativo' ?></td>
                         </tr>
@@ -84,4 +96,5 @@
     <?php include __DIR__ . '/../../../public/components/footer.php'; ?>
 
 </body>
+
 </html>

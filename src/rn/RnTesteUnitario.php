@@ -2,7 +2,7 @@
 
 namespace rn;
 
-require __DIR__ .'/../../vendor/autoload.php';
+require __DIR__ . '/../../vendor/autoload.php';
 
 use database\Conexao;
 use Util\Sessao;
@@ -10,23 +10,20 @@ use Util\Sessao;
 use rn\RnHorimetro;
 
 
-class RnTesteUnitario{
+class RnTesteUnitario
+{
     private $idUsuarioSessao;
 
-    function __construct($idUsuarioSessao){
+    function __construct($idUsuarioSessao)
+    {
         $this->idUsuarioSessao = $idUsuarioSessao;
     }
 
-    function testeHorimetro(){
+    function testeHorimetro()
+    {
         $listaHorimetros = (new RnHorimetro(Sessao::idusuario()))->recuperarListaHorimetros(600);
 
-        echo"<pre>";
+        echo "<pre>";
         var_dump($listaHorimetros);
     }
-
-    
 }
-
-
-
-?>

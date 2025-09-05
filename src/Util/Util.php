@@ -13,26 +13,29 @@ use DAO\DaoErro;
 use PHPMailer\PHPMailer\PHPMailer;
 
 
-class Util{
+class Util
+{
 
-    public static function inserirErro(Exception $e, $local, $idUsuarioSessao){
+    public static function inserirErro(Exception $e, $local, $idUsuarioSessao)
+    {
         $erro = new Erro(0, $e->getMessage(), $e->getFile(), $e->getLine(), $local, (new DateTime())->format('d/m/Y H:i:s'), $idUsuarioSessao);
         (new DaoErro((new Conexao())->conectar(), $idUsuarioSessao))->inserirErro($erro);
         Util::enviarEmail($erro);
 
-        if(Sessao::idusuario() == 3){
-            $listaErros = (new DaoErro((new Conexao())->conectar(), $idUsuarioSessao))->recuperarListaDeErros();  
+        if (Sessao::idusuario() == 3) {
+            $listaErros = (new DaoErro((new Conexao())->conectar(), $idUsuarioSessao))->recuperarListaDeErros();
             require_once __DIR__ . '/../views/features/deploy/deploy.php';
         }
     }
 
-    private static function enviarEmail(Erro $erro){
+    private static function enviarEmail(Erro $erro)
+    {
         $para = "devdanilofranco@gmail.com";
         $assunto = "Erro no sistema Syscheck";
 
 
         $email = new PHPMailer();
-        try{
+        try {
             $email->isSMTP();
             $email->Host = 'smtplw.com.br';
             $email->SMTPAuth = true;
@@ -62,16 +65,16 @@ class Util{
             $email->AltBody = "Erro no sistema Syscheck";
 
             $email->send();
-
-        }catch (Exception $e){
+        } catch (Exception $e) {
             //Util::inserirErro($e, 'enviarEmail', Sessao::idusuario());  
-            error_log("Erro ao enviar e-mail: " . $e->getMessage());          
+            error_log("Erro ao enviar e-mail: " . $e->getMessage());
         }
     }
 
-    public static function statusChecklist($status){
+    public static function statusChecklist($status)
+    {
         $retorno = "";
-        switch ($status){
+        switch ($status) {
             case 1:
                 $retorno = "Pendente";
                 break;
@@ -87,9 +90,10 @@ class Util{
         return $retorno;
     }
 
-    public static function status($status){
+    public static function status($status)
+    {
         $retorno = "";
-        switch ($status){
+        switch ($status) {
             case 0:
                 $retorno = "Inativo";
                 break;
@@ -103,11 +107,9 @@ class Util{
         return $retorno;
     }
 
-    public static function formatarDataHora($dataHora){
+    public static function formatarDataHora($dataHora)
+    {
         $dataFormatada = DateTime::createFromFormat('Y-m-d H:i:s', $dataHora);
         return $dataFormatada->format('d/m/Y H:i');
     }
-
 }
-
-?>

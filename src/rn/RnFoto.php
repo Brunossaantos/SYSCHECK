@@ -8,33 +8,37 @@ use models\Foto;
 use DAO\DaoFoto;
 use database\Conexao;
 
-class RnFoto{
+class RnFoto
+{
     private $idUsuarioSessao;
 
-    function __construct($idUsuarioSessao){
+    function __construct($idUsuarioSessao)
+    {
         $this->idUsuarioSessao = $idUsuarioSessao;
     }
 
-    function inserirFoto(Foto $foto){
+    function inserirFoto(Foto $foto)
+    {
         return (new DaoFoto((new Conexao())->conectar(), $this->idUsuarioSessao))->inserirFoto($foto);
     }
 
-    function selecionarFoto(int $fkChecklist, int $numeroEtapa){
+    function selecionarFoto(int $fkChecklist, int $numeroEtapa)
+    {
         return (new DaoFoto((new Conexao())->conectar(), $this->idUsuarioSessao))->selecionarFoto($fkChecklist, $numeroEtapa);
     }
 
-    function selecionarFotoChecklist(int $idChecklist){
+    function selecionarFotoChecklist(int $idChecklist)
+    {
         return (new DaoFoto((new Conexao())->conectar(), $this->idUsuarioSessao))->listaFotosChecklist($idChecklist);
     }
 
-    function selecionarFotoEtapa(int $fkChecklist, int $numeroEtapa){
+    function selecionarFotoEtapa(int $fkChecklist, int $numeroEtapa)
+    {
         return (new DaoFoto((new Conexao())->conectar(), $this->idUsuarioSessao))->selecionarFotoEtapa($fkChecklist, $numeroEtapa);
     }
 
-    function listarFotosPorEtapa(int $fkChecklist, int $numeroEtapa){
+    function listarFotosPorEtapa(int $fkChecklist, int $numeroEtapa)
+    {
         return (new DaoFoto((new Conexao())->conectar(), $this->idUsuarioSessao))->listarFotosPorEtapa($fkChecklist, $numeroEtapa);
     }
-
 }
-
-?>

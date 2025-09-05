@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,19 +8,30 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
+
         .animate-fadeIn {
             animation: fadeIn 0.5s ease-in-out;
         }
     </style>
 </head>
+
 <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-20">
 
-    <?php 
-        use Util\Sessao;
-        $usuario = Sessao::retornarUsuarioLogado();
+    <?php
+
+    use Util\Sessao;
+
+    $usuario = Sessao::retornarUsuarioLogado();
     ?>
 
     <div class="w-full flex justify-center items-center space-x-10  mb-8 max-w-6xl mx-auto">
@@ -68,4 +80,5 @@
     <?php include_once __DIR__ . '/../../public/components/footer.php'; ?>
 
 </body>
+
 </html>

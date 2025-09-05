@@ -8,21 +8,22 @@ use models\Responsavel;
 use DAO\DaoResponsavel;
 use database\Conexao;
 
-class RnResponsavel{
+class RnResponsavel
+{
     private $idUsuarioSessao;
 
-    function __construct($idUsuarioSessao){
+    function __construct($idUsuarioSessao)
+    {
         $this->idUsuarioSessao = $idUsuarioSessao;
     }
 
-    function selecionarResponsavel(int $fkResponsavel){
+    function selecionarResponsavel(int $fkResponsavel)
+    {
         return (new DaoResponsavel((new Conexao)->conectar(), $this->idUsuarioSessao))->selecionarResponsavel($fkResponsavel);
     }
 
-    function gerarListaResponsaveis(){
+    function gerarListaResponsaveis()
+    {
         return (new DaoResponsavel((new Conexao)->conectar(), $this->idUsuarioSessao))->gerarListaResponsaveis();
     }
 }
-
-
-?>

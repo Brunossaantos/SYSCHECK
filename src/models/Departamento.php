@@ -2,41 +2,46 @@
 
 namespace models;
 
-class Departamento{
+class Departamento
+{
     private $idDepartamento;
     private $descricaoDepartamento;
     private $statusDepartamento;
 
-    function __construct($idDepartamento, $descricaoDepartamento, $statusDepartamento){
+    function __construct($idDepartamento, $descricaoDepartamento, $statusDepartamento)
+    {
         $this->setIdDepartamento($idDepartamento);
         $this->setDescricaoDepartamento($descricaoDepartamento);
         $this->setStatusDepartamento($statusDepartamento);
     }
 
-    function setIdDepartamento($idDepartamento){
+    function setIdDepartamento($idDepartamento)
+    {
         $this->idDepartamento = $idDepartamento;
     }
 
-    function setDescricaoDepartamento($descricaoDepartamento){
+    function setDescricaoDepartamento($descricaoDepartamento)
+    {
         $this->descricaoDepartamento = $descricaoDepartamento;
     }
 
-    function setStatusDepartamento($statusDepartamento){
+    function setStatusDepartamento($statusDepartamento)
+    {
         $this->statusDepartamento = $statusDepartamento;
     }
 
-    function getIdDepartamento(){
+    function getIdDepartamento()
+    {
         return $this->idDepartamento;
     }
 
-    function getDescricaoDepartamento(){
+    function getDescricaoDepartamento()
+    {
         return $this->descricaoDepartamento;
     }
 
-    function getStatusDepartamento(){
+    function getStatusDepartamento()
+    {
         return $this->statusDepartamento;
     }
-    
 }
-
-?>

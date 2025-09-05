@@ -16,44 +16,44 @@
         <h2>Cadastro de etapas</h2>
         <form onsubmit="return verificarCampos()" action="/syscheck/etapaschecklist/salvaralteracaoetapa" method="POST">
 
-            <input type="hidden" name="idetapa" value="<?=$etapa->getIdEtapaChecklist()?>">
+            <input type="hidden" name="idetapa" value="<?= $etapa->getIdEtapaChecklist() ?>">
 
             <div class="form-group">
                 <label for="tipochecklist">Checklist</label>
                 <select class="form-control" id="fktipo" name="fktipo_display" id="tipochecklist" disabled>
                     <!--<option value="--" selected disabled>Selecione o tipo do checklist</option>-->
                     <?php foreach ($listaTipos as $tipo) { ?>
-                        <option value="<?= $tipo->getIdTipoChecklist() ?>" <?=($etapa->getFkTipoChecklist() == $tipo->getIdTipoChecklist() ? "selected" : "")?>><?= $tipo->getDescricaoTipoChecklist() ?></option>
+                        <option value="<?= $tipo->getIdTipoChecklist() ?>" <?= ($etapa->getFkTipoChecklist() == $tipo->getIdTipoChecklist() ? "selected" : "") ?>><?= $tipo->getDescricaoTipoChecklist() ?></option>
                     <?php } ?>
                 </select>
-                <input type="hidden" name="fktipo" value="<?=$etapa->getFkTipoChecklist()?>">
+                <input type="hidden" name="fktipo" value="<?= $etapa->getFkTipoChecklist() ?>">
             </div>
-            
+
             <div class="form-group">
                 <label for="titulo">Título da etapa</label>
-                <input type="text" class="form-control" name="titulo" value="<?=$etapa->getTituloEtapa()?>" placeholder="Título da etapa" require>
+                <input type="text" class="form-control" name="titulo" value="<?= $etapa->getTituloEtapa() ?>" placeholder="Título da etapa" require>
             </div>
 
             <div class="form-group">
                 <label for="conteudo">Conteúdo da etapa</label>
-                <textarea class="form-control" name="conteudo" id="" rows="5" cols="5"  require><?=$etapa->getConteudoEtapa()?></textarea>
+                <textarea class="form-control" name="conteudo" id="" rows="5" cols="5" require><?= $etapa->getConteudoEtapa() ?></textarea>
             </div>
 
             <div class="form-group">
                 <label for="numero">Número da etapa</label>
-                <input type="text" class="form-control" name="numero" value="<?=$etapa->getNumeroEtapa()?>" readonly>
+                <input type="text" class="form-control" name="numero" value="<?= $etapa->getNumeroEtapa() ?>" readonly>
             </div>
 
             <div class="form-group">
                 <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="fotoobrigatoria" name="fotoobrigatoria" <?=($etapa->getFotoObrigatoria() == 1) ? "checked" : ""?>>
+                    <input type="checkbox" class="form-check-input" id="fotoobrigatoria" name="fotoobrigatoria" <?= ($etapa->getFotoObrigatoria() == 1) ? "checked" : "" ?>>
                     <label for="fotoobrigatoria" class="form-check-label">Foto obrigatória</label>
                 </div>
             </div>
 
             <div class="form-group">
                 <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="campoadicional" name="campoadicional" <?=($etapa->getCampoAdicional() == 1) ? "checked" : ""?>>
+                    <input type="checkbox" class="form-check-input" id="campoadicional" name="campoadicional" <?= ($etapa->getCampoAdicional() == 1) ? "checked" : "" ?>>
                     <label for="campoadicional" class="form-check-label">Campo adicional</label>
                 </div>
             </div>
@@ -62,8 +62,8 @@
                 <label for="status">Status da etapa</label>
                 <select name="status" id="status" class="form-control">
                     <option value="--" selected disabled>Status</option>
-                    <option value="1" <?=($etapa->getStatusEtapa() == 1)? "selected": ""?>>Ativo</option>
-                    <option value="0" <?=($etapa->getStatusEtapa() == 0)? "selected": ""?>>Inativo</option>
+                    <option value="1" <?= ($etapa->getStatusEtapa() == 1) ? "selected" : "" ?>>Ativo</option>
+                    <option value="0" <?= ($etapa->getStatusEtapa() == 0) ? "selected" : "" ?>>Inativo</option>
                 </select>
             </div>
 

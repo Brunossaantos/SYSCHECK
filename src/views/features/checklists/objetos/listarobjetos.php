@@ -1,32 +1,34 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Itens de Checklist - SYSCHECK</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-8">
-    <?php 
-        use Util\Util;
+    <?php
+
+    use Util\Util;
     ?>
 
     <!-- Barra superior -->
     <div class="w-full flex justify-between items-center mb-8 max-w-6xl mx-auto">
-        <a href="/syscheck/checklist" 
-           class="bg-gray-500 hover:bg-gray-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
-           Voltar
+        <a href="/syscheck/checklist"
+            class="bg-gray-500 hover:bg-gray-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+            Voltar
         </a>
 
-        <a href="/syscheck/index2.php" 
-           class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
-           Home
+        <a href="/syscheck/index2.php"
+            class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+            Home
         </a>
 
-        <a href="/syscheck/usuario/logout" 
-           class="bg-red-500 hover:bg-red-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
-           Logout
+        <a href="/syscheck/usuario/logout"
+            class="bg-red-500 hover:bg-red-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+            Logout
         </a>
     </div>
     <!-- Card de listagem -->
@@ -44,13 +46,13 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-600">
-                    <?php foreach($listaObjetos as $objeto){ ?>
+                    <?php foreach ($listaObjetos as $objeto) { ?>
                         <tr class="hover:bg-gray-700 transition">
                             <!-- Tipo do checklist -->
                             <td class="px-4 py-3">
-                                <?php 
-                                foreach($listaTipos as $tipo){
-                                    if($objeto->getFkTipoChecklist() == $tipo->getIdTipoChecklist()){
+                                <?php
+                                foreach ($listaTipos as $tipo) {
+                                    if ($objeto->getFkTipoChecklist() == $tipo->getIdTipoChecklist()) {
                                         echo $tipo->getDescricaoTipoChecklist();
                                         break;
                                     }
@@ -60,9 +62,9 @@
 
                             <!-- Descrição -->
                             <td class="px-4 py-3">
-                                <a href="/syscheck/objeto/alterarobjeto/<?=$objeto->getIdObjeto()?>"
-                                   class="text-blue-400 hover:underline">
-                                    <?=$objeto->getDescricaoObjeto()?>
+                                <a href="/syscheck/objeto/alterarobjeto/<?= $objeto->getIdObjeto() ?>"
+                                    class="text-blue-400 hover:underline">
+                                    <?= $objeto->getDescricaoObjeto() ?>
                                 </a>
                             </td>
 
@@ -73,13 +75,13 @@
 
                             <!-- Ações -->
                             <td class="px-4 py-3">
-                                <a href="/syscheck/objeto/alterarobjeto/<?=$objeto->getIdObjeto()?>"
-                                   class="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded-lg text-sm font-medium transition">
-                                   Editar
+                                <a href="/syscheck/objeto/alterarobjeto/<?= $objeto->getIdObjeto() ?>"
+                                    class="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded-lg text-sm font-medium transition">
+                                    Editar
                                 </a>
-                                <a href="/syscheck/objeto/excluir/<?=$objeto->getIdObjeto()?>"
-                                   class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg text-sm font-medium transition ml-2">
-                                   Excluir
+                                <a href="/syscheck/objeto/excluir/<?= $objeto->getIdObjeto() ?>"
+                                    class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg text-sm font-medium transition ml-2">
+                                    Excluir
                                 </a>
                             </td>
                         </tr>
@@ -91,4 +93,5 @@
 
     <?php include_once __DIR__ . '/../../../public/components/footer.php'; ?>
 </body>
+
 </html>

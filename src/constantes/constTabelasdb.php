@@ -1,11 +1,11 @@
 <?php
 
 //tabelas
-define("TBL_ERROS","tbl_erros");
-define("TBL_ETAPAS_CHECKLIST","tbl_etapas_checklists");
-define("TBL_OBJETOS","tbl_objetos");
-define("TBL_TIPOS_CHECKLIST","tbl_tipos_checklist");
-define("TBL_USUARIOS","tbl_usuarios");
+define("TBL_ERROS", "tbl_erros");
+define("TBL_ETAPAS_CHECKLIST", "tbl_etapas_checklists");
+define("TBL_OBJETOS", "tbl_objetos");
+define("TBL_TIPOS_CHECKLIST", "tbl_tipos_checklist");
+define("TBL_USUARIOS", "tbl_usuarios");
 define("TBL_CHECKLISTS", "tbl_checklists");
 define("TBL_ETAPAS_REALIZADAS", "tbl_etapas_realizadas");
 define("TBL_FOTOS", "tbl_fotos");
@@ -35,5 +35,3 @@ define("tbl_colaboradores", "COLABORADORES");
 //views
 define("V_CHECKLIS_VISAO_GERAL", "v_checklist_visao_geral");
 define("V_CHECKLISTS_HORIMETRO", "v_checklist_horimetro");
-
-?>

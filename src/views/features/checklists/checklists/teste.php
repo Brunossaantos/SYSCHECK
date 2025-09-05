@@ -58,7 +58,6 @@ require_once __DIR__ . '/../../../../../vendor/autoload.php';
         .imagem {
             width: 100px;
         }
-
     </style>
 </head>
 
@@ -81,61 +80,61 @@ require_once __DIR__ . '/../../../../../vendor/autoload.php';
     <p>Caso a resposta da "Ação" da etapa seja "NÃO", descrever o motivo no campo "Observação" e informar seu Líder.</p>
 
     <?php
-        
+
     ?>
 
-    <?php if($empilhadeira){?>
+    <?php if ($empilhadeira) { ?>
 
         <table>
             <thead>
                 <tr>
-                    <th>Horimetro inicial</th>                    
-                    <th><?=(isset($listaHorimetros[0]['horimetro']) ? $listaHorimetros[0]['horimetro']."horas" : "Horimetro inicial não preenchido.")?></th>                
+                    <th>Horimetro inicial</th>
+                    <th><?= (isset($listaHorimetros[0]['horimetro']) ? $listaHorimetros[0]['horimetro'] . "horas" : "Horimetro inicial não preenchido.") ?></th>
                 </tr>
-                <tr>    
+                <tr>
                     <th>Horimetro final</th>
-                    <th><?=(isset($listaHorimetros[1])) ? $listaHorimetros[1]['horimetro']."horas" : "Horimetro final não preechido."?></th>                    
+                    <th><?= (isset($listaHorimetros[1])) ? $listaHorimetros[1]['horimetro'] . "horas" : "Horimetro final não preechido." ?></th>
                 </tr>
             </thead>
         </table>
 
-    <?php }?>
+    <?php } ?>
 
-    <?php if($empilhadeiraBateriaComum){ ?>
+    <?php if ($empilhadeiraBateriaComum) { ?>
         <table>
             <thead>
                 <tr>
                     <th>Nivel da bateria no inicio do expediente</th>
-                    <th><?=$nivelBateria?>%</th>
+                    <th><?= $nivelBateria ?>%</th>
                 </tr>
             </thead>
         </table>
-        
-    <?php }?>
- 
-    
-    <?php if($empilhadeiraEletrica){?>
-    <table>
-        <thead>
-            <tr>
-                <th>Número da bateria</th>
-                <th>Descrição da bateria</th>
-                <th>Nível de carga da bateria</th>
-                <th>Data e hora da troca</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach($listaBaterias as $baterias){ ?>
-            <tr>
-                <th><?=$baterias['BATERIA']?></th>
-                <th><?=$baterias['DESC_BATERIA']?></th>
-                <th><?=$baterias['NIVEL_BATERIA']."%"?></th>
-                <th><?=$baterias['DATA_HORA']?></th>
-            </tr>
-            <?php }?>
-        </tbody>
-    </table>
-    <?php }?>
+
+    <?php } ?>
+
+
+    <?php if ($empilhadeiraEletrica) { ?>
+        <table>
+            <thead>
+                <tr>
+                    <th>Número da bateria</th>
+                    <th>Descrição da bateria</th>
+                    <th>Nível de carga da bateria</th>
+                    <th>Data e hora da troca</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($listaBaterias as $baterias) { ?>
+                    <tr>
+                        <th><?= $baterias['BATERIA'] ?></th>
+                        <th><?= $baterias['DESC_BATERIA'] ?></th>
+                        <th><?= $baterias['NIVEL_BATERIA'] . "%" ?></th>
+                        <th><?= $baterias['DATA_HORA'] ?></th>
+                    </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+    <?php } ?>
 
     <!-- Seção Ar-condicionado -->
 
@@ -151,7 +150,7 @@ require_once __DIR__ . '/../../../../../vendor/autoload.php';
                     <tr>
                         <th>Etapas</th>
                         <th>Ações</th>
-                        <th>Aprovado \  Reprovado</th>                        
+                        <th>Aprovado \ Reprovado</th>
                         <th>Observação</th>
                         <!--<th>Nome Analista / Hora</th>-->
                         <th>Foto</th>
@@ -164,7 +163,7 @@ require_once __DIR__ . '/../../../../../vendor/autoload.php';
                             <tr>
                                 <td><?= $etapas['NUMERO_ETAPA'] ?></td>
                                 <td><?= $etapas['CONTEUDO'] ?></td>
-                                <td><?= ($etapas['ACAO'] == 1) ? 'APROVADO' : 'REPROVADO' ?></td>                                
+                                <td><?= ($etapas['ACAO'] == 1) ? 'APROVADO' : 'REPROVADO' ?></td>
                                 <!--<td><?= $etapa['OBSERVACAO'] ?></td>-->
                                 <td>
                                     <?php

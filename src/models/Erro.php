@@ -2,7 +2,8 @@
 
 namespace models;
 
-class Erro{
+class Erro
+{
     private $idErro;
     private $erro;
     private $arquivo;
@@ -11,7 +12,8 @@ class Erro{
     private $dataHora;
     private $fkUsuario;
 
-    function __construct($idErro, $erro, $arquivo, $linha, $local, $dataHora, $fkUsuario){
+    function __construct($idErro, $erro, $arquivo, $linha, $local, $dataHora, $fkUsuario)
+    {
         $this->setIdErro($idErro);
         $this->setErro($erro);
         $this->setArquivo($arquivo);
@@ -21,61 +23,73 @@ class Erro{
         $this->setFkUsuario($fkUsuario);
     }
 
-    function setIdErro($idErro){
+    function setIdErro($idErro)
+    {
         $this->idErro = $idErro;
     }
 
-    function setErro($erro){
+    function setErro($erro)
+    {
         $this->erro = $erro;
     }
 
-    function setArquivo($arquivo){
+    function setArquivo($arquivo)
+    {
         $this->arquivo = $arquivo;
     }
 
-    function setLinha($linha){
+    function setLinha($linha)
+    {
         $this->linha = $linha;
     }
 
-    function setLocal($local){
+    function setLocal($local)
+    {
         $this->local = $local;
     }
 
-    function setDataHora($dataHora){
+    function setDataHora($dataHora)
+    {
         $this->dataHora = $dataHora;
     }
 
-    function setFkUsuario($fkUsuario){
+    function setFkUsuario($fkUsuario)
+    {
         $this->fkUsuario = $fkUsuario;
     }
 
-    function getIdErro(){
+    function getIdErro()
+    {
         return $this->idErro;
     }
 
-    function getErro(){
+    function getErro()
+    {
         return $this->erro;
     }
 
-    function getArquivo(){
+    function getArquivo()
+    {
         return $this->arquivo;
     }
 
-    function getLInha(){
+    function getLInha()
+    {
         return $this->linha;
     }
 
-    function getLocal(){
+    function getLocal()
+    {
         return $this->local;
     }
 
-    function getDataHora(){
+    function getDataHora()
+    {
         return $this->dataHora;
     }
 
-    function getFkUsuario(){
+    function getFkUsuario()
+    {
         return $this->fkUsuario;
     }
 }
-
-?>

@@ -2,21 +2,24 @@
 
 namespace controllers;
 
-require __DIR__ .'/../../vendor/autoload.php';
+require __DIR__ . '/../../vendor/autoload.php';
 
 use DAO\DaoFoto;
 use rn\RnFoto;
 use models\Foto;
 
-class FotosController{
+class FotosController
+{
     private $rnFoto;
 
-    function __construct(RnFoto $rnFoto){
+    function __construct(RnFoto $rnFoto)
+    {
         $this->rnFoto = $rnFoto;
     }
 
-    function uploadimagem(){
-        if($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['foto'])){
+    function uploadimagem()
+    {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['foto'])) {
             $fkChecklist = $_POST['fkchecklist'];
             $numeroEtapa = $_POST['numeroEtapa'];
 
@@ -27,37 +30,37 @@ class FotosController{
 
             //$nomeArquivo = basename($arquivo['name']);
             $caminhoCompleto = $diretorioDestino . $nomeArquivo;
-            
-            $caminhoFoto = "fotos/".$nomeArquivo;
+
+            $caminhoFoto = "fotos/" . $nomeArquivo;
             $tiposPermitidos = ['image/jpeg', 'image/png', 'image/jpg'];
 
-            if(!in_array($arquivo['type'], $tiposPermitidos)){
+            if (!in_array($arquivo['type'], $tiposPermitidos)) {
                 return ['error' => 'Tipo de arquivo não permitido'];
             }
 
-            if(move_uploaded_file($arquivo['tmp_name'], $caminhoCompleto)){
+            if (move_uploaded_file($arquivo['tmp_name'], $caminhoCompleto)) {
                 $this->inserirfoto($fkChecklist, $numeroEtapa, $caminhoFoto);
-                header("Location:".$_POST['url']);
+                header("Location:" . $_POST['url']);
             }
         }
     }
 
-    function inserirfoto($fkChecklist, $numeroEtapa, $caminhoFoto){
+    function inserirfoto($fkChecklist, $numeroEtapa, $caminhoFoto)
+    {
         $foto = new Foto(1, $fkChecklist, $numeroEtapa, $caminhoFoto);
         $rnFoto = new RnFoto(1);
         $rnFoto->inserirFoto($foto);
     }
-    
-    function selecionarFoto(int $fkChecklist, int $numeroEtapa){
+
+    function selecionarFoto(int $fkChecklist, int $numeroEtapa)
+    {
         $rnFoto = new RnFoto(1);
         $foto = $rnFoto->selecionarFoto($fkChecklist, $numeroEtapa);
 
-        if($foto != null){
+        if ($foto != null) {
             return $foto;
         } else {
             return null;
-        }        
+        }
     }
 }
-
-?>

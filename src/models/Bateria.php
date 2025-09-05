@@ -2,14 +2,16 @@
 
 namespace models;
 
-class Bateria{
+class Bateria
+{
     private $idBateria;
     private $numeroBateria;
     private $descricaoBateria;
     private $medidas;
     private $observacao;
 
-    function __construct($idBateria = 0, $numeroBateria, $descricaoBateria, $medidas, $observacao = ""){
+    function __construct($idBateria = 0, $numeroBateria, $descricaoBateria, $medidas, $observacao = "")
+    {
         $this->setIdBateria($idBateria);
         $this->setNumeroBateria($numeroBateria);
         $this->setDescricaoBateria($descricaoBateria);
@@ -17,47 +19,55 @@ class Bateria{
         $this->setObservacao($observacao);
     }
 
-    function setIdBateria($idBateria){
+    function setIdBateria($idBateria)
+    {
         $this->idBateria = $idBateria;
     }
 
-    function setNumeroBateria($numeroBateria){
+    function setNumeroBateria($numeroBateria)
+    {
         $this->numeroBateria = $numeroBateria;
     }
 
-    function setDescricaoBateria($descricaoBateria){
+    function setDescricaoBateria($descricaoBateria)
+    {
         $this->descricaoBateria = $descricaoBateria;
     }
 
-    function setMedidas($medidas){
+    function setMedidas($medidas)
+    {
         $this->medidas = $medidas;
     }
 
-    function setObservacao($observacao){
+    function setObservacao($observacao)
+    {
         $this->observacao = $observacao;
     }
 
     //get
 
-    function getIdBateria(){
+    function getIdBateria()
+    {
         return $this->idBateria;
     }
 
-    function getNumeroBateria(){
+    function getNumeroBateria()
+    {
         return $this->numeroBateria;
     }
 
-    function getDescricaoBateria(){
+    function getDescricaoBateria()
+    {
         return $this->descricaoBateria;
     }
 
-    function getMedidas(){
+    function getMedidas()
+    {
         return $this->medidas;
     }
 
-    function getObservacao(){
+    function getObservacao()
+    {
         return $this->observacao;
     }
 }
-
-?>

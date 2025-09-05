@@ -2,7 +2,7 @@
 
 namespace controllers;
 
-require_once __DIR__ .'/../../vendor/autoload.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 use rn\RnChecklist;
 use rn\RnGerenciamentoChecklist;
@@ -13,18 +13,22 @@ use rn\RnTipoChecklist;
 use rn\RnUsuario;
 use Util\Sessao;
 
-class GerenciamentoChecklistsController{
+class GerenciamentoChecklistsController
+{
     private $rnGerenciamentoChecklist;
 
-    function __construct($rnGerenciamentoChecklist){
-        $this->rnGerenciamentoChecklist = $rnGerenciamentoChecklist;        
+    function __construct($rnGerenciamentoChecklist)
+    {
+        $this->rnGerenciamentoChecklist = $rnGerenciamentoChecklist;
     }
 
-    function index(){
+    function index()
+    {
         echo 'Estou respondendo';
     }
 
-    function listarChecklists(){
+    function listarChecklists()
+    {
         $rnGerenciamentoChecklist = new RnGerenciamentoChecklists(Sessao::idusuario());
         $listaChecklists = $rnGerenciamentoChecklist->listaChecklists();
 
@@ -35,7 +39,7 @@ class GerenciamentoChecklistsController{
 
         $qtdChecklists = 0;
 
-        foreach($listaChecklists as &$checklist){
+        foreach ($listaChecklists as &$checklist) {
             $usuario = $rnUsuario->selecionarUsuario($checklist['usuario']);
             $checklist['usuario'] = $usuario;
 
@@ -45,18 +49,19 @@ class GerenciamentoChecklistsController{
             $empilhadeira = $rnObjeto->selecionarObjeto($checklist['empilhadeira']);
             $checklist['empilhadeira'] = $empilhadeira;
 
-            if($checklist['horimetroFinal'] == null){
+            if ($checklist['horimetroFinal'] == null) {
                 $qtdChecklists++;
             }
-            
+
             //lista composta por objetos usuario, objeto tipo, e empilhadeira. Utilizar métodos getters para consultar os dados.
-        } 
+        }
 
         require_once __DIR__ . '/../views/features/checklists/gerenciamento/gerenciarchecklists.php';
     }
 
-        
-    function finalizarhorimetro($idChecklist){
+
+    function finalizarhorimetro($idChecklist)
+    {
         $checklist = (new RnChecklist(Sessao::idusuario()))->selecionarChecklist($idChecklist);
         $empilhadeira = (new RnObjeto(Sessao::idusuario()))->selecionarObjeto($checklist->getFkObjeto());
 
@@ -64,17 +69,13 @@ class GerenciamentoChecklistsController{
             'checklist' => $checklist->getIdChecklist(),
             'empilhadeira' => $empilhadeira->getIdObjeto(),
             'lider' => Sessao::idusuario()
-        ];        
+        ];
 
         $idLog = (new RnGerenciamentoChecklist(Sessao::idusuario()))->salvarLogFinalizarHorimetro($logHorimetro);
 
-        if($idLog > 0){
-            header("Location:/syscheck/checklist/horimetro/".$checklist->getIdChecklist());
+        if ($idLog > 0) {
+            header("Location:/syscheck/checklist/horimetro/" . $checklist->getIdChecklist());
             exit;
         }
-
     }
-
 }
-
-?>

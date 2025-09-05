@@ -2,28 +2,31 @@
 
 namespace controllers;
 
-require __DIR__ .'/../../vendor/autoload.php';
+require __DIR__ . '/../../vendor/autoload.php';
 
 use rn\RnObjeto;
 use models\Objeto;
 use rn\RnTipoChecklist;
 use Util\Sessao;
 
-class ObjetosChecklistController{
-    
+class ObjetosChecklistController
+{
+
     private $rnObjeto;
 
-    function __construct(RnObjeto $rnObjeto){
+    function __construct(RnObjeto $rnObjeto)
+    {
         $this->rnObjeto = $rnObjeto;
     }
 
-    function cadastrarobjeto(){
+    function cadastrarobjeto()
+    {
 
-        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $descricao = $_POST['descricao'];
             $fkTipo = $_POST['fktipo'];
             $status = $_POST['statusitem'];
-            
+
             $objeto = new Objeto(1, strtoupper($descricao), $fkTipo, $status);
 
             echo "<pre>";
@@ -33,21 +36,20 @@ class ObjetosChecklistController{
 
             var_dump($idObjetoCadastrado);
 
-            if($idObjetoCadastrado > 0){
+            if ($idObjetoCadastrado > 0) {
                 header("Location: /syscheck/checklist");
             } else {
                 echo "Não foi possível cadastrar um novo objeto";
             }
-
         } else {
 
             $listaTipos = (new RnTipoChecklist(Sessao::idusuario()))->retornarListaTiposChecklist();
             require_once __DIR__ . '/../views/features/checklists/objetos/cadastrarobjeto.php';
         }
-
     }
 
-    function listarobjetos(){
+    function listarobjetos()
+    {
         $listaObjetos = (new RnObjeto(Sessao::idusuario()))->listarObejetos();
         $listaTipos = (new RnTipoChecklist(Sessao::idusuario()))->retornarListaTiposChecklist();
 
@@ -56,16 +58,18 @@ class ObjetosChecklistController{
         require_once __DIR__ . '/../views/features/checklists/objetos/listarobjetos.php';
     }
 
-    function alterarobjeto($idobjeto){
+    function alterarobjeto($idobjeto)
+    {
         $objeto = (new RnObjeto(Sessao::idusuario()))->selecionarObjeto($idobjeto);
         $listaTipos = (new RnTipoChecklist(Sessao::idusuario()))->retornarListaTiposChecklist();
 
         require_once __DIR__ . '/../views/features/checklists/objetos/alterarobjeto.php';
     }
 
-    function salvarAlteracaoObjeto(){
-        if($_SERVER['REQUEST_METHOD'] == 'POST'){
-            
+    function salvarAlteracaoObjeto()
+    {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
             $idObjeto = $_POST['idobjeto'];
             $descricao = $_POST['descricao'];
             $fkTipoChecklist = $_POST['fktipo'];
@@ -76,29 +80,22 @@ class ObjetosChecklistController{
 
             $objetoAlterado = (new RnObjeto(Sessao::idusuario()))->alterarObjeto($objeto);
 
-            
-            if($objetoAlterado > 0){
+
+            if ($objetoAlterado > 0) {
                 header("Location: /syscheck/objeto/listarobjetos");
             } else {
                 echo "Não foi possível alterar o objeto";
             }
-            
-            
-
         }
     }
 
-    function excluirobjeto(){
+    function excluirobjeto()
+    {
         echo "Função para excluir objeto cadastrado";
     }
 
-    function retornarListaObjetos(){
+    function retornarListaObjetos()
+    {
         echo "Função que retorna listagem de objetos cadastrados";
-    }    
-
+    }
 }
-
-
-
-
-?>

@@ -9,18 +9,21 @@ use Util\Util;
 require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/../constantes/constTabelasdb.php';
 
-class DaoGerenciamentoChecklists{
+class DaoGerenciamentoChecklists
+{
     private $conexao;
     private $idUsuarioSessao;
     private $tbl_log_horimetro = TBL_LOG_FINALIZACAO_HORIMETRO;
 
-    function __construct($conexao, $idUsuarioSessao){
+    function __construct($conexao, $idUsuarioSessao)
+    {
         $this->conexao = $conexao;
         $this->idUsuarioSessao = $idUsuarioSessao;
     }
 
-    function salvarLogFinalizacaoHorimetro($logHorimetro){
-        try{
+    function salvarLogFinalizacaoHorimetro($logHorimetro)
+    {
+        try {
 
             $checklist = $logHorimetro['checklist'];
             $empilhadeira = $logHorimetro['empilhadeira'];
@@ -33,12 +36,9 @@ class DaoGerenciamentoChecklists{
             $stmt->execute();
 
             return $stmt->insert_id;
-
-        }catch(Exception $e){
+        } catch (Exception $e) {
             Util::inserirErro($e, "salvarLogFinalizacaoHorimetro", $this->idUsuarioSessao);
             return -2;
         }
     }
 }
-
-?>

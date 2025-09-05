@@ -277,6 +277,51 @@
     });
 });
 
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const btnAprovado = document.querySelector(".btn.btn-success");
+    const btnReprovado = document.querySelector(".btn.btn-warning");
+
+    function bloquearBotao(btn) {
+        if (!btn) return;
+
+        btn.addEventListener("click", function (e) {
+            if (btn.disabled) {
+                e.preventDefault();
+                return false;
+            }
+
+            // desabilita ANTES de continuar
+            btn.disabled = true;
+
+            // salva o texto original (caso queira restaurar depois)
+            const originalText = btn.innerHTML;
+
+            // adiciona spinner
+            btn.innerHTML = `
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                ◌
+            `;
+
+            // garante que o form vai ser submetido corretamente
+            const form = btn.closest("form");
+            if (form) {
+                form.submit();
+            }
+        });
+    }
+
+    // aplica nos dois botões
+    bloquearBotao(btnAprovado);
+    bloquearBotao(btnReprovado);
+});
+
+
+
+
+
 </script>
 
 

@@ -2,52 +2,59 @@
 
 namespace models;
 
-class Foto{
+class Foto
+{
 
     private $idFoto;
     private $fkCheckist;
     private $numeroEtapa;
     private $caminhoFoto;
 
-    function __construct($idFoto, $fkCheckist, $numeroEtapa, $caminhoFoto){
+    function __construct($idFoto, $fkCheckist, $numeroEtapa, $caminhoFoto)
+    {
         $this->setIdFoto($idFoto);
         $this->setFkChecklist($fkCheckist);
         $this->setNumeroEtapa($numeroEtapa);
         $this->setCaminhoFoto($caminhoFoto);
     }
 
-    function setIdFoto($idFoto){
+    function setIdFoto($idFoto)
+    {
         $this->idFoto = $idFoto;
     }
 
-    function setFkChecklist($fkCheckist){
+    function setFkChecklist($fkCheckist)
+    {
         $this->fkCheckist = $fkCheckist;
     }
 
-    function setNumeroEtapa($numeroEtapa){
+    function setNumeroEtapa($numeroEtapa)
+    {
         $this->numeroEtapa = $numeroEtapa;
     }
 
-    function setCaminhoFoto($caminhoFoto){
+    function setCaminhoFoto($caminhoFoto)
+    {
         $this->caminhoFoto = $caminhoFoto;
     }
 
-    function getIdFoto(){
+    function getIdFoto()
+    {
         return $this->idFoto;
     }
-    
-    function getFkChecklist(){
+
+    function getFkChecklist()
+    {
         return $this->fkCheckist;
     }
 
-    function getNumeroEtapa(){
+    function getNumeroEtapa()
+    {
         return $this->numeroEtapa;
     }
 
-    function getCaminhoFoto(){
+    function getCaminhoFoto()
+    {
         return $this->caminhoFoto;
     }
-
 }
-
-?>

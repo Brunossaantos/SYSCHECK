@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
     height: 100%;
     margin: 0;
 }
@@ -29,9 +30,9 @@ body {
     padding: 10px 0;
     position: fixed;
     width: 100%;
-    bottom: 0;    
+    bottom: 0;
 }
 
-.alerta{
+.alerta {
     color: red;
 }

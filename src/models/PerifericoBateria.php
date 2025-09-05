@@ -2,50 +2,58 @@
 
 namespace models;
 
-class PerifericoBateria{
+class PerifericoBateria
+{
     private $idPeriferico;
     private $tipoPeriferico;
     private $descricaoPeriferico;
     private $statusPeriferico;
 
-    function __construct($idPeriferico = 0, $tipoPeriferico, $descricaoPeriferico, $statusPeriferico){
+    function __construct($idPeriferico = 0, $tipoPeriferico, $descricaoPeriferico, $statusPeriferico)
+    {
         $this->setIdPeriferico($idPeriferico);
         $this->setTipoPeriferico($tipoPeriferico);
         $this->setDescricaoPeriferico($descricaoPeriferico);
         $this->setStatusPeriferico($statusPeriferico);
     }
 
-    function setIdPeriferico($idPeriferico){
+    function setIdPeriferico($idPeriferico)
+    {
         $this->idPeriferico = $idPeriferico;
     }
 
-    function setTipoPeriferico($tipoPeriferico){
+    function setTipoPeriferico($tipoPeriferico)
+    {
         $this->tipoPeriferico = $tipoPeriferico;
     }
 
-    function setDescricaoPeriferico($descricaoPeriferico){
+    function setDescricaoPeriferico($descricaoPeriferico)
+    {
         $this->descricaoPeriferico = $descricaoPeriferico;
     }
 
-    function setStatusPeriferico($statusPeriferico){
+    function setStatusPeriferico($statusPeriferico)
+    {
         $this->statusPeriferico = $statusPeriferico;
     }
 
-    function getIdPeriferico(){
+    function getIdPeriferico()
+    {
         return $this->idPeriferico;
     }
 
-    function getTipoPeriferico(){
+    function getTipoPeriferico()
+    {
         return $this->tipoPeriferico;
     }
 
-    function getDescricaoPeriferico(){
+    function getDescricaoPeriferico()
+    {
         return $this->descricaoPeriferico;
     }
 
-    function getStatusPeriferico(){
+    function getStatusPeriferico()
+    {
         return $this->statusPeriferico;
     }
 }
-
-?>

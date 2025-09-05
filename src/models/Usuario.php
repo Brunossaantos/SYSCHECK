@@ -2,7 +2,8 @@
 
 namespace models;
 
-class Usuario{
+class Usuario
+{
     private $idUsuario;
     private $nome;
     private $departamento;
@@ -12,7 +13,8 @@ class Usuario{
     private $statusUsuario;
     private $tipoChecklist;
 
-    function __construct($idUsuario, $nome, $departamento, $cargo, $nomeUsuario, $senha, $statusUsuario, $tipoChecklist = 0){
+    function __construct($idUsuario, $nome, $departamento, $cargo, $nomeUsuario, $senha, $statusUsuario, $tipoChecklist = 0)
+    {
         $this->setIdUsuario($idUsuario);
         $this->setNome($nome);
         $this->setDepartamento($departamento);
@@ -22,75 +24,88 @@ class Usuario{
         $this->setStatusUsuario($statusUsuario);
         $this->setUserTipoChecklist($tipoChecklist);
     }
-    
+
     //set
 
-    function setIdUsuario($idUsuario){
+    function setIdUsuario($idUsuario)
+    {
         $this->idUsuario = $idUsuario;
     }
 
-    function setNome($nome){
+    function setNome($nome)
+    {
         $this->nome = $nome;
     }
 
-    function setDepartamento($departamento){
+    function setDepartamento($departamento)
+    {
         $this->departamento = $departamento;
     }
 
-    function setCargo($cargo){
+    function setCargo($cargo)
+    {
         $this->cargo = $cargo;
     }
 
-    function setNomeUsuario($nomeUsuario){
+    function setNomeUsuario($nomeUsuario)
+    {
         $this->nomeUsuario = $nomeUsuario;
     }
 
-    function setSenha($senha){
+    function setSenha($senha)
+    {
         $this->senha = $senha;
     }
 
-    function setStatusUsuario($statusUsuario){
+    function setStatusUsuario($statusUsuario)
+    {
         $this->statusUsuario = $statusUsuario;
     }
 
-    function setUserTipoChecklist($tipoChecklist){
+    function setUserTipoChecklist($tipoChecklist)
+    {
         $this->tipoChecklist = $tipoChecklist;
     }
 
     //get
 
-    function getIdUsuario(){
+    function getIdUsuario()
+    {
         return $this->idUsuario;
     }
 
-    function getNome(){
+    function getNome()
+    {
         return $this->nome;
     }
 
-    function getDepartamento(){
+    function getDepartamento()
+    {
         return $this->departamento;
     }
 
-    function getCargo(){
+    function getCargo()
+    {
         return $this->cargo;
     }
 
-    function getNomeUsuario(){
+    function getNomeUsuario()
+    {
         return $this->nomeUsuario;
     }
 
-    function getSenha(){
+    function getSenha()
+    {
         return $this->senha;
     }
 
-    function getStatusUsuario(){
+    function getStatusUsuario()
+    {
         return $this->statusUsuario;
     }
 
-    function getUserTipoChecklist(){
+    function getUserTipoChecklist()
+    {
         return $this->tipoChecklist;
     }
-
 }
-
-?>

@@ -2,7 +2,8 @@
 
 namespace models;
 
-class EtapasChecklist{
+class EtapasChecklist
+{
     private $idEtapaChecklist;
     private $fkTipoChecklist;
     private $tituloEtapa;
@@ -12,7 +13,8 @@ class EtapasChecklist{
     private $campoAdicional;
     private $statusEtapa;
 
-    function __construct($idEtapaChecklist, $fkTipoChecklist, $tituloEtapa, $conteudoEtapa, $numeroEtapa = 0, $fotoObrigatoria, $campoAdicional, $statusEtapa){
+    function __construct($idEtapaChecklist, $fkTipoChecklist, $tituloEtapa, $conteudoEtapa, $numeroEtapa = 0, $fotoObrigatoria, $campoAdicional, $statusEtapa)
+    {
         $this->setIdEtapaChecklist($idEtapaChecklist);
         $this->setFkTipoChecklist($fkTipoChecklist);
         $this->setTituloEtapa($tituloEtapa);
@@ -23,71 +25,85 @@ class EtapasChecklist{
         $this->setStatusEtapa($statusEtapa);
     }
 
-    function setIdEtapaChecklist($idEtapaChecklist){
+    function setIdEtapaChecklist($idEtapaChecklist)
+    {
         $this->idEtapaChecklist = $idEtapaChecklist;
     }
 
-    function setFkTipoChecklist($fkTipoChecklist){
+    function setFkTipoChecklist($fkTipoChecklist)
+    {
         $this->fkTipoChecklist = $fkTipoChecklist;
     }
 
-    function setTituloEtapa($tituloEtapa){
+    function setTituloEtapa($tituloEtapa)
+    {
         $this->tituloEtapa = $tituloEtapa;
     }
 
-    function setConteudoEtapa($conteudoEtapa){
+    function setConteudoEtapa($conteudoEtapa)
+    {
         $this->conteudoEtapa = $conteudoEtapa;
     }
 
-    function setNumeroEtapa($numeroEtapa){
+    function setNumeroEtapa($numeroEtapa)
+    {
         $this->numeroEtapa = $numeroEtapa;
     }
 
-    function setFotoObrigatoria($fotoObrigatoria){
+    function setFotoObrigatoria($fotoObrigatoria)
+    {
         $this->fotoObrigatoria = $fotoObrigatoria;
     }
 
-    function setCampoAdicional($campoAdicional){
+    function setCampoAdicional($campoAdicional)
+    {
         $this->campoAdicional = $campoAdicional;
     }
 
-    function setStatusEtapa($statusEtapa){
+    function setStatusEtapa($statusEtapa)
+    {
         $this->statusEtapa = $statusEtapa;
     }
 
     //get
 
-    function getIdEtapaChecklist(){
+    function getIdEtapaChecklist()
+    {
         return $this->idEtapaChecklist;
     }
 
-    function getFkTipoChecklist(){
+    function getFkTipoChecklist()
+    {
         return $this->fkTipoChecklist;
     }
 
-    function getTituloEtapa(){
+    function getTituloEtapa()
+    {
         return $this->tituloEtapa;
     }
 
-    function getConteudoEtapa(){
+    function getConteudoEtapa()
+    {
         return $this->conteudoEtapa;
     }
 
-    function getNumeroEtapa(){
+    function getNumeroEtapa()
+    {
         return $this->numeroEtapa;
     }
 
-    function getFotoObrigatoria(){
+    function getFotoObrigatoria()
+    {
         return $this->fotoObrigatoria;
     }
 
-    function getCampoAdicional(){
+    function getCampoAdicional()
+    {
         return $this->campoAdicional;
     }
 
-    function getStatusEtapa(){
+    function getStatusEtapa()
+    {
         return $this->statusEtapa;
     }
 }
-
-?>

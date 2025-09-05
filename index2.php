@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-    
+
 
 <head>
-    
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Página Inicial - SYSCHECK</title>
@@ -24,16 +24,15 @@
         .animate-fadeIn {
             animation: fadeIn 0.5s ease-in-out;
         }
-        
     </style>
 </head>
 
 
 <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-8">
 
-        
+
     <?php
- 
+
     use rn\RnObjeto;
     use rn\RnusuarioEmpilhadeira;
     use Util\Sessao;
@@ -43,7 +42,7 @@
 
     $rnUsuarioEmpilhadeira = new RnusuarioEmpilhadeira(Sessao::idusuario());
     $status = $rnUsuarioEmpilhadeira->verificarChecklistAberto(Sessao::idusuario());
-    
+
 
     Sessao::mostrarMensagem();
 
@@ -55,7 +54,7 @@
     $usuario = Sessao::retornarUsuarioLogado();
     ?>
 
-    
+
     <!-- Topo fixo com Home e Logout -->
     <div class="w-full flex justify-end  items-center  mb-8 max-w-6xl mx-auto">
 

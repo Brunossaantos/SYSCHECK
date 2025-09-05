@@ -1,12 +1,12 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark w-100">
     <div class="container">
         <?php
-            $nome = "";
-            if(isset($_SESSION['nome'])){
-                $nome = $_SESSION['nome'];
-            }
+        $nome = "";
+        if (isset($_SESSION['nome'])) {
+            $nome = $_SESSION['nome'];
+        }
         ?>
-        <a class="navbar-brand" href="#">Bem vindo ao Syscheck - <?=$nome?></a>
+        <a class="navbar-brand" href="#">Bem vindo ao Syscheck - <?= $nome ?></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>

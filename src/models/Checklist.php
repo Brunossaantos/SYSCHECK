@@ -2,7 +2,8 @@
 
 namespace models;
 
-class Checklist{
+class Checklist
+{
     private $idChecklist;
     private $fkUsuario;
     private $fkTipo;
@@ -11,7 +12,8 @@ class Checklist{
     private $dataFim;
     private $statusChecklist;
 
-    function __construct($idChecklist, $fkUsuario, $fkTipo, $fkObjeto, $dataInicio, $dataFim, $status){
+    function __construct($idChecklist, $fkUsuario, $fkTipo, $fkObjeto, $dataInicio, $dataFim, $status)
+    {
         $this->setIdChecklist($idChecklist);
         $this->setFkUsuario($fkUsuario);
         $this->setFkTipo($fkTipo);
@@ -23,63 +25,75 @@ class Checklist{
 
     //set
 
-    function setIdChecklist($idChecklist){
+    function setIdChecklist($idChecklist)
+    {
         $this->idChecklist = $idChecklist;
     }
 
-    function setFkUsuario($fkUsuario){
+    function setFkUsuario($fkUsuario)
+    {
         $this->fkUsuario = $fkUsuario;
     }
 
-    function setFkTipo($fkTipo){
+    function setFkTipo($fkTipo)
+    {
         $this->fkTipo = $fkTipo;
     }
 
-    function setFkObjeto($fkObjeto){
+    function setFkObjeto($fkObjeto)
+    {
         $this->fkObjeto = $fkObjeto;
     }
 
-    function setDataInicio($dataInicio){
+    function setDataInicio($dataInicio)
+    {
         $this->dataInicio = $dataInicio;
     }
 
-    function setDataFim($dataFim){
+    function setDataFim($dataFim)
+    {
         $this->dataFim = $dataFim;
     }
 
-    function setStatusChecklist($status){
+    function setStatusChecklist($status)
+    {
         $this->statusChecklist = $status;
     }
 
     //get
 
-    function getIdChecklist(){
+    function getIdChecklist()
+    {
         return $this->idChecklist;
     }
 
-    function getFkUsuario(){
+    function getFkUsuario()
+    {
         return $this->fkUsuario;
     }
 
-    function getFkTipo(){
+    function getFkTipo()
+    {
         return $this->fkTipo;
     }
 
-    function getFkObjeto(){
+    function getFkObjeto()
+    {
         return $this->fkObjeto;
     }
 
-    function getDataInicio(){
+    function getDataInicio()
+    {
         return $this->dataInicio;
     }
 
-    function getDataFim(){
+    function getDataFim()
+    {
         return $this->dataFim;
     }
 
-    function getStatusChecklist(){
+    function getStatusChecklist()
+    {
         return $this->statusChecklist;
     }
 }
-
-?>
