@@ -96,7 +96,7 @@
                 <div class="text-center">
                     <button type="submit"
                         class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg font-semibold">
-                        Salvar Cadastro
+                        Enviar Chamado
                     </button>
                 </div>
             </form>

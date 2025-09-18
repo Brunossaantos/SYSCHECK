@@ -39,7 +39,11 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-700">
-                        <?php foreach($listaChamados as $chamado){?>  
+                        <?php 
+                        usort($listaChamados, function($a, $b) {
+                            return $b->getIdChamado() <=> $a->getIdChamado();
+                        });
+                        foreach($listaChamados as $chamado){?>  
                         <tr class="hover:bg-gray-700 transition">
                             <td class="px-4 py-3">
                                 <a href="/syscheck/chamado/selecionarChamado/<?=$chamado->getIdChamado()?>"
@@ -49,7 +53,12 @@
                             </td>
                             <td class="px-4 py-3"><?=$chamado->getDataAberturaChamado()?></td>
                             <td class="px-4 py-3"><?=$chamado->getFkItemChamado()?></td>
-                            <td class="px-4 py-3 italic text-gray-400">*iterar sobre a lista do follow up*</td>
+                            <td class="px-4 py-3 italic text-gray-400">
+                                <?php
+                                    $desc = $chamado->getDescricaoChamado();
+                                    echo strlen($desc) > 25 ? substr($desc, 0, 25) . '...' : $desc;
+                                ?>
+                            </td>
                             <td class="px-4 py-3">
                                 <span class="px-3 py-1 rounded-full text-xs font-semibold
                                     <?= $chamado->getStatusChamado() === 'Aberto' ? 'bg-red-600 text-white' : 

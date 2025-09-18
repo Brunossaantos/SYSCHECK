@@ -41,4 +41,10 @@ class RnObjeto
     {
         return (new DaoObjeto((new Conexao())->conectar(), $this->idUsuarioSessao))->listarObjetos();
     }
+
+    public function listarObjetosAtivos()
+    {
+        $daoObjeto = new DaoObjeto((new Conexao())->conectar(), $this->idUsuarioSessao);
+        return $daoObjeto->listarObjetosAtivos();
+    }
 }

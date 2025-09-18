@@ -41,7 +41,7 @@ class ChamadoController
             (new RnChamado(Sessao::idusuario()))->abrirChamado($chamado, $_FILES);
         } else {
             $listaTipos = (new RnTipoChecklist(Sessao::idusuario()))->retornarListaTiposChecklist();
-            $listaEquipamentos = (new RnObjeto(Sessao::idusuario()))->listarObejetos();
+            $listaEquipamentos = (new RnObjeto(Sessao::idusuario()))->listarObjetosAtivos();
             $dataHora = (new DateTime())->format('d/m/Y H:i');
             $usuario = (new RnUsuario(Sessao::idusuario()))->selecionarUsuario(Sessao::idusuario());
 
