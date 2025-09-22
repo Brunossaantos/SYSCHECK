@@ -30,7 +30,7 @@ class Util
 
     private static function enviarEmail(Erro $erro)
     {
-        $para = "devdanilofranco@gmail.com";
+        $para = "brunossaantos@gmail.com";
         $assunto = "Erro no sistema Syscheck";
 
 
@@ -48,7 +48,7 @@ class Util
 
 
             $email->setFrom('suporte.ti@udlog.com.br', 'Syscheck');
-            $email->addAddress($para, "Danilo");
+            $email->addAddress($para, "Bruno");
 
             $emailTemplate = file_get_contents(__DIR__ . '/../views/features/desenvolvimento/emailerro.html');
 
