@@ -92,15 +92,30 @@
     </style>
 </head>
 
-<body>
 
+    <div class="d-flex justify-content-center mt-60">
+        <a href="/syscheck/index2.php" class="btn btn-primary mb-4">
+            Home
+        </a>
+    </div>
     <?php
+
 
     use Util\Sessao;
 
     require __DIR__ . '/../../../../vendor/autoload.php';
 
+    // mostrar mensagem (se existir)
     Sessao::mostrarMensagem();
+
+    // --- Garantir variáveis padrão para evitar "undefined variable" na view ---
+    // Caso o controller não tenha fornecido, usamos valores vazios / arrays vazios
+    $nome = $nome ?? '';
+    $fkUsuario = $fkUsuario ?? '';
+    $listaCarros = $listaCarros ?? [];
+    $data = $data ?? date('d/m/Y H:i');
+    $listaChecklists = $listaChecklists ?? [];
+
     ?>
 
     <div class="container">
@@ -112,8 +127,8 @@
                 <!-- Campo Nome -->
                 <div class="form-group col-md-4">
                     <label for="nome">Nome</label>
-                    <input type="text" id="nome" class="form-control" value="<?= $nome ?>" readonly>
-                    <input type="hidden" id="fkusuario" name="fkusuario" value="<?= $fkUsuario ?>">
+                    <input type="text" id="nome" class="form-control" value="<?= htmlspecialchars($nome) ?>" readonly>
+                    <input type="hidden" id="fkusuario" name="fkusuario" value="<?= htmlspecialchars($fkUsuario) ?>">
                 </div>
 
                 <!-- Campo Empresa -->
@@ -122,7 +137,7 @@
                     <select name="veiculo" id="veiculo" class="form-control">
                         <option value="" selected disabled>Selecione o veículo</option>
                         <?php foreach ($listaCarros as $objeto) { ?>
-                            <option value="<?= $objeto->getIdObjeto() ?>"><?= $objeto->getDescricaoObjeto() ?></option>
+                            <option value="<?= htmlspecialchars($objeto->getIdObjeto()) ?>"><?= htmlspecialchars($objeto->getDescricaoObjeto()) ?></option>
                         <?php } ?>
                     </select>
                 </div>
@@ -130,13 +145,13 @@
                 <!-- Campo Data -->
                 <div class="form-group col-md-2">
                     <label for="data">Data</label>
-                    <input type="text" id="data" class="form-control" value="<?= $data ?>" readonly>
+                    <input type="text" id="data" class="form-control" value="<?= htmlspecialchars($data) ?>" readonly>
                 </div>
 
                 <!-- Campo status -->
                 <div class="form-group col-md-3">
                     <label for="status">Status do veículo</label>
-                    <input type="text" name="status" id="status" class="form-control" value="1" readonly>
+                    <input type="text" name="status" id="status" class="form-control" value="0" readonly>
                 </div>
             </div>
 
@@ -146,7 +161,6 @@
                     <div class="form-group col-md-12" style="text-align: center;">
                         <div style="width:100%; margin: 0 auto;">
                             <input type="text" name="tagdec" maxlength="10" class="form-control" style="height:80px; font-size:30px;" placeholder="Efetue a Leitura do Crachá" autocomplete="off" required id="tagdec">
-
                         </div>
                     </div>
                 </div>
@@ -157,25 +171,45 @@
 
         </div>
 
-
-        <table class="table">
+        <table class="table mt-4">
             <thead>
-                <td>Número</td>
-                <td>Veículo</td>
-                <td>Usuário</td>
-                <td>Data inicio</td>
-                <td>Data de devolução</td>
-                <td>Status Checklist</td>
+                <tr>
+                    <th>Número</th>
+                    <th>Veículo</th>
+                    <th>Usuário</th>
+                    <th>Data inicio</th>
+                    <th>Data de devolução</th>
+                    <th>Status Checklist</th>
+                </tr>
             </thead>
             <tbody>
-                <?php foreach ($listaChecklists as $checklist) { ?>
+                <?php
+                // Verifica se é um array e tem elementos antes de iterar
+                if (!empty($listaChecklists) && is_array($listaChecklists)) {
+                    foreach ($listaChecklists as $checklist) { ?>
+                        <tr>
+                            <td><?= htmlspecialchars($checklist->getIdChecklist()) ?></td>
+                            <td><?= htmlspecialchars($checklist->getFkObjeto()) ?></td>
+                            <td><?= htmlspecialchars($checklist->getFkUsuario()) ?></td>
+                            <td><?= htmlspecialchars($checklist->getDataInicio()) ?></td>
+                            <td><?= htmlspecialchars($checklist->getDataFim()) ?></td>
+                            <td>
+                                <?php
+                                // Exibir status com cor — ajusta conforme tipo retornado pelo getter
+                                $status = $checklist->getStatusChecklist();
+                                $isPendente = (is_string($status) && strtolower($status) === 'pendente') || ($status == 1 && false); // mantenha a lógica conforme seu domínio
+                                if ($isPendente) {
+                                    echo '<span style="color: red">' . htmlspecialchars($checklist->getStatusChecklist()) . '</span>';
+                                } else {
+                                    echo '<span style="color: green">' . htmlspecialchars($checklist->getStatusChecklist()) . '</span>';
+                                }
+                                ?>
+                            </td>
+                        </tr>
+                    <?php }
+                } else { ?>
                     <tr>
-                        <td><?= $checklist->getIdChecklist() ?></td>
-                        <td><?= $checklist->getFkObjeto() ?></td>
-                        <td><?= $checklist->getFkUsuario() ?></td>
-                        <td><?= $checklist->getDataInicio() ?></td>
-                        <td><?= $checklist->getDataFim() ?></td>
-                        <td><?= ($checklist->getStatusChecklist() == "Pendente") ? '<span style="color: red">' . $checklist->getStatusChecklist() . '</span>' : '<span style="color: green">' . $checklist->getStatusChecklist() . '</span>' ?></td>
+                        <td colspan="6" class="text-center">Nenhum checklist encontrado.</td>
                     </tr>
                 <?php } ?>
             </tbody>
@@ -220,7 +254,7 @@
                 }
 
                 // Criar a URL correta
-                let url = `/syscheck/lista/selvarMovimentacao/${fkUsuario}/${fkVeiculo}/${status}`;
+                let url = `/syscheck/lista/salvarMovimentacao/${fkUsuario}/${fkVeiculo}/${status}`;
                 //let url = '/syscheck/lista/selvarMovimentacao/' + fkUsuario + '/' +fkVeiculo+ '/' +data+ '/' +status;
                 console.log(url);
 

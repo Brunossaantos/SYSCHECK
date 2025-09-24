@@ -74,7 +74,7 @@ class ListaController
         echo (new RnLista())->verificarStatus($fkVeiculo);
     }
 
-    function selvarMovimentacao($fkUsuario, $fkVeiculo, $status)
+    function salvarMovimentacao($fkUsuario, $fkVeiculo, $status)
     {
 
         $movimentacao = [

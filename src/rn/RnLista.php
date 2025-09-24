@@ -17,6 +17,13 @@ class RnLista
         return true;
     }
 
+    public function atualizarStatusVeiculo($fkVeiculo, $novoStatus)
+    {
+        return (new DaoLista((new Conexao())->conectar(), Sessao::idusuario()))
+            ->atualizarStatusVeiculo($fkVeiculo, $novoStatus);
+    }
+
+
     function selecionarColaborador($hexadecimal)
     {
         return (new DaoLista((new Conexao2)->conectar(), Sessao::idusuario()))->selecionarUsuario($hexadecimal);
@@ -41,27 +48,23 @@ class RnLista
 
     function salvarMovimentacao($movimentacao)
     {
-
         switch ($this->verificarStatus($movimentacao['veiculo'])) {
-            case 1:
-                $movimentacao['status'] = 2;
+            case 1: // Disponível → Retirada
+                $movimentacao['status'] = 2; // Ocupado
                 (new DaoLista((new Conexao())->conectar(), Sessao::idusuario()))->salvarMovimentacao($movimentacao);
                 break;
-            case 2:
 
-                $ultimaMovimentacao = $this->verificarUltimaMovimentacao($movimentacao);
-
-                if ($movimentacao['usuario'] == $ultimaMovimentacao['usuario']) {
-                    (new DaoLista((new Conexao())->conectar(), Sessao::idusuario()))->salvarDevolucao($movimentacao['veiculo']);
-                } else {
-                    Sessao::salvarMensagemNaSessao("Apenas o usuário que retirou o veículo pode fazer a devolução");
-                }
-
-                $movimentacao['status'] = 1;
+            case 2: // Ocupado → Devolução (qualquer usuário)
+                (new DaoLista((new Conexao())->conectar(), Sessao::idusuario()))->salvarDevolucao($movimentacao['veiculo']);
+                $movimentacao['status'] = 1; // Disponível
                 break;
+
             default:
-                $movimentacao['status'] = 3;
+                $movimentacao['status'] = 3; // Status desconhecido
         }
+
+        // Atualiza o status do veículo na tabela
+        $this->atualizarStatusVeiculo($movimentacao['veiculo'], $movimentacao['status']);
 
         header("Location:/syscheck/checklist/iniciarChecklistVeicular/" . $movimentacao['usuario'] . "/" . $movimentacao['veiculo']);
     }

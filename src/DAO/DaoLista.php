@@ -1,6 +1,5 @@
 <?php
 
-namespace DAO;
 
 namespace DAO;
 
@@ -54,6 +53,26 @@ class DaoLista
             return [];
         }
     }
+
+    function atualizarStatusVeiculo($fkVeiculo, $novoStatus)
+    {
+        try {
+            $stmt = $this->conexao->prepare("
+            UPDATE {$this->tbl_lista_uso} 
+            SET STATUS_USO = ? 
+            WHERE FK_VEICULO = ? 
+            ORDER BY ID_USO_VEICULO DESC 
+            LIMIT 1
+        ");
+            $stmt->bind_param("ii", $novoStatus, $fkVeiculo);
+            $stmt->execute();
+            return true;
+        } catch (Exception $e) {
+            Util::inserirErro($e, "atualizarStatusVeiculo", $this->idUsuarioSessao);
+            return false;
+        }
+    }
+
 
     function buscarFkUsuario($nomeUsuario)
     {
