@@ -11,9 +11,9 @@
 
 <body class="bg-gray-900 text-white min-h-screen flex flex-col">
 
-   
-        <!-- Barra superior -->
-      <div class="w-full flex justify-center items-center space-x-16 mb-8 max-w-6xl mt-20 mx-auto">
+
+    <!-- Barra superior -->
+    <div class="w-full flex justify-center items-center space-x-16 mb-8 max-w-6xl mt-20 mx-auto">
         <a href="/syscheck/index2.php"
             class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
             Home
@@ -44,10 +44,11 @@
                 <div>
                     <label for="tipo" class="block mb-1 text-gray-300">Tipo do Chamado</label>
                     <select name="fktipo" id="tipo"
-                        class="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white">
-                        <option value="--" disabled selected>Selecione o tipo do chamado</option>
-                        <?php foreach($listaTipos as $tipo){?>
-                            <option value="<?=$tipo->getIdTipoChecklist()?>"><?=$tipo->getDescricaoTipoChecklist()?></option>
+                        class="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white"
+                        required>
+                        <option value="" disabled selected>Selecione o tipo do chamado</option>
+                        <?php foreach ($listaTipos as $tipo) { ?>
+                            <option value="<?= $tipo->getIdTipoChecklist() ?>"><?= $tipo->getDescricaoTipoChecklist() ?></option>
                         <?php } ?>
                     </select>
                 </div>
@@ -56,11 +57,12 @@
                 <div>
                     <label for="equipamento" class="block mb-1 text-gray-300">Equipamento</label>
                     <select name="fkequipamento" id="equipamento"
-                        class="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white">
-                        <option value="--" disabled selected>Selecione o equipamento</option>
-                        <?php foreach($listaEquipamentos as $equipamento){?>
-                            <option value="<?=$equipamento->getIdObjeto()?>"><?=$equipamento->getDescricaoObjeto()?></option>
-                        <?php }?>
+                        class="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white"
+                        required>
+                        <option value="" disabled selected>Selecione o equipamento</option>
+                        <?php foreach ($listaEquipamentos as $equipamento) { ?>
+                            <option value="<?= $equipamento->getIdObjeto() ?>"><?= $equipamento->getDescricaoObjeto() ?></option>
+                        <?php } ?>
                     </select>
                 </div>
 
@@ -106,7 +108,7 @@
     <?php include __DIR__ . '/../../public/components/footer.php'; ?>
 
     <script>
-        document.getElementById("foto").addEventListener("change", function () {
+        document.getElementById("foto").addEventListener("change", function() {
             const files = this.files;
             const fileNameInput = document.getElementById("file-name");
             const validExtensions = ["jpg", "jpeg", "png", "gif"];
@@ -131,4 +133,5 @@
     </script>
 
 </body>
+
 </html>

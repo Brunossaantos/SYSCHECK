@@ -30,21 +30,45 @@ class UsuarioController
     function cadastrarUsuario()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $usuario = new Usuario(1, $_POST['nome'], $_POST['departamento'], $_POST['cargo'], $_POST['nomeusuario'], "", $_POST['statususuario'], $_POST['checklistveicular']);
+            $nome          = $_POST['nome'] ?? null;
+            $departamento  = $_POST['departamento'] ?? null;
+            $cargo         = $_POST['cargo'] ?? null;
+            $nomeusuario   = $_POST['nomeusuario'] ?? null;
+            $statususuario = $_POST['statususuario'] ?? 1;
+            $checklist     = isset($_POST['checklistveicular']) ? 1 : 0;
+
+            $usuario = new Usuario(
+                1,
+                $nome,
+                $departamento,
+                $cargo,
+                $nomeusuario,
+                "",
+                $statususuario,
+                $checklist
+            );
 
             $idUsuario = $this->rnUsuario->cadastrarNovoUsuario($usuario);
 
             if ($idUsuario > 0) {
-                echo "Usuário cadastrado com sucesso";
+                // ALERTA SUCESSO + RELOAD
+                echo "<script>
+                    alert('Usuário cadastrado com sucesso!');
+                    window.location.href = '/syscheck/usuario/cadastrarUsuario';
+                  </script>";
             } else {
-                echo "Não foi possível cadastrar o usuário no banco de dados.";
+                // ALERTA ERRO + RELOAD
+                echo "<script>
+                    alert('Não foi possível cadastrar o usuário no banco de dados.');
+                    window.location.href = '/syscheck/usuario/cadastrarUsuario';
+                  </script>";
             }
         } else {
-
             $listaDepartamentos = (new RnDepartamento(Sessao::idusuario()))->listarDepartamentos();
             require_once __DIR__ . '/../views/features/usuarios/cadastrousuario.php';
         }
     }
+
 
     function gerenciarUsuarios()
     {
@@ -61,7 +85,25 @@ class UsuarioController
     function salvaralteracao()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $usuario = new Usuario($_POST['idusuario'], $_POST['nome'], $_POST['departamento'], $_POST['cargo'], $_POST['nomeusuario'], "", $_POST['statususuario'], $_POST['checklistveicular']);
+            $idusuario     = $_POST['idusuario'] ?? null;
+            $nome          = $_POST['nome'] ?? null;
+            $departamento  = $_POST['departamento'] ?? null;
+            $cargo         = $_POST['cargo'] ?? null;
+            $nomeusuario   = $_POST['nomeusuario'] ?? null;
+            $statususuario = $_POST['statususuario'] ?? 1;
+            $checklist     = isset($_POST['checklistveicular']) ? 1 : 0;
+
+            $usuario = new Usuario(
+                $idusuario,
+                $nome,
+                $departamento,
+                $cargo,
+                $nomeusuario,
+                "",
+                $statususuario,
+                $checklist
+            );
+
             $quantLinhas = $this->rnUsuario->alterarUsuario($usuario);
 
             if ($quantLinhas > 0) {
@@ -75,35 +117,24 @@ class UsuarioController
     function login()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $usuario = $_POST['usuario'];
-            $senha = $_POST['senha'];
+            $usuario = $_POST['usuario'] ?? null;
+            $senha   = $_POST['senha'] ?? null;
 
-            //recuperar o nome de usuário e senha
             $login = new Login($usuario, $senha);
-
-            //validar no banco
             $rnLogin = new RnLogin(1);
 
-            //verificação se é o primeiro acesso
-            //caso seja o primeiro acesso, envie para página cadastro de senha
             if ($rnLogin->verficarPrimerioAcesso($login)) {
                 $usuario = (new RnLogin(1))->selecionarUsuarioPeloNomeUsuario($login);
-
                 require_once __DIR__ . '/../../cadastrar_senha.php';
             } else {
-
                 if ($rnLogin->realizarLogin($login)) {
                     Sessao::iniciarSessao((new RnLogin(1))->selecionarUsuarioPeloNomeUsuario($login));
 
                     $pendencia = (new RnChecklist(Sessao::idusuario()))->verificarPendencia(Sessao::idusuario());
-
                     $existeChecklist = false;
                     $checklistPendente = (new RnChecklist(Sessao::idusuario()))->verificarChecklistPendente(Sessao::idusuario());
 
-                    //verificação para fechamento do horimetro
                     $horimetroPendente = $this->verificarSeExisteHorimetroPendente(Sessao::idusuario());
-
-                    //var_dump($horimetroPendente);
 
                     if (!empty($horimetroPendente)) {
                         $checklist = (new RnChecklist(Sessao::idusuario()))->selecionarChecklist($horimetroPendente['idChecklist']);
@@ -145,17 +176,14 @@ class UsuarioController
     function cadastrarSenha()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-            if ($_POST['senha'] == $_POST['conf_senha']) {
-
-                //$senha = password_hash($_POST['senha'], PASSWORD_DEFAULT);
+            if (($_POST['senha'] ?? '') === ($_POST['conf_senha'] ?? '')) {
                 $senha = $_POST['senha'];
                 $usuario = new Usuario($_POST['idUsuario'], null, null, null, null, $senha, null, null);
 
                 $cadSenha = (new RnUsuario(1))->cadastrarSenha($usuario);
 
                 if ($cadSenha > 0) {
-                    Sessao::salvarMensagemNaSessao("Senha cadatrada com sucesso");
+                    Sessao::salvarMensagemNaSessao("Senha cadastrada com sucesso");
                     header("Location: /syscheck");
                     exit;
                 } else {
@@ -175,8 +203,6 @@ class UsuarioController
     {
         $rnUsuario = new RnUsuario(Sessao::idusuario());
         $usuario = $rnUsuario->selecionarUsuario($idUsuario);
-        //echo "<pre>";
-        //var_dump($usuario);
 
         $usuario->setStatusUsuario(0);
         if ($rnUsuario->alterarUsuario($usuario) > 0) {

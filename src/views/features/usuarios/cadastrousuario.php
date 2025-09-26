@@ -64,9 +64,8 @@
                 <select name="departamento" id="departamento"
                     class="p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="--" selected disabled>Selecione um departamento</option>
-                    <?php foreach ($listaDepartamentos as $departamento) { ?>
-                        <option value="<?= $departamento->getIdDepartamento() ?>"><?= $departamento->getDescricaoDepartamento() ?></option>
-                    <?php } ?>
+                    <option value="1">Administrativo geral</option>
+                    <option value="1">Operação</option>
                 </select>
             </div>
 
@@ -74,10 +73,16 @@
             <div class="flex flex-col">
                 <label for="cargo" class="mb-1">Cargo</label>
                 <select name="cargo" id="cargo"
-                    class="p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="--" selected disabled>Selecione o cargo do usuário</option>
+                    class="p-3 rounded-lg bg-gray-700 border border-gray-600 text-white 
+               focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="" disabled selected>Selecione o cargo do usuário</option>
+                    <option value="1">Conferente</option>
+                    <option value="1">Líder</option>
+                    <option value="1">Administrativo</option>
+                    <option value="2">Operador de empilhadeira</option>
                 </select>
             </div>
+
 
             <!-- Nome de usuário -->
             <div class="flex flex-col">

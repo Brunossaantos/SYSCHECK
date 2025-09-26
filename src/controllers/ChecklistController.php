@@ -339,14 +339,14 @@ class ChecklistController
         $responsavel = (new RnResponsavel(Sessao::idusuario()))->selecionarResponsavel($fkResponsavel);
 
 
-        //fazer o envio do email
+        //fazer o envio do email dos itens reprovados
         $email = new PHPMailer(true);
         try {
             $email->isSMTP();
             $email->Host = 'smtplw.com.br';
             $email->SMTPAuth = true;
             $email->Username = 'udlog';
-            $email->Password = 'Ti2020@#';
+            $email->Password = 'Udlog3pt4af#';
             $email->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $email->Port = 587;
 
@@ -363,6 +363,7 @@ class ChecklistController
             //Destinarios
             $email->setFrom('suporte.ti@udlog.com.br', 'Syscheck');
             $email->addAddress($responsavel->getEmailResponsavel(), $responsavel->getNomeResponsavel());
+            $email->addCC('qualidade@udlog.com.br', 'Qualidade');
 
             //carregando o template do email
             $emailTemplate = file_get_contents(__DIR__ . '/../views/features/checklists/checklists/email_template.html');
