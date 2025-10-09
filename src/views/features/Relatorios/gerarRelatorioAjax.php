@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../../../controllers/RelatorioController.php';
+
 use Controller\RelatorioController;
 
 $controller = new RelatorioController();
@@ -46,19 +47,43 @@ if (empty($relatorios)) {
 </div>
 
 <script>
-$(document).ready(function(){
-    $('#tabelaRelatorios').DataTable({
-        responsive: true,
-        pageLength: 5,
-        language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json' },
-        dom: '<"flex justify-between items-center mb-4"Bf>t<"flex justify-between items-center mt-4"lp>',
-        buttons: [
-            { extend: 'copyHtml5', text: '📋 Copiar', className: 'bg-gray-600 text-white px-3 py-2 rounded-lg hover:bg-gray-700' },
-            { extend: 'excelHtml5', text: '📊 Excel', className: 'bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700' },
-            { extend: 'csvHtml5', text: '📝 CSV', className: 'bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700' },
-            { extend: 'pdfHtml5', text: '📄 PDF', className: 'bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700', orientation: 'landscape', pageSize: 'A4' },
-            { extend: 'print', text: '🖨️ Imprimir', className: 'bg-purple-600 text-white px-3 py-2 rounded-lg hover:bg-purple-700' }
-        ]
+    $(document).ready(function() {
+        $('#tabelaRelatorios').DataTable({
+            responsive: true,
+            pageLength: 5,
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json',
+                search: 'Buscar',
+            },
+            dom: '<"flex justify-between items-center mb-4"Bf>t<"flex justify-between items-center mt-4"lp>',
+            buttons: [{
+                    extend: 'copyHtml5',
+                    text: '📋 Copiar',
+                    className: 'bg-gray-600 text-white px-3 py-2 rounded-lg hover:bg-gray-700'
+                },
+                {
+                    extend: 'excelHtml5',
+                    text: '📊 Excel',
+                    className: 'bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700'
+                },
+                {
+                    extend: 'csvHtml5',
+                    text: '📝 CSV',
+                    className: 'bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700'
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: '📄 PDF',
+                    className: 'bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700',
+                    orientation: 'landscape',
+                    pageSize: 'A4'
+                },
+                {
+                    extend: 'print',
+                    text: '🖨️ Imprimir',
+                    className: 'bg-purple-600 text-white px-3 py-2 rounded-lg hover:bg-purple-700'
+                }
+            ]
+        });
     });
-});
 </script>

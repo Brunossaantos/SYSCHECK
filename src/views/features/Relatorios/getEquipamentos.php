@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../../../../controllers/RelatorioController.php';
+
 use Controller\RelatorioController;
 
 if (!isset($_GET['id_tipo']) || empty($_GET['id_tipo'])) {

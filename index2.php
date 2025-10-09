@@ -70,6 +70,7 @@
 
     <div class="flex flex-col items-center w-full gap-6">
 
+
         <?php if ($usuario->getDepartamento() != 3) { ?>
             <!-- Finalizar uso da empilhadeira -->
             <?php if (isset($checklist)) { ?>
@@ -84,6 +85,21 @@
 
                     </p>
                     <a href="/syscheck/checklist/horimetro/<?= $checklist->getIdChecklist() ?>" class="bg-red-500 hover:bg-red-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">Registrar horímetro final</a>
+                </div>
+            <?php } ?>
+
+            <!-- Status da empilhadeira -->
+            <?php if (!empty($status)) { ?>
+                <div class="bg-gradient-to-br from-gray-800 to-gray-700 p-6 rounded-2xl shadow-2xl hover:scale-105 transform transition animate-fadeIn text-center max-w-md w-full">
+                    <h2 class="text-xl font-semibold mb-3">Utilização da empilhadeira</h2>
+                    <p class="text-gray-300 mb-4">
+                        Você iniciou a utilização da empilhadeira <strong><?= $empilhadeira->getDescricaoObjeto() ?></strong> no dia <strong><?= $dataFormatada ?></strong>.<br>
+                        O que deseja fazer?
+                    </p>
+                    <div class="flex flex-col gap-4">
+                        <a href="/syscheck/checklist/iniciarChecklistBateriaLitio/<?= $status['FK_CHECKLIST'] ?>" class="bg-yellow-500 hover:bg-yellow-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">Trocar bateria</a>
+                        <a href="/syscheck/checklist/encerrarusoempilhadeiraeletrica/<?= $status['FK_CHECKLIST'] ?>" class="bg-red-500 hover:bg-red-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">Encerrar o uso</a>
+                    </div>
                 </div>
             <?php } ?>
 
@@ -134,22 +150,6 @@
                 </div>
             <?php } ?>
 
-
-            <!-- Status da empilhadeira -->
-            <?php if (!empty($status)) { ?>
-                <div class="bg-gradient-to-br from-gray-800 to-gray-700 p-6 rounded-2xl shadow-2xl hover:scale-105 transform transition animate-fadeIn text-center max-w-md w-full">
-                    <h2 class="text-xl font-semibold mb-3">Utilização da empilhadeira</h2>
-                    <p class="text-gray-300 mb-4">
-                        Você iniciou a utilização da empilhadeira <strong><?= $empilhadeira->getDescricaoObjeto() ?></strong> no dia <strong><?= $dataFormatada ?></strong>.<br>
-                        O que deseja fazer?
-                    </p>
-                    <div class="flex flex-col gap-4">
-                        <a href="/syscheck/checklist/iniciarChecklistBateriaLitio/<?= $status['FK_CHECKLIST'] ?>" class="bg-yellow-500 hover:bg-yellow-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">Trocar bateria</a>
-                        <a href="/syscheck/checklist/encerrarusoempilhadeiraeletrica/<?= $status['FK_CHECKLIST'] ?>" class="bg-red-500 hover:bg-red-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">Encerrar o uso</a>
-                    </div>
-                </div>
-            <?php } ?>
-
             <!--fechar o !=3-->
         <?php } ?>
 
@@ -162,7 +162,6 @@
                 <a href="/syscheck/lista" class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">Abrir lista</a>
             </div>
         <?php } ?>
-
 
 
     </div>

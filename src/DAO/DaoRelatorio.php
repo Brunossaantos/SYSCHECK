@@ -3,6 +3,7 @@
 namespace Dao;
 
 require_once __DIR__ . '/../database/Conexao.php';
+
 use mysqli;
 
 class DaoRelatorio
@@ -49,9 +50,16 @@ class DaoRelatorio
         }
 
         if (!empty($data)) {
-            $diaMes = date('d/m', strtotime($data));
-            $sql .= " AND DATA_INICIO LIKE '" . $this->conn->real_escape_string($diaMes) . "/%'";
+            $dataSql = $this ->conn -> real_escape_string($data);
+
         }
+
+ if (!empty($data)) {
+            $dataSql = $this->conn->real_escape_string($data);
+            $sql .= " AND DATE(STR_TO_DATE(DATA_INICIO, '%d/%m/%Y %H:%i:%s')) = '" . $dataSql . "'";
+        }
+
+
 
         $result = $this->conn->query($sql);
         $relatorios = [];

@@ -3,6 +3,7 @@
 namespace Controller;
 
 require_once __DIR__ . '/../dao/DaoRelatorio.php';
+
 use Dao\DaoRelatorio;
 
 class RelatorioController
