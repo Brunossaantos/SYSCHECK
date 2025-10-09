@@ -57,11 +57,16 @@ src/
 - MySQL 5.7+  
 - Composer instalado globalmente  
 
+---
+
 ### 📦 Passos para Instalar
 
 1. **Clonar o repositório:**
    ```bash
    git clone https://github.com/Brunossaantos/syscheck.git
+
+---
+
 Instalar dependências via Composer:
 
 composer install
@@ -95,12 +100,15 @@ As senhas são armazenadas de forma segura.
 
 Acesso a funções restritas depende do status e cargo do usuário.
 
+---
 
 👥 Estrutura de Usuários
 Tipo de Usuário	Permissões
 Administrador	Acesso total ao sistema, cadastro de usuários e configurações
 Técnico	Abertura e fechamento de chamados, controle de equipamentos
 Usuário Comum	Abertura de chamados e acompanhamento de status
+
+---
 
 🧩 Fluxo de Chamado
 Usuário logado acessa Abertura de Chamado.
@@ -113,6 +121,8 @@ Usuário descreve o problema e confirma.
 
 O chamado é registrado e vinculado ao usuário da sessão.
 
+---
+
 📁 Organização do Código
 Pasta	Descrição
 /controllers	Controla o fluxo entre interface e regras de negócio
@@ -122,8 +132,11 @@ Pasta	Descrição
 /util	Funções auxiliares como Sessao, Util, Mensagens, etc.
 /views	Telas e formulários do sistema
 
+---
+
 🧠 Desenvolvido por
-Danilo Franco
+
+Danilo Franco   
 Bruno Santos
 
 
