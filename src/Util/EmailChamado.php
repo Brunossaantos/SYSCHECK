@@ -1,5 +1,9 @@
 <?php
+
 namespace Util;
+
+require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/../../config/initEnv.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -9,26 +13,24 @@ class EmailChamado
     public static function enviarAberturaChamado($dados, $fotos = [])
     {
         $mail = new PHPMailer(true);
-
         try {
-            // Configuração SMTP
             $mail->isSMTP();
-            $mail->CharSet   = 'UTF-8';
-            $mail->Host      = 'smtplw.com.br';
-            $mail->SMTPAuth  = true;
-            $mail->Username  = 'udlog';
-            $mail->Password  = 'Udlog3pt4af#';   
+            $mail->Host       = $_ENV['SMTP_HOST'];
+            $mail->SMTPAuth   = true;
+            $mail->Username   = $_ENV['SMTP_USER'];
+            $mail->Password   = $_ENV['SMTP_PASS'];
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-            $mail->Port      = 465;
+            $mail->Port = $_ENV['SMTP_PORT'];
+            $mail->CharSet    = $_ENV['SMTP_CHARSET'];
 
             // Remetente
             $mail->setFrom('suporte.ti@envios.udlog.com.br', 'Chamados Syscheck');
 
             // Destinatários
-            $mail->addAddress('Qualidade@udlog.com.br', 'Qualidade');
-            $mail->addCC('priscila.braz@udlog.com.br', 'Priscila');
+            $mail->addAddress('brunossaantos@gmail.com', 'Bruno');
 
-            
+
+
             foreach ($fotos as $foto) {
                 $caminhoRel = isset($foto['caminhoImagem']) ? $foto['caminhoImagem'] : null;
                 if (!$caminhoRel) {
@@ -36,13 +38,13 @@ class EmailChamado
                     continue;
                 }
 
-                
+
                 $possiveis = [];
-          
-                $possiveis[] = __DIR__ . '/../../' . $caminhoRel; 
-                $possiveis[] = __DIR__ . '/../../src/views/' . ltrim($caminhoRel, '/'); 
-                $possiveis[] = __DIR__ . '/../../views/' . ltrim($caminhoRel, '/'); 
-                $possiveis[] = $caminhoRel; 
+
+                $possiveis[] = __DIR__ . '/../../' . $caminhoRel;
+                $possiveis[] = __DIR__ . '/../../src/views/' . ltrim($caminhoRel, '/');
+                $possiveis[] = __DIR__ . '/../../views/' . ltrim($caminhoRel, '/');
+                $possiveis[] = $caminhoRel;
 
                 $anexado = false;
                 foreach ($possiveis as $caminho) {
@@ -63,11 +65,11 @@ class EmailChamado
             }
 
             $fotosTexto = !empty($fotos) ? 'As imagens seguem em anexo.' : 'Nenhuma foto enviada';
-          
+
             $mail->isHTML(true);
             $mail->Subject = 'Novo Chamado Aberto - Nº ' . $dados['idChamado'];
 
-             $mail->Body = "
+            $mail->Body = "
             <div style='width:100%;display:flex;justify-content:center;background:#f7f8fa;'>
                 <div style='background:#fff;
                             border-radius:10px;
@@ -110,7 +112,6 @@ class EmailChamado
 
             $mail->send();
             return true;
-
         } catch (Exception $e) {
             error_log("Erro ao enviar email: {$mail->ErrorInfo}");
             return false;

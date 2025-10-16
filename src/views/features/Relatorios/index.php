@@ -29,7 +29,7 @@
     <div class="bg-white p-8 rounded-2xl shadow w-full max-w-4xl mb-8">
         <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Relatórios</h1>
 
-        <form id="formRelatorio" class="space-y-6">
+        <form id="formRelatorio" class="space-y-10">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Equipamento -->
                 <div>
@@ -55,13 +55,13 @@
             </div>
 
             <button type="submit"
-                class="w-full bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+                class="w-full bg-blue-200 hover:bg-blue-300 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
                 Gerar Relatório
             </button>
         </form>
     </div>
 
-    <div id="tabelaResultados" class="w-full max-w-6xl"></div>
+    <div id="tabelaResultados" class="w-full max-w-8xl"></div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>

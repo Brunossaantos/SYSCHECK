@@ -97,10 +97,33 @@
                 <!-- Botão -->
                 <div class="text-center">
                     <button type="submit"
+                        onclick="enviarUmaVez(event, this)"
                         class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg font-semibold">
                         Enviar Chamado
                     </button>
-                </div>
+
+                    <script>
+                        function enviarUmaVez(event, botao) {
+                            event.preventDefault();
+                            const form = botao.form;
+
+                            // Verifica se todos os campos obrigatórios estão válidos
+                            if (!form.checkValidity()) {
+                                form.reportValidity(); // Mostra o aviso padrão do navegador
+                                return; // Interrompe se algo estiver inválido
+                            }
+
+                            botao.disabled = true;
+                            botao.textContent = 'Enviando...';
+
+                            // Dá tempo de renderizar a mudança antes de enviar
+                            setTimeout(() => {
+                                form.requestSubmit(); // envia de forma válida (respeita o required)
+                            }, 100);
+                        }
+                    </script>
+
+
             </form>
         </div>
     </main>

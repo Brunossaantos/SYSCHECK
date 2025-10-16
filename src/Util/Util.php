@@ -3,6 +3,7 @@
 namespace Util;
 
 require __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/../../config/initEnv.php';
 
 use database\Conexao;
 use Exception;
@@ -34,17 +35,16 @@ class Util
         $assunto = "Erro no sistema Syscheck";
 
 
-        $email = new PHPMailer();
+        $email = new PHPMailer(true);
         try {
             $email->isSMTP();
-            $email->Host = 'smtplw.com.br';
-            $email->SMTPAuth = true;
-            $email->Username = 'udlog';
-            $email->Password = 'Ti2020@#';
-            $email->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $email->Port = 587;
-
-            $email->CharSet = 'UTF-8';
+            $email->Host       = $_ENV['SMTP_HOST'];
+            $email->SMTPAuth   = true;
+            $email->Username   = $_ENV['SMTP_USER'];
+            $email->Password   = $_ENV['SMTP_PASS'];
+            $email->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // ou ENCRYPTION_SMTPS se usar 465
+            $email->Port       = $_ENV['SMTP_PORT'];
+            $email->CharSet    = $_ENV['SMTP_CHARSET'];;
 
 
             $email->setFrom('suporte.ti@udlog.com.br', 'Syscheck');

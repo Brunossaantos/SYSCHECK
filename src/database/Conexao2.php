@@ -3,6 +3,7 @@
 namespace database;
 
 require_once __DIR__ . '/../constantes/constConexao.php';
+require_once __DIR__ . '/../../config/initEnv.php';
 
 use mysqli;
 

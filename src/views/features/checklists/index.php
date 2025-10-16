@@ -59,25 +59,25 @@
 
     <div class="flex flex-col items-center w-full max-w-6xl space-y-8">
 
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+            <div class="bg-gray-800 p-6 rounded-2xl shadow-2xl flex flex-col justify-between animate-fadeIn">
+                <h2 class="text-xl font-semibold mb-2">Checklists</h2>
+                <p class="text-gray-300 mb-4">Gerenciar checklists</p>
+                <div class="flex gap-2 flex-wrap">
+                    <?php if ($liberarNovoChecklist) { ?>
+                        <a href="/syscheck/checklist/iniciarChecklist" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg font-medium transition transform hover:scale-105">Iniciar checklist</a>
+                    <?php } ?>
+                    <a href="/syscheck/checklist/listarChecklists" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg font-medium transition transform hover:scale-105">Consultar</a>
+                </div>
+            </div>
+        </div>
+
         <!-- Primeira faixa de cards (Tipos, Etapas e Itens) -->
         <?php if ($usuarioSessao->getCargo() != 2 && $usuario->getUserTipoChecklist() == 0) { ?>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
 
-
-                <!-- Checklists -->
-                <div class="bg-gray-800 p-6 rounded-2xl shadow-2xl flex flex-col justify-between animate-fadeIn">
-                    <h2 class="text-xl font-semibold mb-2">Checklists</h2>
-                    <p class="text-gray-300 mb-4">Gerenciar checklists</p>
-                    <div class="flex gap-2 flex-wrap">
-                        <?php if ($liberarNovoChecklist) { ?>
-                            <a href="/syscheck/checklist/iniciarChecklist" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg font-medium transition transform hover:scale-105">Iniciar checklist</a>
-                        <?php } ?>
-                        <a href="/syscheck/checklist/listarChecklists" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg font-medium transition transform hover:scale-105">Consultar</a>
-                    </div>
-                </div>
-
-
-                <!-- Tipos de checklist -->
+            <!-- Tipos de checklist -->
                 <div class="bg-gray-800 p-6 rounded-2xl shadow-2xl flex flex-col justify-between animate-fadeIn">
                     <h2 class="text-xl font-semibold mb-2">Tipos de checklist</h2>
                     <p class="text-gray-300 mb-4">Gerenciar tipos de checklist</p>
@@ -86,8 +86,6 @@
                         <a href="/syscheck/tiposchecklist/gerenciarTipos" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg font-medium transition transform hover:scale-105">Consultar</a>
                     </div>
                 </div>
-
-
 
                 <!-- Etapas de checklist -->
                 <div class="bg-gray-800 p-6 rounded-2xl shadow-2xl flex flex-col justify-between animate-fadeIn">
