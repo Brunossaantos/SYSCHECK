@@ -47,4 +47,11 @@ class RnObjeto
         $daoObjeto = new DaoObjeto((new Conexao())->conectar(), $this->idUsuarioSessao);
         return $daoObjeto->listarObjetosAtivos();
     }
+    public function excluirObjeto($idObjeto)
+{
+    $daoObjeto = new \DAO\DaoObjeto((new \database\Conexao())->conectar(), $this->idUsuarioSessao);
+    return $daoObjeto->excluirObjeto($idObjeto);
+}
+
+
 }

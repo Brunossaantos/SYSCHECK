@@ -89,10 +89,20 @@ class ObjetosChecklistController
         }
     }
 
-    function excluirobjeto()
-    {
-        echo "Função para excluir objeto cadastrado";
-    }
+    function excluirobjeto($idObjeto)
+{
+    $resultado = $this->rnObjeto->excluirObjeto($idObjeto);
+
+if ($resultado > 0) {
+    header("Location: /syscheck/objeto/listarobjetos");
+    exit;
+} else {
+    echo "<script>alert('Não foi possível excluir. Contate o TI.'); window.location.href='/syscheck/objeto/listarobjetos';</script>";
+}
+
+
+}
+
 
     function retornarListaObjetos()
     {

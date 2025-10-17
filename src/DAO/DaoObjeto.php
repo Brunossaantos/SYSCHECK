@@ -15,6 +15,7 @@ class DaoObjeto
     private $conexao;
     private $idUsuarioSessao;
     private $tbl_objetos = TBL_OBJETOS;
+    
 
     function __construct($conexao, $idUsuarioSessao)
     {
@@ -156,4 +157,21 @@ class DaoObjeto
             return [];
         }
     }
+
+    public function excluirObjeto($idObjeto)
+{
+    $stmt = $this->conexao->prepare("DELETE FROM {$this->tbl_objetos} WHERE ID_OBJETO = ?");
+    if (!$stmt) {
+        die("Erro ao preparar DELETE: " . $this->conexao->error);
+    }
+
+    $stmt->bind_param("i", $idObjeto);
+    $stmt->execute();
+
+    $rowsAffected = $stmt->affected_rows;
+    $stmt->close();
+
+    return $rowsAffected; // retorna o número de linhas afetadas
+}
+
 }

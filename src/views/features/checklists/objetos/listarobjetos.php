@@ -79,10 +79,12 @@
                                     class="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded-lg text-sm font-medium transition">
                                     Editar
                                 </a>
-                                <a href="/syscheck/objeto/excluir/<?= $objeto->getIdObjeto() ?>"
-                                    class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg text-sm font-medium transition ml-2">
-                                    Excluir
-                                </a>
+                                <a href="/syscheck/objeto/excluirobjeto/<?= $objeto->getIdObjeto() ?>"
+   onclick="return confirm('Tem certeza que deseja excluir este objeto?');"
+   class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg text-sm font-medium transition ml-2">
+   Excluir
+</a>
+
                             </td>
                         </tr>
                     <?php } ?>
