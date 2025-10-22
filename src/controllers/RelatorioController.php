@@ -29,13 +29,20 @@ class RelatorioController
 
     /**
      * Gera relatório da visão geral
-     * @param int|null $idTipo
-     * @param int|null $idEquip
-     * @param string|null $data yyyy-mm-dd
-     * @return array
      */
     public function gerarRelatorioVisaoGeral($idTipo = null, $idEquip = null, $data = null): array
     {
         return $this->dao->getRelatorioVisaoGeral($idTipo, $idEquip, $data);
+    }
+
+    /**
+     * Lista todos os itens reprovados
+     * @param int|null $idEquip
+     * @param string|null $dataInicio
+     * @param string|null $dataFim
+     */
+    public function listarItensReprovados($idEquip = null, $dataInicio = null, $dataFim = null): array
+    {
+        return $this->dao->listarItensReprovados($idEquip, $dataInicio, $dataFim);
     }
 }

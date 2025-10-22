@@ -30,7 +30,8 @@ class EtapaRealizadaController
 
         if ($idEtapaRealizada > 0) {
             $quantEtapas = count($rnEtapasChecklist->listarEtapasChecklist($fktipo));
-            header("Location: /syscheck/etapaschecklist/etapa/" . $idChecklist . "/" . $fktipo . "/" . $numeroEtapa + 1);
+           header("Location: /syscheck/etapaschecklist/etapa/" . $idChecklist . "/" . $fktipo . "/" . ($numeroEtapa + 1));
+            exit;
         }
     }
 
@@ -45,7 +46,9 @@ class EtapaRealizadaController
 
         if ($idEtapaRealizada > 0) {
             $quantEtapas = count($rnEtapasChecklist->listarEtapasChecklist($fktipo));
-            header("Location: /syscheck/etapaschecklist/etapa/" . $idChecklist . "/" . $fktipo . "/" . $numeroEtapa + 1);
+           header("Location: /syscheck/etapaschecklist/etapa/" . $idChecklist . "/" . $fktipo . "/" . ($numeroEtapa + 1));
+            exit; 
+
         }
     }
 

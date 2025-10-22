@@ -146,7 +146,10 @@
                 <div class="bg-gradient-to-br from-gray-800 to-gray-700 p-6 rounded-2xl shadow-2xl hover:scale-105 transform transition animate-fadeIn text-center max-w-md w-full">
                     <h2 class="text-xl font-semibold mb-3">Relatórios</h2>
                     <p class="text-gray-300 mb-4">Relatórios de checklists</p>
+                    <div class="flex flex-col gap-2">
                     <a href="/syscheck/src/views/features/Relatorios" class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">Relatórios</a>
+                    <a href="/syscheck/src/views/features/Relatorios/checklistsReprovados.php" class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">Reprovados</a>
+                </div>
                 </div>
             <?php } ?>
 

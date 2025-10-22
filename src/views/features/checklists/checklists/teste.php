@@ -1,6 +1,3 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-
 <?php
 
 use Util\Util;
@@ -9,6 +6,9 @@ require_once __DIR__ . '/../../../../../vendor/autoload.php';
 
 ?>
 
+
+<!DOCTYPE html>
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
@@ -22,6 +22,16 @@ require_once __DIR__ . '/../../../../../vendor/autoload.php';
             margin: 20px;
         }
 
+        h1,
+        h2,
+        h3 {
+            color: #333;
+        }
+
+        a.btn-block {
+            margin-bottom: 20px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -31,17 +41,13 @@ require_once __DIR__ . '/../../../../../vendor/autoload.php';
         th,
         td {
             border: 1px solid #000;
-            padding: 4px;
+            padding: 6px;
             text-align: left;
+            vertical-align: top;
         }
 
         th {
-            background-color: #f2f2f2;
-        }
-
-        h2,
-        h3 {
-            color: #333;
+            background-color: rgba(34, 34, 34, 0.47)
         }
 
         .section {
@@ -56,150 +62,144 @@ require_once __DIR__ . '/../../../../../vendor/autoload.php';
         }
 
         .imagem {
-            width: 100px;
+            max-width: 100px;
+            max-height: 100px;
+            display: block;
+        }
+
+        /* Para quebrar linhas de texto longas */
+        td {
+            word-wrap: break-word;
+        }
+
+        /* Larguras proporcionais */
+        th:nth-child(1),
+        td:nth-child(1) {
+            width: 10%;
+        }
+
+        th:nth-child(2),
+        td:nth-child(2) {
+            width: 40%;
+        }
+
+        th:nth-child(3),
+        td:nth-child(3) {
+            width: 15%;
+        }
+
+        th:nth-child(4),
+        td:nth-child(4) {
+            width: 15%;
+        }
+
+        th:nth-child(5),
+        td:nth-child(5) {
+            width: 20%;
+        }
+
+        th:nth-child(6),
+        td:nth-child(6) {
+            width: 15%;
         }
     </style>
 </head>
 
 <body>
 
-    <div>
-        <a class="btn btn-danger btn-block" href="/syscheck/usuario/logout">Finalizar checklist</a>
-        <br>
-        <br>
-    </div>
+    <a class="btn btn-danger btn-block" href="/syscheck/usuario/logout">Finalizar checklist</a>
 
     <h1><?= $tipo->getDescricaoTipoChecklist() ?></h1>
     <h2><?= $itemChecado->getDescricaoObjeto() ?></h2>
-    <p><strong>Data de início: </strong><?= $checklist->getDataInicio() ?></p>
-    <p><strong>Data de finalização do checklist: </strong><?= $checklist->getDataFim() ?></p>
-    <p><strong>Status do checklist: </strong><?= Util::statusChecklist($checklist->getStatusChecklist()) ?></p>
-    <p><strong>Responsável: </strong><?= $responsavel->getNome() ?></p>
-    <p><strong>Número do checklist: </strong><?= $checklist->getIdChecklist() ?></p>
+
+    <p><strong>Data de início:</strong> <?= $checklist->getDataInicio() ?></p>
+    <p><strong>Data de finalização do checklist:</strong> <?= $checklist->getDataFim() ?></p>
+    <p><strong>Status:</strong> <?= Util::statusChecklist($checklist->getStatusChecklist()) ?></p>
+    <p><strong>Responsável:</strong> <?= $responsavel->getNome() ?></p>
+    <p><strong>Número do checklist:</strong> <?= $checklist->getIdChecklist() ?></p>
 
     <p>Caso a resposta da "Ação" da etapa seja "NÃO", descrever o motivo no campo "Observação" e informar seu Líder.</p>
 
-    <?php
-
-    ?>
-
+    <!-- Seções gerais como horímetro, bateria etc -->
     <?php if ($empilhadeira) { ?>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Horimetro inicial</th>
-                    <th><?= (isset($listaHorimetros[0]['horimetro']) ? $listaHorimetros[0]['horimetro'] . "horas" : "Horimetro inicial não preenchido.") ?></th>
-                </tr>
-                <tr>
-                    <th>Horimetro final</th>
-                    <th><?= (isset($listaHorimetros[1])) ? $listaHorimetros[1]['horimetro'] . "horas" : "Horimetro final não preechido." ?></th>
-                </tr>
-            </thead>
+        <table class="table table-bordered">
+            <tr>
+                <td>Horímetro inicial</td>
+                <td><?= $listaHorimetros[0]['horimetro'] ?? 'Não preenchido' ?> horas</td>
+            </tr>
+            <tr>
+                <td>Horímetro final</td>
+                <td><?= $listaHorimetros[1]['horimetro'] ?? 'Não preenchido' ?> horas</td>
+            </tr>
         </table>
-
     <?php } ?>
 
     <?php if ($empilhadeiraBateriaComum) { ?>
-        <table>
-            <thead>
-                <tr>
-                    <th>Nivel da bateria no inicio do expediente</th>
-                    <th><?= $nivelBateria ?>%</th>
-                </tr>
-            </thead>
+        <table class="table table-bordered">
+            <tr>
+                <th>Nível da bateria no início do expediente</th>
+                <td><?= $nivelBateria ?>%</td>
+            </tr>
         </table>
-
     <?php } ?>
 
-
     <?php if ($empilhadeiraEletrica) { ?>
-        <table>
+        <table class="table table-bordered">
             <thead>
                 <tr>
                     <th>Número da bateria</th>
-                    <th>Descrição da bateria</th>
-                    <th>Nível de carga da bateria</th>
+                    <th>Descrição</th>
+                    <th>Nível de carga</th>
                     <th>Data e hora da troca</th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($listaBaterias as $baterias) { ?>
+                <?php foreach ($listaBaterias as $bateria) { ?>
                     <tr>
-                        <th><?= $baterias['BATERIA'] ?></th>
-                        <th><?= $baterias['DESC_BATERIA'] ?></th>
-                        <th><?= $baterias['NIVEL_BATERIA'] . "%" ?></th>
-                        <th><?= $baterias['DATA_HORA'] ?></th>
+                        <td><?= $bateria['BATERIA'] ?></td>
+                        <td><?= $bateria['DESC_BATERIA'] ?></td>
+                        <td><?= $bateria['NIVEL_BATERIA'] ?>%</td>
+                        <td><?= $bateria['DATA_HORA'] ?></td>
                     </tr>
                 <?php } ?>
             </tbody>
         </table>
     <?php } ?>
 
-    <!-- Seção Ar-condicionado -->
-
-    <?php
-    foreach ($listaTitulos as $titulo) {
-    ?>
-
+    <!-- Seções de etapas -->
+    <?php foreach ($listaTitulos as $titulo) { ?>
         <div class="section">
             <h2><?= $titulo ?></h2>
-
-            <table>
+            <table class="table table-bordered">
                 <thead>
                     <tr>
                         <th>Etapas</th>
                         <th>Ações</th>
-                        <th>Aprovado \ Reprovado</th>
+                        <th>Aprovado / Reprovado</th>
                         <th>Observação</th>
-                        <!--<th>Nome Analista / Hora</th>-->
                         <th>Foto</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($listaEtapas as $etapas) {
-                        if ($titulo == $etapas['TITULO']) {
-                    ?>
+                        if ($titulo == $etapas['TITULO']) { ?>
                             <tr>
                                 <td><?= $etapas['NUMERO_ETAPA'] ?></td>
                                 <td><?= $etapas['CONTEUDO'] ?></td>
                                 <td><?= ($etapas['ACAO'] == 1) ? 'APROVADO' : 'REPROVADO' ?></td>
-                                <!--<td><?= $etapa['OBSERVACAO'] ?></td>-->
+                                <td><?= $etapas['OBSERVACAO'] ?? '' ?></td>
                                 <td>
                                     <?php
-                                    echo (!empty($etapas['OBSERVACAO'])) ? $etapas['OBSERVACAO'] : '';
-                                    ?>
-                                </td>
-
-
-                                <!--<td><?= $etapas['OBSERVACAO'] ?></td>-->
-                                <!--<td><?= $usuario->getNome() ?></td>-->
-
-                                <!--<td>
-                        <?php
-                            foreach ($listaFotos as $foto) {
-                                if ($foto->getNumeroEtapa() == $etapas['NUMERO_ETAPA']) {
-                                    echo "<img class='imagem' src=/syscheck/src/views/" . $foto->getCaminhoFoto() . " alt='Foto da etapa' loading='lazy'>";
-                                } else {
-                                    echo "etapa sem foto";
-                                }
-                            }
-                        ?>
-                    </td>-->
-
-                                <td>
-                                    <?php
-                                    $fotoEncontrada = false; // Flag para rastrear se a foto foi encontrada
+                                    $fotoEncontrada = false;
                                     foreach ($listaFotos as $foto) {
                                         if ($foto->getNumeroEtapa() == $etapas['NUMERO_ETAPA']) {
-                                            echo "<img class='imagem' src='/syscheck/src/views/" . $foto->getCaminhoFoto() . "' alt='--' loading='lazy'>";
-                                            $fotoEncontrada = true; // Marca que encontrou a foto
-                                            break; // Sai do loop ao encontrar a primeira correspondência
+                                            $caminhoFoto = '/syscheck/src/views/' . $foto->getCaminhoFoto();
+                                            echo "<a href='" . $caminhoFoto . "' target='_blank'>Visualizar foto</a>";
+                                            $fotoEncontrada = true;
+                                            break;
                                         }
                                     }
-                                    if (!$fotoEncontrada) {
-                                        echo "etapa sem foto"; // Mostra a mensagem apenas se nenhuma foto for encontrada
-                                    }
+                                    if (!$fotoEncontrada) echo "Etapa sem foto";
                                     ?>
                                 </td>
 
@@ -209,28 +209,7 @@ require_once __DIR__ . '/../../../../../vendor/autoload.php';
                 </tbody>
             </table>
         </div>
-
     <?php } ?>
-
-    <!-- 
-        tbl_checklists
-        tbl_departamentos
-        tbl_erros
-        tbl_etapas_checklists
-        tbl_etapas_realizadas
-        tbl_fotos
-        tbl_objetos
-        tbl_tipos_checklist
-        tbl_usuarios
-
-        -- views --
-
-        v_checklist_conteudo_etapas
-        v_checklist_visao_geral
-        v_quantidade_etapas_checklist
-    -->
-
-    <!-- Adicionar mais seções replicando as informações conforme o PDF -->
 
 </body>
 

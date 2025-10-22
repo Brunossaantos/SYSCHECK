@@ -50,16 +50,8 @@ class DaoRelatorio
         }
 
         if (!empty($data)) {
-            $dataSql = $this ->conn -> real_escape_string($data);
-
+            $sql .= " AND DATE(STR_TO_DATE(DATA_INICIO, '%d/%m/%Y %H:%i:%s')) = '" . $this->conn->real_escape_string($data) . "'";
         }
-
- if (!empty($data)) {
-            $dataSql = $this->conn->real_escape_string($data);
-            $sql .= " AND DATE(STR_TO_DATE(DATA_INICIO, '%d/%m/%Y %H:%i:%s')) = '" . $dataSql . "'";
-        }
-
-
 
         $result = $this->conn->query($sql);
         $relatorios = [];
@@ -83,5 +75,36 @@ class DaoRelatorio
             ?: \DateTime::createFromFormat('d/m/Y H:i:s', $dateStr);
 
         return $dt ? $dt->format('d/m/Y H:i:s') : '-';
+    }
+
+    /**
+     * Retorna todos os itens reprovados (ACAO = 2), com filtro opcional por equipamento e datas
+     */
+    public function listarItensReprovados($idEquip = null, $dataInicio = null, $dataFim = null): array
+    {
+        $sql = "SELECT er.ID_ETAPA_REALIZADA, er.FK_CHECKLIST, er.FK_ETAPA, er.NUMERO_ETAPA, er.ACAO, er.OBSERVACAO,
+                       c.DATA_INICIO, o.DESCRICAO_OBJETO
+                FROM tbl_etapas_realizadas er
+                JOIN tbl_checklists c ON c.ID_CHECKLIST = er.FK_CHECKLIST
+                LEFT JOIN tbl_objetos o ON o.ID_OBJETO = c.FK_OBJETO
+                WHERE er.ACAO = 2";
+
+        if (!empty($idEquip)) {
+            $sql .= " AND c.FK_OBJETO = " . (int)$idEquip;
+        }
+
+        if (!empty($dataInicio)) {
+            $sql .= " AND STR_TO_DATE(c.DATA_INICIO, '%d/%m/%y %H:%i:%s') >= '" . $this->conn->real_escape_string($dataInicio) . "'";
+        }
+
+        if (!empty($dataFim)) {
+            $sql .= " AND STR_TO_DATE(c.DATA_INICIO, '%d/%m/%y %H:%i:%s') <= '" . $this->conn->real_escape_string($dataFim) . "'";
+        }
+
+        // Ordenação: Checklist crescente, depois Número da Etapa crescente
+        $sql .= " ORDER BY er.FK_CHECKLIST ASC, er.NUMERO_ETAPA ASC";
+
+        $result = $this->conn->query($sql);
+        return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
     }
 }

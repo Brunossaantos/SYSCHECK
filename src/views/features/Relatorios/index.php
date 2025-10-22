@@ -55,7 +55,7 @@
             </div>
 
             <button type="submit"
-                class="w-full bg-blue-200 hover:bg-blue-300 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+                class="w-full bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
                 Gerar Relatório
             </button>
         </form>
