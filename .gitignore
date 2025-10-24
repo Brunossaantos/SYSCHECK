@@ -1,2 +1,7 @@
 .env
 Thumbs.db
+
+# Ignorar fotos enviadas em produção
+src/views/fotos/
+
+src/views/fotos_chamados/

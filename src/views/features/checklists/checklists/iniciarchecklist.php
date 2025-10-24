@@ -44,9 +44,9 @@
             <!-- Tipo do checklist -->
             <div>
                 <label for="fktipo" class="block mb-2 font-medium">Tipo do checklist</label>
-                <select name="fktipo" id="fktipo"
+                <select name="fktipo" id="fktipo" required
                     class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                    <option value="" disabled selected>Selecione o tipo do checklist</option>
+                    <option value="" disabled selected>Selecione o tipo</option>
                     <?php foreach ($listaTipos as $tipoChecklist) { ?>
                         <option value="<?= $tipoChecklist->getIdTipoChecklist() ?>"><?= $tipoChecklist->getDescricaoTipoChecklist() ?></option>
                     <?php } ?>
@@ -56,9 +56,10 @@
             <!-- Objeto/item checado -->
             <div>
                 <label for="fkobjeto" class="block mb-2 font-medium">Item checado</label>
-                <select name="fkobjeto" id="fkobjeto"
+                <select name="fkobjeto" id="fkobjeto" required
                     class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                    <option value="">Selecione o item/local do checklist</option>
+                    <option value="">Selecione o item/local </option
+                    require>
                 </select>
             </div>
 
