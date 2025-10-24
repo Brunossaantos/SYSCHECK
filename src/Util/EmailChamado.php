@@ -27,7 +27,7 @@ class EmailChamado
             $mail->setFrom('suporte.ti@envios.udlog.com.br', 'Chamados Syscheck');
 
             // Destinatários
-            $mail->addAddress('brunossaantos@gmail.com', 'Bruno');
+            $mail->addAddress('priscila.braz@udlog.com.br', 'Priscila');
 
 
 
