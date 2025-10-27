@@ -42,7 +42,7 @@ class Util
             $email->SMTPAuth   = true;
             $email->Username   = $_ENV['SMTP_USER'];
             $email->Password   = $_ENV['SMTP_PASS'];
-            $email->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // ou ENCRYPTION_SMTPS se usar 465
+            $email->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
             $email->Port       = $_ENV['SMTP_PORT'];
             $email->CharSet    = $_ENV['SMTP_CHARSET'];;
 

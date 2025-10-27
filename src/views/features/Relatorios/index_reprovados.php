@@ -4,17 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Relatórios</title>
+    <title>Relatórios Reprovados</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
 </head>
 
 <body class="bg-gray-100 min-h-screen flex flex-col items-center p-8">
 
     <?php
     require_once __DIR__ . '/../../../controllers/RelatorioController.php';
-
     use Controller\RelatorioController;
 
     $controller = new RelatorioController();
@@ -27,13 +27,13 @@
     </div>
 
     <div class="bg-white p-8 rounded-2xl shadow w-full max-w-4xl mb-8">
-        <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Relatórios</h1>
+        <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Relatórios de Itens Reprovados</h1>
 
-        <form id="formRelatorio" class="space-y-10">
+        <form id="formRelatorioReprovados" class="space-y-8">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Equipamento -->
                 <div>
-                    <label for="fkequipamento" class="block mb-2 font-medium text-gray-700">Tipo do Relatório</label>
+                    <label for="fkequipamento" class="block mb-2 font-medium text-gray-700">Equipamento</label>
                     <select name="id_equipamento" id="fkequipamento"
                         class="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none">
                         <option value="">Todos</option>
@@ -45,12 +45,20 @@
                     </select>
                 </div>
 
-                <!-- Data -->
-                <div>
-                    <label for="data_relatorio" class="block mb-2 font-medium text-gray-700">Data</label>
-                    <input type="date" id="data_relatorio" name="data_relatorio"
-                        class="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                        value="<?= date('Y-m-d') ?>">
+                <!-- Intervalo de datas -->
+                <div class="flex gap-2">
+                    <div class="flex-1">
+                        <label for="data_inicio" class="block mb-2 font-medium text-gray-700">De</label>
+                        <input type="date" id="data_inicio" name="data_inicio"
+                            class="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            value="<?= date('Y-m-d') ?>">
+                    </div>
+                    <div class="flex-1">
+                        <label for="data_fim" class="block mb-2 font-medium text-gray-700">Até</label>
+                        <input type="date" id="data_fim" name="data_fim"
+                            class="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            value="<?= date('Y-m-d') ?>">
+                    </div>
                 </div>
             </div>
 
@@ -66,28 +74,26 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-
-    <!-- DataTables Buttons -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
 
     <script>
         $(document).ready(function() {
-            $('#formRelatorio').submit(function(e) {
+            $('#formRelatorioReprovados').submit(function(e) {
                 e.preventDefault();
 
                 var equipId = $('#fkequipamento').val();
-                var data = $('#data_relatorio').val();
+                var dataInicio = $('#data_inicio').val();
+                var dataFim = $('#data_fim').val();
 
-                $.post('gerarRelatorioAjax.php', {
+                $.post('gerarItensReprovadosAjax.php', {
                     id_equipamento: equipId,
-                    data_relatorio: data
+                    data_inicio: dataInicio,
+                    data_fim: dataFim
                 }, function(response) {
                     $('#tabelaResultados').html(response);
                 });
@@ -96,5 +102,4 @@
     </script>
 
 </body>
-
 </html>
