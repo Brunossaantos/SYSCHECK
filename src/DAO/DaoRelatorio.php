@@ -50,11 +50,10 @@ class DaoRelatorio
         }
 
         if (!empty($data)) {
-            $dataSql = $this ->conn -> real_escape_string($data);
-
+            $dataSql = $this->conn->real_escape_string($data);
         }
 
- if (!empty($data)) {
+        if (!empty($data)) {
             $dataSql = $this->conn->real_escape_string($data);
             $sql .= " AND DATE(STR_TO_DATE(DATA_INICIO, '%d/%m/%Y %H:%i:%s')) = '" . $dataSql . "'";
         }
@@ -84,72 +83,54 @@ class DaoRelatorio
 
         return $dt ? $dt->format('d/m/Y H:i:s') : '-';
     }
-    /**
-     * Retorna os itens reprovados (ACAO = 2)
-     * com filtro por equipamento e intervalo de datas
-     */
-        /**
-     * Retorna os itens reprovados (ACAO = 2)
-     * com filtro por equipamento e intervalo de datas
-     */public function gerarRelatorioItensReprovados($idEquip = null, $dataInicio = null, $dataFim = null): array
-{
-    $sql = "
+    public function gerarRelatorioItensReprovados($idEquip = null, $dataInicio = null, $dataFim = null): array
+    {
+        $sql = "
         SELECT 
             e.FK_CHECKLIST,
             e.NUMERO_ETAPA,
+            o.DESCRICAO_OBJETO AS EQUIPAMENTO,
             c.STATUS_CHECKLIST,
             c.DATA_INICIO,
             c.DATA_FIM
         FROM tbl_etapas_realizadas e
         INNER JOIN tbl_checklists c ON c.ID_CHECKLIST = e.FK_CHECKLIST
+        INNER JOIN tbl_objetos o ON o.ID_OBJETO = c.FK_OBJETO
         WHERE e.ACAO = 2
     ";
 
-    // Filtro por equipamento
-    if (!empty($idEquip)) {
-        $idEquip = $this->conn->real_escape_string($idEquip);
-        $sql .= " AND c.OBJETO = '{$idEquip}'";
-    }
-
-    // Filtro por intervalo de datas
-    if (!empty($dataInicio) && !empty($dataFim)) {
-        $dataInicio = $this->conn->real_escape_string($dataInicio);
-        $dataFim = $this->conn->real_escape_string($dataFim);
-
-        // Verifica se DATA_INICIO é datetime ou texto
-        $sql .= "
-            AND (
-                (DATE(c.DATA_INICIO) BETWEEN '{$dataInicio}' AND '{$dataFim}')
-                OR
-                (DATE(STR_TO_DATE(c.DATA_INICIO, '%d/%m/%Y %H:%i:%s')) BETWEEN '{$dataInicio}' AND '{$dataFim}')
-            )
-        ";
-    } elseif (!empty($dataInicio)) {
-        $dataInicio = $this->conn->real_escape_string($dataInicio);
-        $sql .= "
-            AND (
-                DATE(c.DATA_INICIO) = '{$dataInicio}'
-                OR
-                DATE(STR_TO_DATE(c.DATA_INICIO, '%d/%m/%Y %H:%i:%s')) = '{$dataInicio}'
-            )
-        ";
-    }
-
-    $sql .= " ORDER BY e.FK_CHECKLIST, e.NUMERO_ETAPA";
-
-    $result = $this->conn->query($sql);
-    $relatorios = [];
-
-    if ($result) {
-        while ($row = $result->fetch_object()) {
-            $relatorios[] = $row;
+        // Filtro por equipamento
+        if (!empty($idEquip)) {
+            $idEquip = $this->conn->real_escape_string($idEquip);
+            $sql .= " AND o.DESCRICAO_OBJETO = '{$idEquip}'";
         }
+
+        // Filtro por intervalo de datas (convertendo o varchar para datetime)
+        if (!empty($dataInicio) && !empty($dataFim)) {
+            $dataInicio = $this->conn->real_escape_string($dataInicio);
+            $dataFim = $this->conn->real_escape_string($dataFim);
+
+            $sql .= "
+            AND STR_TO_DATE(c.DATA_INICIO, '%d/%m/%Y %H:%i:%s') BETWEEN '{$dataInicio} 00:00:00' AND '{$dataFim} 23:59:59'
+        ";
+        } elseif (!empty($dataInicio)) {
+            $dataInicio = $this->conn->real_escape_string($dataInicio);
+            $sql .= "
+            AND DATE(STR_TO_DATE(c.DATA_INICIO, '%d/%m/%Y %H:%i:%s')) = '{$dataInicio}'
+        ";
+        }
+
+        $sql .= " ORDER BY e.FK_CHECKLIST, e.NUMERO_ETAPA";
+
+        $result = $this->conn->query($sql);
+        $relatorios = [];
+
+        if ($result) {
+            while ($row = $result->fetch_object()) {
+                $relatorios[] = $row;
+            }
+        }
+
+        return $relatorios;
     }
-
-    return $relatorios;
-}
-
-
-
-    
 }

@@ -5,27 +5,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Relatórios Reprovados</title>
+
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
 </head>
 
-<body class="bg-gray-100 min-h-screen flex flex-col items-center p-8">
+<body class="bg-gray-100 min-h-screen flex flex-col items-center p-8 font-sans">
 
     <?php
     require_once __DIR__ . '/../../../controllers/RelatorioController.php';
+
     use Controller\RelatorioController;
 
     $controller = new RelatorioController();
     $listaEquipamentos = $controller->listarTodosEquipamentos();
     ?>
 
+    <!-- Navegação -->
     <div class="w-full flex justify-center gap-4 mb-8">
-        <a href="/syscheck/index2.php" class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">Home</a>
-        <a href="/syscheck/usuario/logout" class="bg-red-500 hover:bg-red-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">Logout</a>
+        <a href="/syscheck/index2.php"
+            class="bg-gray-700 hover:bg-gray-800 text-white px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+            Home
+        </a>
+        <a href="/syscheck/usuario/logout"
+            class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+            Logout
+        </a>
     </div>
 
+    <!-- Card de Filtro -->
     <div class="bg-white p-8 rounded-2xl shadow w-full max-w-4xl mb-8">
         <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Relatórios de Itens Reprovados</h1>
 
@@ -35,14 +48,15 @@
                 <div>
                     <label for="fkequipamento" class="block mb-2 font-medium text-gray-700">Equipamento</label>
                     <select name="id_equipamento" id="fkequipamento"
-                        class="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        class="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-600 focus:outline-none">
                         <option value="">Todos</option>
                         <?php foreach ($listaEquipamentos as $equip) { ?>
-                            <option value="<?= $equip['DESCRICAO_OBJETO'] ?>">
-                                <?= $equip['DESCRICAO_OBJETO'] ?>
+                            <option value="<?= htmlspecialchars($equip['ID_OBJETO']) ?>">
+                                <?= htmlspecialchars($equip['DESCRICAO_OBJETO']) ?>
                             </option>
                         <?php } ?>
                     </select>
+
                 </div>
 
                 <!-- Intervalo de datas -->
@@ -50,27 +64,29 @@
                     <div class="flex-1">
                         <label for="data_inicio" class="block mb-2 font-medium text-gray-700">De</label>
                         <input type="date" id="data_inicio" name="data_inicio"
-                            class="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            class="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-600 focus:outline-none"
                             value="<?= date('Y-m-d') ?>">
                     </div>
                     <div class="flex-1">
                         <label for="data_fim" class="block mb-2 font-medium text-gray-700">Até</label>
                         <input type="date" id="data_fim" name="data_fim"
-                            class="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            class="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-gray-600 focus:outline-none"
                             value="<?= date('Y-m-d') ?>">
                     </div>
                 </div>
             </div>
 
             <button type="submit"
-                class="w-full bg-gray-400 hover:bg-gray-500 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+                class="w-full bg-gray-700 hover:bg-gray-800 text-white px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
                 Gerar Relatório
             </button>
         </form>
     </div>
 
+    <!-- Resultados -->
     <div id="tabelaResultados" class="w-full max-w-7xl"></div>
 
+    <!-- JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
@@ -102,4 +118,5 @@
     </script>
 
 </body>
+
 </html>

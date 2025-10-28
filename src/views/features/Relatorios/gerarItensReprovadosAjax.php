@@ -32,11 +32,12 @@ function traduzirStatus($status)
             Itens Reprovados <?= !empty($dataInicio) && !empty($dataFim) ? "de " . date('d/m/Y', strtotime($dataInicio)) . " até " . date('d/m/Y', strtotime($dataFim)) : "" ?>
         </h2>
 
-        <div class="overflow-x-auto ">
+        <div class="overflow-x-auto">
             <table id="tabelaReprovados" class="display nowrap w-full text-sm">
                 <thead class="bg-gray-600 text-white">
                     <tr>
                         <th class="px-4 py-3 text-left">Número</th>
+                        <th class="px-4 py-3 text-left">Equipamento</th>
                         <th class="px-4 py-3 text-left">Etapa</th>
                         <th class="px-4 py-3 text-left">Status</th>
                         <th class="px-4 py-3 text-left">Data Início</th>
@@ -52,6 +53,7 @@ function traduzirStatus($status)
                                     <?= htmlspecialchars($r->FK_CHECKLIST) ?>
                                 </a>
                             </td>
+                            <td class="px-4 py-3"><?= htmlspecialchars($r->EQUIPAMENTO) ?></td>
                             <td class="px-4 py-3"><?= htmlspecialchars($r->NUMERO_ETAPA) ?></td>
                             <td class="px-4 py-3"><?= traduzirStatus($r->STATUS_CHECKLIST) ?></td>
                             <td class="px-4 py-3"><?= htmlspecialchars($r->DATA_INICIO) ?></td>

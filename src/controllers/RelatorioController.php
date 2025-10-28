@@ -41,16 +41,13 @@ class RelatorioController
 
     /**
      * Gera relatório de itens reprovados
-     * @param string|null $idEquip Descrição do equipamento
-     * @param string|null $data Data no formato yyyy-mm-dd
+     * @param string|null $descricaoEquip Nome do equipamento
+     * @param string|null $dataInicio Data de início no formato yyyy-mm-dd
+     * @param string|null $dataFim Data final no formato yyyy-mm-dd
      * @return array
      */
-    public function gerarRelatorioItensReprovados($idEquip = null, $dataInicio = null, $dataFim = null): array
-{
-    return $this->dao->gerarRelatorioItensReprovados($idEquip, $dataInicio, $dataFim);
-
-    
-}
-
-
+    public function gerarRelatorioItensReprovados($descricaoEquip = null, $dataInicio = null, $dataFim = null): array
+    {
+        return $this->dao->gerarRelatorioItensReprovados($descricaoEquip, $dataInicio, $dataFim);
+    }
 }
