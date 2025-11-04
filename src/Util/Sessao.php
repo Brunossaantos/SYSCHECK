@@ -8,9 +8,11 @@ use models\Login;
 use models\Usuario;
 
 
-class Sessao{
+class Sessao
+{
 
-    public static function iniciarSessao(Usuario $usuario){
+    public static function iniciarSessao(Usuario $usuario)
+    {
         session_start();
         $_SESSION['idUsuario'] = $usuario->getIdUsuario();
         $_SESSION['nome'] = $usuario->getNome();
@@ -20,60 +22,86 @@ class Sessao{
         $_SESSION['statusUsuario'] = $usuario->getStatusUsuario();
     }
 
-    public static function verificarSessao(){
+    public static function verificarSessao()
+    {
         session_start();
-        
-        if(isset($_SESSION['nomeUsuario'])){
+
+        if (isset($_SESSION['nomeUsuario'])) {
             return true;
         }
 
         return false;
     }
 
-    public static function retornarUsuarioLogado(){
-
-        if(session_status() == PHP_SESSION_NONE){
-            session_start(); 
+    public static function verificarSessaoCompleta()
+    {
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
         }
-               
-        $usuario = new Usuario($_SESSION['idUsuario'], $_SESSION['nome'], $_SESSION['departamento'], $_SESSION['cargo'], $_SESSION['nomeUsuario'], null, $_SESSION['statusUsuario']);
-        return $usuario;        
+
+        $campos = ['idUsuario', 'nome', 'departamento', 'cargo', 'nomeUsuario', 'statusUsuario'];
+        foreach ($campos as $campo) {
+            if (!isset($_SESSION[$campo])) {
+                echo '<script>
+                    alert("Sessão expirada ou inválida. Faça login novamente.");
+                    window.location.href = "/syscheck";
+                  </script>';
+                exit;
+            }
+        }
     }
 
-    public static function idusuario() {
+    public static function retornarUsuarioLogado()
+    {
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        return new Usuario(
+            $_SESSION['idUsuario'],
+            $_SESSION['nome'],
+            $_SESSION['departamento'],
+            $_SESSION['cargo'],
+            $_SESSION['nomeUsuario'],
+            null,
+            $_SESSION['statusUsuario']
+        );
+    }
+
+    public static function idusuario()
+    {
         if (session_status() == PHP_SESSION_NONE) {
             session_start(); // Inicia a sessão apenas se não estiver já ativa
         }
-    
+
         if (!isset($_SESSION['idUsuario'])) {
             header("Location: /syscheck"); // Redireciona se o ID do usuário não estiver definido
             exit(); // Garante que o script pare após o redirecionamento
         }
-    
+
         return $_SESSION['idUsuario'];
     }
 
-    public static function nomeUsuario(){
+    public static function nomeUsuario()
+    {
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
         }
         return $_SESSION['nome'];
     }
 
-    public static function salvarMensagemNaSessao($mensagem){
+    public static function salvarMensagemNaSessao($mensagem)
+    {
         $_SESSION['mensagem'] = $mensagem;
     }
 
-    public static function mostrarMensagem(){
+    public static function mostrarMensagem()
+    {
         if (!empty($_SESSION['mensagem'])) {
             echo '<script>
-                    alert('.json_encode($_SESSION['mensagem']).');                    
+                    alert(' . json_encode($_SESSION['mensagem']) . ');                    
                   </script>';
             unset($_SESSION['mensagem']);
         }
     }
-
 }
-
-
-?>
