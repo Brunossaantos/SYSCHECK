@@ -52,6 +52,12 @@
     }
 
     $usuario = Sessao::retornarUsuarioLogado();
+
+    if (!$usuario) {
+        header("Location: /syscheck/login.php");
+        exit;
+    }
+
     ?>
 
 

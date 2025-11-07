@@ -89,7 +89,7 @@
                             <td class="px-4 py-2"><?= Util::status($tipoChecklist->getStatusTipoChecklist()) ?></td>
                             <td class="px-4 py-2"><?= (new RnEtapasChecklist($_SESSION['idUsuario']))->quantidadeEtapas($tipoChecklist->getIdTipoChecklist()) ?></td>
                             <td class="px-4 py-2 flex gap-2">
-                                <a href="#"
+                                <a href="/syscheck/etapaschecklist/finalizarcadastro/<?= $tipoChecklist->getIdTipoChecklist() ?>"
                                     class="bg-yellow-500 hover:bg-yellow-600 px-3 py-1 rounded text-white text-sm">Editar</a>
                                 <a href="#"
                                     class="bg-red-500 hover:bg-red-600 px-3 py-1 rounded text-white text-sm">Inativar</a>

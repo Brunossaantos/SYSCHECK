@@ -52,21 +52,35 @@ class Sessao
     }
 
     public static function retornarUsuarioLogado()
-    {
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        return new Usuario(
-            $_SESSION['idUsuario'],
-            $_SESSION['nome'],
-            $_SESSION['departamento'],
-            $_SESSION['cargo'],
-            $_SESSION['nomeUsuario'],
-            null,
-            $_SESSION['statusUsuario']
-        );
+{
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
     }
+
+    // Garante que as chaves existam, usando operador de coalescência nula
+    $idUsuario       = $_SESSION['idUsuario']      ?? null;
+    $nome            = $_SESSION['nome']           ?? null;
+    $departamento    = $_SESSION['departamento']   ?? null;
+    $cargo           = $_SESSION['cargo']          ?? null;
+    $nomeUsuario     = $_SESSION['nomeUsuario']    ?? null;
+    $statusUsuario   = $_SESSION['statusUsuario']  ?? null;
+
+    // Se a sessão não está completa, apenas retorna null (sem redirecionar)
+    if (!$idUsuario || !$nomeUsuario) {
+        return null;
+    }
+
+    return new Usuario(
+        $idUsuario,
+        $nome,
+        $departamento,
+        $cargo,
+        $nomeUsuario,
+        null,
+        $statusUsuario
+    );
+}
+
 
     public static function idusuario()
     {
