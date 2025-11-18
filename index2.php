@@ -143,9 +143,14 @@
                 <p class="text-gray-300 mb-4">Verificação de chamados abertos</p>
                 <div class="flex flex-col gap-2">
                     <a href="/syscheck/chamado/abrirchamado" class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium">Abrir chamado</a>
-                    <a href="/syscheck/chamado/gerenciarChamados" class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium">Verificar chamados</a>
+
+                    <?php $idsPermitidos = [25, 64]; ?>
+                    <?php if (in_array(Sessao::idusuario(), $idsPermitidos)): ?>
+                        <a href="/syscheck/chamado/gerenciarChamados" class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium">Verificar chamados</a>
+                    <?php endif; ?>
                 </div>
             </div>
+
 
             <!-- Relatórios -->
             <?php if ($usuario->getCargo() != 2) { ?>
@@ -154,7 +159,7 @@
                     <p class="text-gray-300 mb-4">Relatórios de checklists</p>
                     <div class="flex flex-col gap-2">
                         <a href="/syscheck/src/views/features/Relatorios" class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">Relatórios</a>
-                        <a href="/syscheck/src/views/features/Relatorios/index_reprovados.php" class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">Relatórios reprovados</a>
+                        <a href="/syscheck/src/views/features/Relatorios/index_reprovados.php" class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">Relatórios de Itens reprovados</a>
                     </div>
                 </div>
             <?php } ?>

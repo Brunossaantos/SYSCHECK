@@ -33,6 +33,12 @@ use rn\RnHorimetro;
 use rn\RnPeriferico;
 use rn\RnusuarioEmpilhadeira;
 
+/** @var mixed $fkEmpilhadeira */
+/** @var mixed $idChecklist */
+/** @var int $fkUsuario */
+
+
+
 class ChecklistController
 {
     private $rnChecklist;
@@ -62,12 +68,24 @@ class ChecklistController
         $usuario = (new RnUsuario(Sessao::idusuario()))->selecionarUsuario(Sessao::idusuario());
         $listaTipos = (new RnTipoChecklist(Sessao::idusuario()))->retornarListaTiposChecklist();
 
-        if ($usuario->getUserTipoChecklist() >= 1) {
-            $listaTipos = array_filter($listaTipos, function ($tipoChecklist) use ($usuario) {
-                return $tipoChecklist->getIdTipoChecklist() === $usuario->getUserTipoChecklist();
+        if ($usuario->getUserTipoChecklist() == 0) {
+            // 0 = Empilhadeiras em geral
+            $tiposPermitidos = [3, 4, 14]; // seus tipos de empilhadeira
+            $listaTipos = array_filter($listaTipos, function ($tipoChecklist) use ($tiposPermitidos) {
+                return in_array($tipoChecklist->getIdTipoChecklist(), $tiposPermitidos);
+            });
+        } elseif ($usuario->getUserTipoChecklist() == 1) {
+            // 1 = Veicular
+            $listaTipos = array_filter($listaTipos, function ($tipoChecklist) {
+                return $tipoChecklist->getIdTipoChecklist() === 1;
+            });
+        } elseif ($usuario->getUserTipoChecklist() == 2) {
+            // 2 = TI e Veicular
+            $tiposPermitidos = [1, 2]; // IDs dos tipos de checklist para TI e Veicular
+            $listaTipos = array_filter($listaTipos, function ($tipoChecklist) use ($tiposPermitidos) {
+                return in_array($tipoChecklist->getIdTipoChecklist(), $tiposPermitidos);
             });
         }
-
         require_once __DIR__ . '/../views/features/checklists/checklists/iniciarchecklist.php';
     }
 

@@ -70,7 +70,9 @@
                 <div>
                     <label for="deschamado" class="block mb-1 text-gray-300">Descrição do Chamado</label>
                     <textarea name="deschamado" id="deschamado" rows="3"
-                        class="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white"></textarea>
+                        class="w-full px-4 py-2 rounded-lg bg-gray-700 border border-gray-600 text-white"
+                        required
+                        ></textarea>
                 </div>
 
                 <!-- Upload de Fotos -->

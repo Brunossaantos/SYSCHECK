@@ -26,7 +26,7 @@ class RnChamado
     - Salvar o follow up inicial "Abertura de chamado" utilizando o id retornado
     */
 
-    function abrirChamado(Chamado $chamado, $fotos)
+    function abrirChamado(Chamado $chamado, $fotos = null)
 {
     $daoChamado = new DaoChamado((new Conexao())->conectar(), $this->idUsuarioSessao);
 

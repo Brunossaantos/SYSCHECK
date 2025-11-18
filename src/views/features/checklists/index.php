@@ -31,7 +31,6 @@
 
     use Util\Sessao;
 
-    include __DIR__ . '/../../public/components/navbar.php';
     $usuarioSessao = Sessao::retornarUsuarioLogado();
     ?>
 
@@ -66,16 +65,16 @@
                 <p class="text-gray-300 mb-4">Gerenciar checklists</p>
                 <div class="flex gap-2 flex-wrap">
                     <?php if ($liberarNovoChecklist) { ?>
-                        <a href="/syscheck/checklist/iniciarChecklist" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg font-medium transition transform hover:scale-105">Iniciar checklist</a>
+                        <a href="/syscheck/checklist/iniciarChecklist" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg font-medium transition transform hover:scale-105">Iniciar</a>
                     <?php } ?>
                     <a href="/syscheck/checklist/listarChecklists" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg font-medium transition transform hover:scale-105">Consultar</a>
                 </div>
             </div>
-        </div>
+        
 
         <!-- Primeira faixa de cards (Tipos, Etapas e Itens) -->
         <?php if ($usuarioSessao->getCargo() != 2 && $usuario->getUserTipoChecklist() == 0) { ?>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+            
 
             <!-- Tipos de checklist -->
                 <div class="bg-gray-800 p-6 rounded-2xl shadow-2xl flex flex-col justify-between animate-fadeIn">
@@ -106,8 +105,8 @@
                         <a href="/syscheck/objeto/listarobjetos" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg font-medium transition transform hover:scale-105">Consultar</a>
                     </div>
                 </div>
-
             </div>
+            
         <?php } ?>
 
     </div>

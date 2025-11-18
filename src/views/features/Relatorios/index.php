@@ -22,8 +22,9 @@
     ?>
 
     <div class="w-full flex justify-center gap-4 mb-8">
-        <a href="/syscheck/index2.php" class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">Home</a>
-        <a href="/syscheck/usuario/logout" class="bg-red-500 hover:bg-red-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">Logout</a>
+        <a href="/syscheck/index2.php" class="bg-gray-700 hover:bg-gray-800 text-white px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+            Home</a>
+        <a href="/syscheck/usuario/logout" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">Logout</a>
     </div>
 
     <div class="bg-white p-8 rounded-2xl shadow w-full max-w-4xl mb-8">
@@ -55,7 +56,7 @@
             </div>
 
             <button type="submit"
-                class="w-full bg-gray-400 hover:bg-gray-500 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+                class="w-full bg-gray-700 hover:bg-gray-800 text-white px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
                 Gerar Relatório
             </button>
         </form>
