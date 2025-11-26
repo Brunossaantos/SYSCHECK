@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Relatório de Checklists - SYSCHECK</title>
+    <title>Consultar Checklists - SYSCHECK</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @keyframes fadeIn {
@@ -48,7 +48,7 @@
 
     </div>
 
-    <h1 class="text-3xl font-bold mb-8 text-center">Relatório de Checklists</h1>
+    <h1 class="text-3xl font-bold mb-8 text-center">Consultar Checklists</h1>
 
     <!-- Formulário de filtro -->
     <form method="GET" action="/syscheck/checklist/listarChecklists" class="w-full max-w-6xl bg-gray-800 p-6 rounded-2xl shadow-2xl mb-8 animate-fadeIn">
