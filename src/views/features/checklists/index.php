@@ -29,7 +29,8 @@
 
     <?php
 
-    use Util\Sessao;
+    require_once __DIR__ . '/../../../../proteger.php';
+    use Util\Sessao;   
 
     $usuarioSessao = Sessao::retornarUsuarioLogado();
     ?>

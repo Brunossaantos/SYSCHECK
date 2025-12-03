@@ -33,6 +33,8 @@
 
     <?php
 
+    require_once __DIR__ . '/proteger.php';
+    
     use rn\RnObjeto;
     use rn\RnusuarioEmpilhadeira;
     use Util\Sessao;

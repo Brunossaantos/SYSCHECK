@@ -68,6 +68,8 @@ $idChecklist = $partes[4];
 
 <body>
     <?php
+
+    require_once __DIR__ . '/../../../../../proteger.php';
     include_once __DIR__ . "/../../../public/components/navbar.php"
     ?>
     <div class="container mt-5">

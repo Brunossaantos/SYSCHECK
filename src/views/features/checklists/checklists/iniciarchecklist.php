@@ -11,6 +11,8 @@
 <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-8">
     <?php
 
+    require_once __DIR__ . '/../../../../../proteger.php';
+
     use Util\Sessao;
 
     $idUsuario = Sessao::idusuario();
