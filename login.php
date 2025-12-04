@@ -39,9 +39,16 @@
     </div>
 
     <?php
-    session_start();
+
+    require_once __DIR__ . '/functions/log.php';
+
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+
     if (isset($_SESSION['idUsuario'])) {
         header("Location: /syscheck/index2.php");
+        exit();
     }
     ?>
 

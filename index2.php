@@ -33,8 +33,9 @@
 
     <?php
 
+    require_once __DIR__ . '/functions/log.php';
     require_once __DIR__ . '/proteger.php';
-    
+
     use rn\RnObjeto;
     use rn\RnusuarioEmpilhadeira;
     use Util\Sessao;
@@ -176,6 +177,15 @@
                 <h2 class="text-xl font-semibold mb-3">Retirada / Devolução de veículo</h2>
                 <p class="text-gray-300 mb-4">Lista veicular</p>
                 <a href="/syscheck/lista" class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">Abrir lista</a>
+            </div>
+        <?php } ?>
+
+        <!-- logs -->
+        <?php if ($usuario->getCargo() == 7) { ?>
+            <div class="bg-gradient-to-br from-gray-800 to-gray-700 p-6 rounded-2xl shadow-2xl hover:scale-105 transform transition animate-fadeIn text-center max-w-md w-full">
+                <h2 class="text-xl font-semibold mb-3">Logs</h2>
+                <p class="text-gray-300 mb-4">Logs de sistema</p>
+                <a href="/syscheck/dev/logs.php" class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">Abrir logs</a>
             </div>
         <?php } ?>
 

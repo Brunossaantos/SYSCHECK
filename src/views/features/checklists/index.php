@@ -28,6 +28,7 @@
 <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-8">
 
     <?php
+    require_once __DIR__ . '/../../../../functions/log.php';
 
     require_once __DIR__ . '/../../../../proteger.php';
     use Util\Sessao;   
@@ -74,7 +75,7 @@
         
 
         <!-- Primeira faixa de cards (Tipos, Etapas e Itens) -->
-        <?php if ($usuarioSessao->getCargo() != 2 && $usuario->getUserTipoChecklist() == 0) { ?>
+        <?php if ($usuarioSessao->getCargo() != 2 && $usuarioSessao->getUserTipoChecklist() == 0) { ?>
             
 
             <!-- Tipos de checklist -->
