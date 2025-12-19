@@ -80,7 +80,7 @@
         </form>
     </div>
 
-    <?php include_once __DIR__ . '/../../../public/components/footer.php'; ?>
+    <?php require_once __DIR__ . '/../../../../../work/components/footer.php'; ?>
 
     <!-- Script AJAX -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

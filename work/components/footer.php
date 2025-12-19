@@ -1,5 +1,8 @@
-<footer class="footer mt-auto py-3 bg-light">
-    <div class="container">
-        <span class="text-muted">Seu rodapé aqui.</span>
+<!--<footer class="footer bg-light border-top">
+    <div class="container text-center py-3">
+        <small class="text-muted">
+            © <?= date('Y') ?> — SysCheck |
+            Desenvolvido por BSC Sistemas & Parceiro
+        </small>
     </div>
-</footer>
+</footer>-->

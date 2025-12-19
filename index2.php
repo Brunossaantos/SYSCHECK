@@ -194,7 +194,7 @@
 
     </div>
 
-    <?php include_once __DIR__ . '/src/views/public/components/footer.php'; ?>
+    <?php include_once __DIR__ . '/work/components/footer.php'; ?>
 </body>
 
 </html>

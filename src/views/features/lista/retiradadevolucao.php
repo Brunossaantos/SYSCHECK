@@ -224,6 +224,26 @@ $listaChecklists = $listaChecklists ?? [];
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#tabelaChecklists').DataTable({
+            pageLength: 10, // quantidade por página
+            lengthMenu: [5, 10, 25, 50],
+            ordering: true,
+            order: [[0, 'desc']], // ordena pelo ID (Número) do mais recente para o mais antigo
+            searching: true,
+            info: true,
+            paging: true,
+            language: {
+                url: "//cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json"
+            }
+        });
+    });
+</script>
+
 
 
 <script>
@@ -233,7 +253,7 @@ $listaChecklists = $listaChecklists ?? [];
             let fkUsuario = $("#fkusuario").val();
             let fkVeiculo = $("#veiculo").val();
             //let data = $("#data").val().replace(/ /g, '+');
-            let status = $("#status").val();
+            //let status = $("#status").val();
 
             console.log("Botão clicado");
 
@@ -248,13 +268,13 @@ $listaChecklists = $listaChecklists ?? [];
                 return;
             }
 
-            if (status == "0" || !status || status == "Erro ao obter status") {
+            /*if (status == "0" || !status || status == "Erro ao obter status") {
                 alert("Status inválido!");
                 return;
-            }
+            }*/
 
             // Criar a URL correta
-            let url = `/syscheck/lista/salvarMovimentacao/${fkUsuario}/${fkVeiculo}/${status}`;
+            let url = `/syscheck/lista/salvarMovimentacao/${fkUsuario}/${fkVeiculo}`;
             //let url = '/syscheck/lista/selvarMovimentacao/' + fkUsuario + '/' +fkVeiculo+ '/' +data+ '/' +status;
             console.log(url);
 

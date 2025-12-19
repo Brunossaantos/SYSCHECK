@@ -48,24 +48,68 @@ class RnLista
 
     function salvarMovimentacao($movimentacao)
     {
-        switch ($this->verificarStatus($movimentacao['veiculo'])) {
+        $statusAtual = $this->verificarStatus($movimentacao['veiculo']);
+
+        $validacao = $this->validarUsuarioVeiculo(
+            $movimentacao['veiculo'],
+            $movimentacao['usuario']
+        );
+
+        if ($validacao !== true) {
+            Sessao::salvarMensagemNaSessao(
+                "Veículo em uso por {$validacao['nome']}. Somente ele pode devolver."
+            );
+            header("Location:/syscheck/lista");
+            exit;
+        }
+
+
+        switch ($statusAtual) {
             case 1: // Disponível → Retirada
-                $movimentacao['status'] = 2; // Ocupado
-                (new DaoLista((new Conexao())->conectar(), Sessao::idusuario()))->salvarMovimentacao($movimentacao);
+                (new DaoLista((new Conexao())->conectar(), Sessao::idusuario()))
+                    ->salvarMovimentacao($movimentacao);
+                $novoStatus = 2;
                 break;
 
-            case 2: // Ocupado → Devolução (qualquer usuário)
-                (new DaoLista((new Conexao())->conectar(), Sessao::idusuario()))->salvarDevolucao($movimentacao['veiculo']);
-                $movimentacao['status'] = 1; // Disponível
+            case 2: // Ocupado → Devolução
+                (new DaoLista((new Conexao())->conectar(), Sessao::idusuario()))
+                    ->salvarDevolucao($movimentacao['veiculo']);
+                $novoStatus = 1;
                 break;
 
             default:
-                $movimentacao['status'] = 3; // Status desconhecido
+                $novoStatus = 3;
         }
 
         // Atualiza o status do veículo na tabela
-        $this->atualizarStatusVeiculo($movimentacao['veiculo'], $movimentacao['status']);
+        $this->atualizarStatusVeiculo($movimentacao['veiculo'], $novoStatus);
 
         header("Location:/syscheck/checklist/iniciarChecklistVeicular/" . $movimentacao['usuario'] . "/" . $movimentacao['veiculo']);
+    }
+
+    public function validarUsuarioVeiculo($fkVeiculo, $fkUsuarioAtual)
+    {
+        $dao = new DaoLista((new Conexao())->conectar(), Sessao::idusuario());
+
+        $status = $dao->verificarStatusVeiculo($fkVeiculo);
+
+        if ($status == 1) {
+            return true; // disponível
+        }
+
+        $dados = $dao->buscarUsuarioUltimaMovimentacao($fkVeiculo);
+
+        if (!$dados) {
+            return false;
+        }
+
+        if ($dados['FK_USUARIO'] != $fkUsuarioAtual) {
+            return [
+                'permitido' => false,
+                'nome' => $dados['NOME']
+            ];
+        }
+
+        return true;
     }
 }

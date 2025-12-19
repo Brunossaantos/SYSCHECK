@@ -103,7 +103,7 @@ $camposObrigatorios = ['idUsuario', 'nomeUsuario', 'statusUsuario'];
 
 
 foreach ($camposObrigatorios as $campo) {
-    if (empty($_SESSION[$campo])) {
+     if (!array_key_exists($campo, $_SESSION)) {
         var_dump($_SESSION);
         die("CAMPO FALTANDO: $campo");
     }

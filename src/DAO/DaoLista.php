@@ -107,7 +107,7 @@ class DaoLista
             if ($result->num_rows > 0) {
                 $row = $result->fetch_assoc();
 
-                return $row['STATUS_USO'];
+                return (int) $row['STATUS_USO'];
             }
 
             return 1;
@@ -120,7 +120,7 @@ class DaoLista
     function selecionarUltimaMovimentacao($movimentacao)
     {
         try {
-            $stmt = $this->conexao->prepare("SELECT ID_USO_VEICULO, FK_USUARIO, FK_VEICULO, DATA_HORA, DATA_HORA_DEVOLUCAO, STATUS_USO FROM {$this->tbl_lista_uso} WHERE FK_VEICULO = ? ORDER By ID_USO_VEICULO LIMIT 1");
+            $stmt = $this->conexao->prepare("SELECT ID_USO_VEICULO, FK_USUARIO, FK_VEICULO, DATA_HORA, DATA_HORA_DEVOLUCAO, STATUS_USO FROM {$this->tbl_lista_uso} WHERE FK_VEICULO = ? ORDER By ID_USO_VEICULO  DESC LIMIT 1");
             $stmt->bind_param("i", $movimentacao['veiculo']);
 
             $stmt->execute();
@@ -187,6 +187,28 @@ class DaoLista
         } catch (Exception $e) {
             Util::inserirErro($e, "salvarMovimentacao", $this->idUsuarioSessao);
             return -1;
+        }
+    }
+
+    function buscarUsuarioUltimaMovimentacao($fkVeiculo)
+    {
+        try {
+            $stmt = $this->conexao->prepare("
+            SELECT u.NOME, l.FK_USUARIO
+            FROM {$this->tbl_lista_uso} l
+            INNER JOIN " . TBL_USUARIOS . " u ON u.ID_USUARIO = l.FK_USUARIO
+            WHERE l.FK_VEICULO = ?
+            ORDER BY l.ID_USO_VEICULO DESC
+            LIMIT 1
+        ");
+            $stmt->bind_param("i", $fkVeiculo);
+            $stmt->execute();
+
+            $result = $stmt->get_result();
+            return $result->fetch_assoc() ?: null;
+        } catch (Exception $e) {
+            Util::inserirErro($e, "buscarUsuarioUltimaMovimentacao", $this->idUsuarioSessao);
+            return null;
         }
     }
 }

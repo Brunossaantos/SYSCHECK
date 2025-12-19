@@ -5,6 +5,7 @@ namespace controllers;
 require __DIR__ . '/../../vendor/autoload.php';
 
 use DateTime;
+use models\Usuario;
 use rn\RnLista;
 use rn\RnObjeto;
 use rn\RnChecklist;
@@ -13,12 +14,13 @@ use Util\Sessao;
 class ListaController
 {
 
-    private $rnLista;
+    /*private $rnLista;
 
     function __construct(RnLista $rnLista)
     {
-        $this->rnLista = $rnLista;
-    }
+       $this-> rnLista = $rnLista;
+
+    }*/
 
     function index()
     {
@@ -36,6 +38,7 @@ class ListaController
             if (empty($colaborador)) {
                 Sessao::salvarMensagemNaSessao("Usuário não encontrado na base do eTreinamento, contate a TI para verificar o cadastro.");
                 header("Location:/syscheck/lista");
+                exit;
             }
 
             $usuario = (new RnLista())->selecionarFkUsuario($colaborador['nome']);
@@ -43,6 +46,7 @@ class ListaController
             if ($usuario == null) {
                 Sessao::salvarMensagemNaSessao("Usuário não encontrado na base do Syscheck, contate a TI para verificar o cadastro.");
                 header("Location:/syscheck/lista");
+                exit;
             }
 
             $nome = $usuario->getNome();
@@ -71,19 +75,21 @@ class ListaController
 
     function verificarStatusVeiculo($fkVeiculo)
     {
-        echo (new RnLista())->verificarStatus($fkVeiculo);
+        echo (int) (new RnLista())->verificarStatus($fkVeiculo);
+        exit;
     }
 
-    function salvarMovimentacao($fkUsuario, $fkVeiculo, $status)
+
+    function salvarMovimentacao($fkUsuario, $fkVeiculo)
     {
 
         $movimentacao = [
             'usuario' => $fkUsuario,
             'veiculo' => $fkVeiculo,
             'data' => (new DateTime())->format('d/m/Y H:i:s'),
-            'status' => $status
         ];
 
         (new RnLista())->salvarMovimentacao($movimentacao);
+        exit;
     }
 }

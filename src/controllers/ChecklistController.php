@@ -373,8 +373,31 @@ class ChecklistController
 
             //Destinarios
             $email->setFrom('suporte.ti@udlog.com.br', 'Syscheck');
-            $email->addAddress($responsavel->getEmailResponsavel(), $responsavel->getNomeResponsavel());
+            switch ((int) $fkResponsavel) {
 
+                // VEICULAR
+                case 1:
+                    $email->addAddress('priscila.braz@udlog.com.br', 'Priscila');
+                    $email->addAddress('jessika.rodrigues@udlog.com.br', 'Jessika');
+                    $email->addAddress('ronaldo.cruz@udlog.com.br', 'Ronaldo');
+                    break;
+
+                // TI
+                case 2:
+                    $email->addAddress('suporte.ti@udlog.com.br', 'TI');
+
+                    break;
+
+                // EMPILHADEIRAS
+                case 3:
+                    $email->addAddress('priscila.braz@udlog.com.br', 'Priscila');
+                    break;
+
+                default:
+                    throw new Exception(
+                        "FK_RESPONSAVEL ({$fkResponsavel}) sem regra de e-mail definida."
+                    );
+            }
 
             //carregando o template do email
             $emailTemplate = file_get_contents(__DIR__ . '/../views/features/checklists/checklists/email_template.html');
