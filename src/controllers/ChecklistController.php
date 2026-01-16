@@ -81,7 +81,7 @@ class ChecklistController
             });
         } elseif ($usuario->getUserTipoChecklist() == 2) {
             // 2 = TI e Veicular
-            $tiposPermitidos = [1, 2]; // IDs dos tipos de checklist para TI e Veicular
+            $tiposPermitidos = [1, 6]; // IDs dos tipos de checklist para TI e Veicular
             $listaTipos = array_filter($listaTipos, function ($tipoChecklist) use ($tiposPermitidos) {
                 return in_array($tipoChecklist->getIdTipoChecklist(), $tiposPermitidos);
             });

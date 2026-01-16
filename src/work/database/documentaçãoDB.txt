@@ -1,0 +1,274 @@
+# Banco de Dados SYSCHECK
+
+## 1. Visão Geral
+
+O **SYSCHECK** é um banco de dados relacional projetado para suportar o sistema corporativo de controle operacional de **checklists**, **empilhadeiras**, **veículos**, **baterias**, **chamados técnicos** e **auditoria operacional**. O modelo foi estruturado para garantir rastreabilidade, histórico de uso, controle de responsabilidades e geração de indicadores.
+
+O banco utiliza **MySQL/MariaDB**, com engine **InnoDB**, permitindo integridade referencial via **chaves estrangeiras**.
+
+---
+
+## 2. Entidades Principais
+
+### 2.1 Usuários e Estrutura Organizacional
+
+#### tbl_usuarios
+
+Armazena os usuários do sistema.
+
+* **ID_USUARIO (PK)** – Identificador único
+* NOME – Nome completo
+* DEPARTAMENTO – Departamento do usuário
+* CARGO – Cargo ocupado
+* NOME_USUARIO – Login
+* SENHA – Senha (hash)
+* STATUS_USUARIO – Ativo/Inativo
+* TIPO_CHECKLIST – Tipo de checklist permitido
+
+Relacionamentos:
+
+* Referenciado por checklists, chamados, erros, uso de veículos e empilhadeiras.
+
+---
+
+#### tbl_departamentos
+
+Define os departamentos da empresa.
+
+* **ID_DEPARTAMENTO (PK)**
+* DESCRICAO_DEPARTAMENTO
+* STATUS_DEPARTAMENTO
+
+---
+
+### 2.2 Checklists
+
+#### tbl_checklists
+
+Registro principal de execução de checklists.
+
+* **ID_CHECKLIST (PK)**
+* FK_USUARIO → tbl_usuarios
+* FK_TIPO → tbl_tipos_checklist
+* FK_OBJETO → tbl_objetos
+* DATA_INICIO
+* DATA_FIM
+* STATUS_CHECKLIST
+
+Representa uma execução completa de checklist.
+
+---
+
+#### tbl_tipos_checklist
+
+Tipos de checklist disponíveis no sistema.
+
+* **ID_TIPO_CHECKLIST (PK)**
+* DESCRICAO_TIPO_CHECKLIST
+* FK_RESPONSAVEL → tbl_responsaveis
+* STATUS_TIPO_CHECKLIST
+
+---
+
+#### tbl_etapas_checklists
+
+Define as etapas que compõem cada tipo de checklist.
+
+* **ID_ETAPA_CHECKLIST (PK)**
+* FK_TIPO_CHECKLIST
+* TITULO_ETAPA
+* CONTEUDO_ETAPA
+* NUMERO_ETAPA
+* FOTO_OBRIGATORIA
+* CAMPO_ADICIONAL
+* STATUS_ETAPA
+
+Exclusão em cascata ao remover um tipo de checklist.
+
+---
+
+#### tbl_etapas_realizadas
+
+Registra a execução de cada etapa.
+
+* **ID_ETAPA_REALIZADA (PK)**
+* FK_CHECKLIST
+* FK_ETAPA
+* NUMERO_ETAPA
+* ACAO
+* OBSERVACAO
+
+---
+
+### 2.3 Objetos, Empilhadeiras e Veículos
+
+#### tbl_objetos
+
+Tabela genérica para equipamentos, empilhadeiras e veículos.
+
+* **ID_OBJETO (PK)**
+* DESCRICAO_OBJETO
+* FK_TIPO_CHECKLIST
+* STATUS_OBJETO
+
+---
+
+#### tbl_tipos_empilhadeiras
+
+Tipos de empilhadeiras cadastradas.
+
+* **ID_TIPO_EMPILHADEIRA (PK)**
+* DESC_TIPO_EMPILHADEIRA
+
+---
+
+#### tbl_usuario_empilhadeira
+
+Controle de uso de empilhadeiras por usuário.
+
+* **ID_USUARIO_EMPILHADEIRA (PK)**
+* FK_CHECKLIST
+* FK_USUARIO
+* FK_EMPILHADEIRA
+* DATA_HORA_INICIO
+* DATA_HORA_ENCERRAMENTO
+
+---
+
+#### tbl_lista_uso_veiculo
+
+Histórico de utilização de veículos.
+
+* **ID_USO_VEICULO (PK)**
+* FK_USUARIO
+* FK_VEICULO
+* DATA_HORA
+* DATA_HORA_DEVOLUCAO
+* STATUS_USO
+
+---
+
+### 2.4 Baterias e Horímetro
+
+#### tbl_baterias
+
+Cadastro de baterias.
+
+* **ID_BATERIA (PK)**
+* NUMERO_BATERIA (Único)
+* DESCRICAO_BATERIA
+* MEDIDAS
+* OBSERVACAO
+
+---
+
+#### tbl_empilhadeira_bateria
+
+Associação entre empilhadeira e bateria.
+
+* **ID_EMPILHADEIRA_BATERIA (PK)**
+* FK_CHECKLIST
+* FK_EMPILHADEIRA
+* FK_BATERIA
+* NIVEL_BATERIA
+* DATA_HORA
+
+---
+
+#### tbl_horimetro
+
+Registro de horímetro por checklist.
+
+* **ID_HORIMETRO (PK)**
+* FK_CHECKLIST
+* FK_EQUIPAMENTO
+* HORIMETRO
+
+---
+
+### 2.5 Chamados e Auditoria
+
+#### tbl_chamados
+
+Controle de chamados técnicos.
+
+* **ID_CHAMADO (PK)**
+* FK_ITEM_CHAMADO
+* DESCRICAO_CHAMADO
+* DATA_ABERTURA_CHAMADO
+* DATA_FINALIZACAO_CHAMADO
+* FK_USUARIO
+* STATUS_CHAMADO
+
+---
+
+#### tbl_erros
+
+Log de erros do sistema.
+
+* **ID_ERRO (PK)**
+* ERRO
+* ARQUIVO
+* LINHA
+* LOCAL
+* DATA_HORA
+* FK_USUARIO
+
+---
+
+### 2.6 Views
+
+#### v_checklist_visao_geral
+
+Visão consolidada de checklists.
+
+Campos:
+
+* NUMERO_CHECKLIST
+* USUARIO
+* TIPO
+* OBJETO
+* DATA_INICIO
+* DATA_FIM
+* STATUS_CHECKLIST
+
+---
+
+#### v_checklist_conteudo_etapas
+
+Exibe etapas executadas com conteúdo.
+
+---
+
+#### v_checklist_horimetro
+
+Apresenta horímetro inicial e final por checklist.
+
+---
+
+#### v_quantidade_etapas_checklist
+
+Quantidade de etapas por tipo de checklist.
+
+---
+
+## 3. Considerações Técnicas
+
+* Engine: InnoDB
+* Charset: utf8mb4
+* Integridade referencial garantida por FKs
+* Views utilizadas para relatórios e dashboards
+
+---
+
+## 4. Boas Práticas Recomendadas
+
+* Padronizar DATA/HORA para DATETIME futuramente
+* Criar índices compostos para relatórios
+* Versionar o schema no Git
+* Manter este documento sincronizado com o banco
+
+---
+
+**Autor:** Bruno Santos | Danilo Franco
+**Sistema:** SYSCHECK
