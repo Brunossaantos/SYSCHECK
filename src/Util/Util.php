@@ -19,15 +19,29 @@ class Util
 
     public static function inserirErro(Exception $e, $local, $idUsuarioSessao)
     {
-        $erro = new Erro(0, $e->getMessage(), $e->getFile(), $e->getLine(), $local, (new DateTime())->format('d/m/Y H:i:s'), $idUsuarioSessao);
-        (new DaoErro((new Conexao())->conectar(), $idUsuarioSessao))->inserirErro($erro);
+        $erro = new Erro(
+            0,
+            $e->getMessage(),
+            $e->getFile(),
+            $e->getLine(),
+            $local,
+            (new DateTime())->format('d/m/Y H:i:s'),
+            $idUsuarioSessao
+        );
+
+        (new DaoErro((new Conexao())->conectar(), $idUsuarioSessao))
+            ->inserirErro($erro);
+
+        Util::salvarLogArquivo($erro); // ✅ AQUI
         Util::enviarEmail($erro);
 
         if (Sessao::idusuario() == 3) {
-            $listaErros = (new DaoErro((new Conexao())->conectar(), $idUsuarioSessao))->recuperarListaDeErros();
+            $listaErros = (new DaoErro((new Conexao())->conectar(), $idUsuarioSessao))
+                ->recuperarListaDeErros();
             require_once __DIR__ . '/../views/features/deploy/deploy.php';
         }
     }
+
 
     private static function enviarEmail(Erro $erro)
     {
@@ -70,6 +84,31 @@ class Util
             error_log("Erro ao enviar e-mail: " . $e->getMessage());
         }
     }
+
+    private static function salvarLogArquivo(Erro $erro)
+    {
+        $logDir = __DIR__ . '/../../logs';
+
+        if (!is_dir($logDir)) {
+            mkdir($logDir, 0777, true);
+        }
+
+        $logFile = $logDir . '/system.log';
+
+        $mensagem = sprintf(
+            "[%s] Usuario: %s | Arquivo: %s | Linha: %s | Local: %s | Erro: %s%s",
+            $erro->getDataHora(),
+            Sessao::nomeUsuario(),
+            $erro->getArquivo(),
+            $erro->getLinha(),
+            $erro->getLocal(),
+            $erro->getErro(),
+            PHP_EOL
+        );
+
+        file_put_contents($logFile, $mensagem, FILE_APPEND);
+    }
+
 
     public static function statusChecklist($status)
     {

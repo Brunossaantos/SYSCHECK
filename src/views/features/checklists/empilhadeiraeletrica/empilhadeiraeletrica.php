@@ -82,7 +82,7 @@
                                                     </div>
                                                     <div class="form-group">
                                                         <label for="nivelbateria">Nivel da bateria</label>
-                                                        <input type="number" class="form-control" name="nivelbateria" placeholder="Digite o nível de carga da bateria" autocomplete="off" require min="0" max="100" step=1>
+                                                        <input type="number" class="form-control" name="nivelbateria" placeholder="Digite o nível de carga da bateria" autocomplete="off" required min="0" max="100" step=1>
                                                     </div>
                                                     <button class="btn btn-success">Iniciar checklist</button>
                                                     <a class="btn btn-warning" href="/syscheck/checklist/abrirchamado">Abrir chamado sobre carrinho ou berço</a>
