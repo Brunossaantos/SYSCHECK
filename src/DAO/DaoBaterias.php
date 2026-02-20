@@ -65,22 +65,43 @@ class DaoBaterias
         }
     }
 
+
+    // foi alterado
     function salvarBateriaDeUso($fkChecklist, $fkEmpilhadeira, $fkBateria, $nivelBateria, $dataEhora)
     {
         try {
-            $stmt = $this->conexao->prepare("INSERT INTO {$this->tbl_empilhadeira_bateria} (FK_CHECKLIST, FK_EMPILHADEIRA, FK_BATERIA, NIVEL_BATERIA, DATA_HORA) VALUES (?,?,?,?,?)");
-            $stmt->bind_param("iiiis", $fkChecklist, $fkEmpilhadeira, $fkBateria, $nivelBateria, $dataEhora);
+            $fkChecklist    = (int) $fkChecklist;
+            $fkEmpilhadeira = (int) $fkEmpilhadeira;
+            $fkBateria      = (int) $fkBateria;
+            $nivelBateria   = (int) $nivelBateria;
 
-            if ($stmt->execute()) {
-                return $stmt->insert_id;
+            if ($fkBateria <= 0) {
+                throw new Exception("FK_BATERIA não informada");
             }
 
-            return -1;
+            $stmt = $this->conexao->prepare("
+            INSERT INTO {$this->tbl_empilhadeira_bateria}
+            (FK_CHECKLIST, FK_EMPILHADEIRA, FK_BATERIA, NIVEL_BATERIA, DATA_HORA)
+            VALUES (?,?,?,?,?)
+        ");
+
+            $stmt->bind_param(
+                "iiiis",
+                $fkChecklist,
+                $fkEmpilhadeira,
+                $fkBateria,
+                $nivelBateria,
+                $dataEhora
+            );
+
+            $stmt->execute();
+            return $stmt->insert_id;
         } catch (Exception $e) {
             Util::inserirErro($e, "salvarBateriaDeUso", $this->idUsuarioSessao);
             return -2;
         }
     }
+
 
     function recuperarBateriasUtilizadas(int $fkChecklist)
     {

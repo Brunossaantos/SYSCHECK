@@ -56,12 +56,13 @@
             </div>
 
             <!-- Objeto/item checado -->
+
+             <!-- alteraçao aqui -->
             <div>
                 <label for="fkobjeto" class="block mb-2 font-medium">Item checado</label>
                 <select name="fkobjeto" id="fkobjeto" required
                     class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                    <option value="">Selecione o item/local </option
-                    require>
+                    <option value="" disabled selected>Selecione o item/local</option>
                 </select>
             </div>
 
