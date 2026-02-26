@@ -20,6 +20,8 @@ class Sessao
         $_SESSION['cargo'] = $usuario->getCargo();
         $_SESSION['nomeUsuario'] = $usuario->getNomeUsuario();
         $_SESSION['statusUsuario'] = $usuario->getStatusUsuario();
+        $_SESSION['fkEmpresa'] = $usuario->getFkEmpresa();
+        $_SESSION['idPerfil']       = $usuario->getFkPerfil();
     }
 
     public static function verificarSessao()
@@ -52,34 +54,52 @@ class Sessao
     }
 
     public static function retornarUsuarioLogado()
-{
-    if (session_status() == PHP_SESSION_NONE) {
-        session_start();
+    {
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $idUsuario       = $_SESSION['idUsuario']      ?? null;
+        $nome            = $_SESSION['nome']           ?? null;
+        $departamento    = $_SESSION['departamento']   ?? null;
+        $cargo           = $_SESSION['cargo']          ?? null;
+        $nomeUsuario     = $_SESSION['nomeUsuario']    ?? null;
+        $statusUsuario   = $_SESSION['statusUsuario']  ?? null;
+        $fkEmpresa       = $_SESSION['fkEmpresa']      ?? null;
+        $idPerfil        = $_SESSION['idPerfil']       ?? 0;
+
+        if (!$idUsuario || !$nomeUsuario) {
+            return null;
+        }
+
+        return new Usuario(
+            $idUsuario,
+            $nome,
+            $departamento,
+            $cargo,
+            $nomeUsuario,
+            null,
+            $statusUsuario,
+            null,
+            $fkEmpresa,
+            $idPerfil
+        );
     }
 
-    // Garante que as chaves existam, usando operador de coalescência nula
-    $idUsuario       = $_SESSION['idUsuario']      ?? null;
-    $nome            = $_SESSION['nome']           ?? null;
-    $departamento    = $_SESSION['departamento']   ?? null;
-    $cargo           = $_SESSION['cargo']          ?? null;
-    $nomeUsuario     = $_SESSION['nomeUsuario']    ?? null;
-    $statusUsuario   = $_SESSION['statusUsuario']  ?? null;
+    public static function recuperarMensagem()
+    {
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
 
-    // Se a sessão não está completa, apenas retorna null (sem redirecionar)
-    if (!$idUsuario || !$nomeUsuario) {
+        if (!empty($_SESSION['mensagem'])) {
+            $mensagem = $_SESSION['mensagem'];
+            unset($_SESSION['mensagem']); // Remove da sessão depois de recuperar
+            return $mensagem;
+        }
+
         return null;
     }
-
-    return new Usuario(
-        $idUsuario,
-        $nome,
-        $departamento,
-        $cargo,
-        $nomeUsuario,
-        null,
-        $statusUsuario
-    );
-}
 
 
     public static function idusuario()
@@ -106,15 +126,24 @@ class Sessao
 
     public static function salvarMensagemNaSessao($mensagem)
     {
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+
         $_SESSION['mensagem'] = $mensagem;
     }
 
     public static function mostrarMensagem()
     {
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+
         if (!empty($_SESSION['mensagem'])) {
             echo '<script>
-                    alert(' . json_encode($_SESSION['mensagem']) . ');                    
-                  </script>';
+                alert(' . json_encode($_SESSION['mensagem']) . ');
+              </script>';
+
             unset($_SESSION['mensagem']);
         }
     }

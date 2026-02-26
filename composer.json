@@ -17,7 +17,8 @@
             "constantes\\": "src/constantes/",
             "testern\\": "src/testeunitario/testesrn/",
             "session\\": "src/sessao/",
-            "lista\\": "src/lista/"       
+            "lista\\": "src/lista/", 
+            "service\\": "src/service/"      
         }
     }
 

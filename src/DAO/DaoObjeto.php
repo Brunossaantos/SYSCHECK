@@ -86,12 +86,17 @@ class DaoObjeto
         }
     }
 
-    function listarObjetosPeloTipo($fkTipo)
+    function listarObjetosPeloTipo($fkTipo, $fkEmpresa)
     {
         $listaObjetos = [];
         try {
-            $stmt = $this->conexao->prepare("SELECT ID_OBJETO, DESCRICAO_OBJETO, FK_TIPO_CHECKLIST, STATUS_OBJETO FROM {$this->tbl_objetos} WHERE FK_TIPO_CHECKLIST = ?");
-            $stmt->bind_param("i", $fkTipo);
+            $stmt = $this->conexao->prepare("
+    SELECT ID_OBJETO, DESCRICAO_OBJETO, FK_TIPO_CHECKLIST, STATUS_OBJETO 
+    FROM {$this->tbl_objetos} 
+    WHERE FK_TIPO_CHECKLIST = ? 
+    AND FK_EMPRESA = ?
+        ");
+            $stmt->bind_param("ii", $fkTipo, $fkEmpresa);
             $stmt->execute();
             $result = $stmt->get_result();
 
@@ -109,19 +114,27 @@ class DaoObjeto
         }
     }
 
-    function listarObjetos()
+    function listarObjetos($fkEmpresa)
     {
         $listaObjetos = [];
         try {
-            $stmt = $this->conexao->prepare("SELECT ID_OBJETO, DESCRICAO_OBJETO, FK_TIPO_CHECKLIST, STATUS_OBJETO FROM {$this->tbl_objetos}");
+            $stmt = $this->conexao->prepare("
+            SELECT ID_OBJETO, DESCRICAO_OBJETO, FK_TIPO_CHECKLIST, STATUS_OBJETO 
+            FROM {$this->tbl_objetos}
+            WHERE FK_EMPRESA = ?
+        ");
+
+            $stmt->bind_param("i", $fkEmpresa);
             $stmt->execute();
             $result = $stmt->get_result();
 
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    $objeto = new Objeto($row['ID_OBJETO'], $row['DESCRICAO_OBJETO'], $row['FK_TIPO_CHECKLIST'], $row['STATUS_OBJETO']);
-                    $listaObjetos[] = $objeto;
-                }
+            while ($row = $result->fetch_assoc()) {
+                $listaObjetos[] = new Objeto(
+                    $row['ID_OBJETO'],
+                    $row['DESCRICAO_OBJETO'],
+                    $row['FK_TIPO_CHECKLIST'],
+                    $row['STATUS_OBJETO']
+                );
             }
 
             return $listaObjetos;
@@ -131,25 +144,30 @@ class DaoObjeto
         }
     }
 
-    public function listarObjetosAtivos()
+    public function listarObjetosAtivos($fkEmpresa)
     {
         $listaObjetos = [];
         try {
-            $stmt = $this->conexao->prepare("SELECT ID_OBJETO, DESCRICAO_OBJETO, FK_TIPO_CHECKLIST, STATUS_OBJETO FROM {$this->tbl_objetos} WHERE STATUS_OBJETO = 1");
+            $stmt = $this->conexao->prepare("
+            SELECT ID_OBJETO, DESCRICAO_OBJETO, FK_TIPO_CHECKLIST, STATUS_OBJETO 
+            FROM {$this->tbl_objetos}
+            WHERE STATUS_OBJETO = 1
+            AND FK_EMPRESA = ?
+        ");
+
+            $stmt->bind_param("i", $fkEmpresa);
             $stmt->execute();
             $result = $stmt->get_result();
 
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    $objeto = new Objeto(
-                        $row['ID_OBJETO'],
-                        $row['DESCRICAO_OBJETO'],
-                        $row['FK_TIPO_CHECKLIST'],
-                        $row['STATUS_OBJETO']
-                    );
-                    $listaObjetos[] = $objeto;
-                }
+            while ($row = $result->fetch_assoc()) {
+                $listaObjetos[] = new Objeto(
+                    $row['ID_OBJETO'],
+                    $row['DESCRICAO_OBJETO'],
+                    $row['FK_TIPO_CHECKLIST'],
+                    $row['STATUS_OBJETO']
+                );
             }
+
             return $listaObjetos;
         } catch (Exception $e) {
             Util::inserirErro($e, "listarObjetosAtivos", $this->idUsuarioSessao);

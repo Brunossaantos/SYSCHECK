@@ -17,106 +17,120 @@ class UsuarioController
 {
     private $rnUsuario;
 
-    function __construct(RnUsuario $rnUsuario)
+    public function __construct(RnUsuario $rnUsuario)
     {
         $this->rnUsuario = $rnUsuario;
     }
 
-    function index()
+    // =========================
+    // Página inicial de usuários
+    // =========================
+    public function index()
     {
         require_once __DIR__ . '/../views/features/usuarios/index.php';
     }
 
-    function cadastrarUsuario()
+    // =========================
+    // Cadastrar novo usuário
+    // =========================
+    public function cadastrarUsuario()
     {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $nome          = $_POST['nome'] ?? null;
-            $departamento  = $_POST['departamento'] ?? null;
-            $cargo         = $_POST['cargo'] ?? null;
-            $nomeusuario   = $_POST['nomeusuario'] ?? null;
-            $statususuario = $_POST['statususuario'] ?? 1;
-            $checklist     = isset($_POST['checklistveicular']) ? 1 : 0;
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-            $usuario = new Usuario(
-                1,
+            // ===============================
+            // Recebe dados do formulário
+            // ===============================
+            $departamento  = 1;             // fixo
+            $cargo         = 2;             // fixo
+            $nomeUsuario   = $_POST['nomeusuario'] ?? '';
+            $nome          = $_POST['nome'] ?? '';
+            $statusUsuario = $_POST['statususuario'] ?? 1;
+            $checklist     = isset($_POST['checklistveicular']) ? 1 : 0;
+            $fk_empresa    = $_POST['fk_empresa'] ?? 1; // Matriz padrão
+            $fk_perfil     = $_POST['fk_perfil'] ?? 2;  // padrão perfil 2
+
+            // ===============================
+            // Cria objeto Usuario
+            // ===============================
+            $usuario = new \models\Usuario(
+                0,
                 $nome,
                 $departamento,
                 $cargo,
-                $nomeusuario,
-                "",
-                $statususuario,
-                $checklist
+                $nomeUsuario,
+                "",        // senha vazia
+                $statusUsuario,
+                $checklist,
+                $fk_empresa,
+                $fk_perfil
             );
 
+            // ===============================
+            // Chama RN para cadastrar
+            // ===============================
             $idUsuario = $this->rnUsuario->cadastrarNovoUsuario($usuario);
 
-            if ($idUsuario > 0) {
-                // ALERTA SUCESSO + RELOAD
-                echo "<script>
-                    alert('Usuário cadastrado com sucesso!');
+            // Mensagem de alerta e redirecionamento
+            echo "<script>
+                    alert('Usuário cadastrado com sucesso! ID: $idUsuario');
                     window.location.href = '/syscheck/usuario/cadastrarUsuario';
-                  </script>";
-            } else {
-                // ALERTA ERRO + RELOAD
-                echo "<script>
-                    alert('Não foi possível cadastrar o usuário no banco de dados.');
-                    window.location.href = '/syscheck/usuario/cadastrarUsuario';
-                  </script>";
-            }
-        } else {
-            $listaDepartamentos = (new RnDepartamento(Sessao::idusuario()))->listarDepartamentos();
-            require_once __DIR__ . '/../views/features/usuarios/cadastrousuario.php';
+                </script>";
+            exit;
         }
+
+        // GET → apenas carrega o formulário
+        require_once __DIR__ . '/../views/features/usuarios/cadastrousuario.php';
     }
 
-
-    function gerenciarUsuarios()
+    // =========================
+    // Gerenciar usuários
+    // =========================
+    public function gerenciarUsuarios()
     {
         $listaUsuario = $this->rnUsuario->listarUsuarios();
         require_once __DIR__ . '/../views/features/usuarios/consultausuario.php';
     }
 
-    function alterarCadastroUsuario($idUsuario)
+    // =========================
+    // Alterar cadastro de usuário
+    // =========================
+    public function alterarCadastroUsuario($idUsuario)
     {
         $usuario = $this->rnUsuario->selecionarUsuario($idUsuario);
         require_once __DIR__ . '/../views/features/usuarios/alterarcadastrousuario.php';
     }
 
-    function salvaralteracao()
+    // =========================
+    // Salvar alterações do usuário
+    // =========================
+    public function salvaralteracao()
     {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $idusuario     = $_POST['idusuario'] ?? null;
-            $nome          = $_POST['nome'] ?? null;
-            $departamento  = $_POST['departamento'] ?? null;
-            $cargo         = $_POST['cargo'] ?? null;
-            $nomeusuario   = $_POST['nomeusuario'] ?? null;
-            $statususuario = $_POST['statususuario'] ?? 1;
-            $checklist     = isset($_POST['checklistveicular']) ? 1 : 0;
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $usuario = new Usuario(
-                $idusuario,
-                $nome,
-                $departamento,
-                $cargo,
-                $nomeusuario,
-                "",
-                $statususuario,
-                $checklist
+                $_POST['idusuario'] ?? null,
+                $_POST['nome'] ?? null,
+                $_POST['departamento'] ?? null,
+                $_POST['cargo'] ?? null,
+                $_POST['nomeusuario'] ?? null,
+                "", // senha não alterada aqui
+                $_POST['statususuario'] ?? 1,
+                isset($_POST['checklistveicular']) ? 1 : 0
             );
 
-            $quantLinhas = $this->rnUsuario->alterarUsuario($usuario);
-
-            if ($quantLinhas > 0) {
-                echo "Cadastro alterado com sucesso";
-            } else {
-                echo "Não foi possível alterar o cadastro";
-            }
+            $this->rnUsuario->alterarUsuario($usuario);
+            Sessao::salvarMensagemNaSessao("Usuário alterado com sucesso.");
+            header("Location: /syscheck/usuario/gerenciarUsuarios");
+            exit;
         }
     }
 
-    function login()
+    // =========================
+    // Login de usuário
+    // =========================
+    public function login()
     {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $usuario = $_POST['usuario'] ?? null;
             $senha   = $_POST['senha'] ?? null;
 
@@ -124,29 +138,16 @@ class UsuarioController
             $rnLogin = new RnLogin(1);
 
             if ($rnLogin->verficarPrimerioAcesso($login)) {
-                $usuario = (new RnLogin(1))->selecionarUsuarioPeloNomeUsuario($login);
+                $usuario = $rnLogin->selecionarUsuarioPeloNomeUsuario($login);
                 require_once __DIR__ . '/../../cadastrar_senha.php';
+                exit;
             } else {
-                if ($rnLogin->realizarLogin($login)) {
-                    Sessao::iniciarSessao((new RnLogin(1))->selecionarUsuarioPeloNomeUsuario($login));
+                $usuarioLogado = $rnLogin->realizarLogin($login);
 
-                    $pendencia = (new RnChecklist(Sessao::idusuario()))->verificarPendencia(Sessao::idusuario());
-                    $existeChecklist = false;
-                    $checklistPendente = (new RnChecklist(Sessao::idusuario()))->verificarChecklistPendente(Sessao::idusuario());
-
-                    $horimetroPendente = $this->verificarSeExisteHorimetroPendente(Sessao::idusuario());
-
-                    if (!empty($horimetroPendente)) {
-                        $checklist = (new RnChecklist(Sessao::idusuario()))->selecionarChecklist($horimetroPendente['idChecklist']);
-                        $empilhadeira = (new RnObjeto(Sessao::idusuario()))->selecionarObjeto($horimetroPendente['empilhadeira']);
-                    }
-
-                    if ($checklistPendente) {
-                        $existeChecklist = true;
-                        $objeto = (new RnObjeto(Sessao::idusuario()))->selecionarObjeto($checklistPendente->getFkObjeto());
-                    }
-
+                if ($usuarioLogado) {
+                    Sessao::iniciarSessao($usuarioLogado);
                     require_once __DIR__ . '/../../index2.php';
+                    exit;
                 } else {
                     Sessao::salvarMensagemNaSessao("Usuário ou senha inválidos.");
                     header("Location: /syscheck");
@@ -158,31 +159,29 @@ class UsuarioController
         }
     }
 
-    public function verificarSeExisteHorimetroPendente($idUsuario)
+    // =========================
+    // Cadastro de senha para primeiro acesso
+    // =========================
+    public function cadastrarSenha()
     {
-        $rnChecklist = new RnChecklist($idUsuario);
-        $listaChecklists = $rnChecklist->recuperarHorimetrosPorChecklist($idUsuario);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-        if (!empty($listaChecklists)) {
-            $tamanhoDoArray = sizeof($listaChecklists);
-            if (is_null($listaChecklists[$tamanhoDoArray - 1]['horimetroFinal'])) {
-                return $listaChecklists[$tamanhoDoArray - 1];
-            }
-        }
-
-        return [];
-    }
-
-    function cadastrarSenha()
-    {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (($_POST['senha'] ?? '') === ($_POST['conf_senha'] ?? '')) {
-                $senha = $_POST['senha'];
-                $usuario = new Usuario($_POST['idUsuario'], null, null, null, null, $senha, null, null);
 
-                $cadSenha = (new RnUsuario(1))->cadastrarSenha($usuario);
+                $usuario = new Usuario(
+                    $_POST['idUsuario'] ?? null,
+                    "",
+                    "",
+                    "",
+                    "",
+                    $_POST['senha'] ?? '',
+                    1,
+                    0,
+                    0,
+                    0
+                );
 
-                if ($cadSenha > 0) {
+                if ($this->rnUsuario->alterarSenhaUsuario($usuario) > 0) {
                     Sessao::salvarMensagemNaSessao("Senha cadastrada com sucesso");
                     header("Location: /syscheck");
                     exit;
@@ -199,20 +198,34 @@ class UsuarioController
         }
     }
 
-    function excluirUsuario($idUsuario)
+    // =========================
+    // Desativar usuário (exclusão lógica)
+    // =========================
+    public function excluirUsuario($idUsuario)
     {
-        $rnUsuario = new RnUsuario(Sessao::idusuario());
-        $usuario = $rnUsuario->selecionarUsuario($idUsuario);
-
+        $usuario = $this->rnUsuario->selecionarUsuario($idUsuario);
         $usuario->setStatusUsuario(0);
-        if ($rnUsuario->alterarUsuario($usuario) > 0) {
-            echo "Usuario alterado com sucesso";
-        } else {
-            echo "Não foi possível alterar o cadastro do usuário";
-        }
+        $this->rnUsuario->alterarUsuario($usuario);
+        Sessao::salvarMensagemNaSessao("Usuário desativado com sucesso.");
+        header("Location: /syscheck/usuario/gerenciarUsuarios");
+        exit;
     }
+    public function ativarUsuario($idUsuario)
+{
+    $usuario = $this->rnUsuario->selecionarUsuario($idUsuario);
+    $usuario->setStatusUsuario(1);
+    $this->rnUsuario->alterarUsuario($usuario);
 
-    function logout()
+    \Util\Sessao::salvarMensagemNaSessao("Usuário ativado com sucesso.");
+
+    header("Location: /syscheck/usuario/gerenciarUsuarios");
+    exit;
+}
+
+    // =========================
+    // Logout
+    // =========================
+    public function logout()
     {
         session_start();
         session_destroy();

@@ -11,52 +11,55 @@ use database\Conexao;
 class RnUsuario
 {
     private $idUsuarioSessao;
+    private $daoUsuario;
 
     function __construct($idUsuarioSessao)
     {
         $this->idUsuarioSessao = $idUsuarioSessao;
+        $this->daoUsuario = new DaoUsuario(
+            (new Conexao())->conectar(),
+            $this->idUsuarioSessao
+        );
     }
 
     function cadastrarNovoUsuario(Usuario $usuario)
     {
-        $usuario->setSenha("");
-        return (new DaoUsuario((new Conexao())->conectar(), $this->idUsuarioSessao))->inserirUsuario($usuario);
+        // chama o método existente no DAO
+        return $this->daoUsuario->cadastrarNovoUsuario($usuario);
     }
 
     function alterarSenhaUsuario(Usuario $usuario)
     {
-        return (new DaoUsuario((new Conexao())->conectar(), $this->idUsuarioSessao))->alterarSenhaUsuario($usuario);
+        return $this->daoUsuario->alterarSenhaUsuario($usuario);
     }
 
     function selecionarUsuario($idUsuario)
     {
-        return (new DaoUsuario((new Conexao())->conectar(), $this->idUsuarioSessao))->selecionarUsuario($idUsuario);
+        return $this->daoUsuario->selecionarUsuario($idUsuario);
     }
 
     function alterarUsuario(Usuario $usuario)
     {
-        return (new DaoUsuario((new Conexao())->conectar(), $this->idUsuarioSessao))->alterarUsuario($usuario);
+        return $this->daoUsuario->alterarUsuario($usuario);
     }
 
     function listarUsuarios()
     {
-        return (new DaoUsuario((new Conexao())->conectar(), $this->idUsuarioSessao))->retornarListaUsuarios();
-    }
-
-    function cadastrarSenha(Usuario $usuario)
-    {
-        return (new DaoUsuario((new Conexao())->conectar(), $this->idUsuarioSessao))->alterarSenhaUsuario($usuario);
+        return $this->daoUsuario->retornarListaUsuarios();
     }
 
     function verificarSenha($idUsuario)
     {
-        $senha =  (new DaoUsuario((new Conexao())->conectar(), $this->idUsuarioSessao))->verificarSenha($idUsuario);
-        if (!is_null($senha)) {
-            if (empty($senha)) {
-                return "Senha não cadastrada";
-            } else {
-                return "Senha cadastrada";
-            }
+        $senha = $this->daoUsuario->verificarSenha($idUsuario);
+
+        if (is_null($senha)) {
+            return "Não cadastrada";
         }
+
+        if (empty($senha)) {
+            return "Não cadastrada";
+        }
+
+        return "Cadastrada";
     }
 }

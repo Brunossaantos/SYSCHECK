@@ -4,9 +4,11 @@ namespace rn;
 
 require __DIR__ . '/../../vendor/autoload.php';
 
+
 use models\Objeto;
 use DAO\DaoObjeto;
 use database\Conexao;
+use Util\Sessao;
 
 class RnObjeto
 {
@@ -34,17 +36,28 @@ class RnObjeto
 
     function listarObjetosPeloTipo($fkTipo)
     {
-        return (new DaoObjeto((new Conexao())->conectar(), $this->idUsuarioSessao))->listarObjetosPeloTipo($fkTipo);
+        $usuario = Sessao::retornarUsuarioLogado();
+        $fkEmpresa = $usuario->getFkEmpresa();
+
+        return (new DaoObjeto((new Conexao())->conectar(), $this->idUsuarioSessao))
+            ->listarObjetosPeloTipo($fkTipo, $fkEmpresa);
     }
 
-    function listarObejetos()
+    function listarObjetos()
     {
-        return (new DaoObjeto((new Conexao())->conectar(), $this->idUsuarioSessao))->listarObjetos();
+        $usuario = Sessao::retornarUsuarioLogado();
+        $fkEmpresa = $usuario->getFkEmpresa();
+
+        return (new DaoObjeto((new Conexao())->conectar(), $this->idUsuarioSessao))
+            ->listarObjetos($fkEmpresa);
     }
 
     public function listarObjetosAtivos()
     {
-        $daoObjeto = new DaoObjeto((new Conexao())->conectar(), $this->idUsuarioSessao);
-        return $daoObjeto->listarObjetosAtivos();
+        $usuario = Sessao::retornarUsuarioLogado();
+        $fkEmpresa = $usuario->getFkEmpresa();
+
+        return (new DaoObjeto((new Conexao())->conectar(), $this->idUsuarioSessao))
+            ->listarObjetosAtivos($fkEmpresa);
     }
 }

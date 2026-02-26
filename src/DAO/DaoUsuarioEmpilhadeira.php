@@ -86,16 +86,27 @@ class DaoUsuarioEmpilhadeira
     function verificarChecklistAberto($idUsuario)
     {
         try {
-            $stmt = $this->conexao->prepare("SELECT ID_USUARIO_EMPILHADEIRA, FK_CHECKLIST, FK_USUARIO, FK_EMPILHADEIRA, DATA_HORA_INICIO, DATA_HORA_ENCERRAMENTO FROM {$this->tbl_usuario_empilhadeira} WHERE FK_USUARIO = ? ORDER BY ID_USUARIO_EMPILHADEIRA DESC LIMIT 1");
-            $stmt->bind_param("i", $idUsuario);
+            $stmt = $this->conexao->prepare(
+                "SELECT ID_USUARIO_EMPILHADEIRA, 
+                    FK_CHECKLIST, 
+                    FK_USUARIO, 
+                    FK_EMPILHADEIRA, 
+                    DATA_HORA_INICIO, 
+                    DATA_HORA_ENCERRAMENTO
+             FROM {$this->tbl_usuario_empilhadeira}
+             WHERE FK_USUARIO = ?
+             AND DATA_HORA_ENCERRAMENTO = '0'
+             ORDER BY ID_USUARIO_EMPILHADEIRA DESC
+             LIMIT 1"
+            );
 
+            $stmt->bind_param("i", $idUsuario);
             $stmt->execute();
             $result = $stmt->get_result();
 
-            $checklistAberto = [];
-
-            if ($result->num_rows > 0) {
+            if ($result && $result->num_rows > 0) {
                 $row = $result->fetch_assoc();
+
                 return [
                     'ID_USUARIO_EMPILHADEIRA' => $row['ID_USUARIO_EMPILHADEIRA'],
                     'FK_CHECKLIST' => $row['FK_CHECKLIST'],
@@ -106,7 +117,7 @@ class DaoUsuarioEmpilhadeira
                 ];
             }
 
-            return $checklistAberto;
+            return [];
         } catch (Exception $e) {
             Util::inserirErro($e, "verificarChecklistAberto", $this->idUsuarioSessao);
             return null;

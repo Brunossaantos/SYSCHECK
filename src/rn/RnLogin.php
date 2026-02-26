@@ -38,20 +38,18 @@ class RnLogin
     }
 
     function realizarLogin(Login $login)
-    {
-        $loginBd = (new DaoLogin((new Conexao())->conectar(), $this->idUsuarioSessao))
-            ->realizarLogin($login);
+{
+    $usuario = (new DaoLogin((new Conexao())->conectar(), $this->idUsuarioSessao))
+        ->selecionarUsuarioPeloNome($login);
 
-        // Caso não encontre usuário, já retorna false
-        if ($loginBd === null) {
-            return false;
-        }
-
-        // Verifica senha
-        if (password_verify($login->getSenha(), $loginBd->getSenha())) {
-            return true;
-        }
-
-        return false;
+    if ($usuario === null) {
+        return null;
     }
+
+    if (password_verify($login->getSenha(), $usuario->getSenha())) {
+        return $usuario; // 👈 retorna o objeto completo
+    }
+
+    return null;
+}
 }

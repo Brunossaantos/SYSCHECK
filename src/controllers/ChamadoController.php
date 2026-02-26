@@ -71,27 +71,11 @@ class ChamadoController
      * Enriquecimento dos modelos com nome do usuário e nome do equipamento.
      */
     function gerenciarChamados()
-    {
-        $listaChamados = (new RnChamado(Sessao::idusuario()))->listarChamados();
-        $rnUsuario = new RnUsuario(Sessao::idusuario());
-        $rnObjeto = new RnObjeto(Sessao::idusuario());
+{
+    $listaChamados = (new RnChamado(Sessao::idusuario()))->listarChamados();
 
-        /** Preenche informações adicionais no objeto Chamado */
-        foreach ($listaChamados as $chamado) {
-
-            // Obtém nome do usuário
-            $usuario = $rnUsuario->selecionarUsuario($chamado->getFkUsuario());
-            $nomeUsuario = $usuario ? ($usuario->getNome() ?? $usuario->getNOME() ?? "Desconhecido") : "Desconhecido";
-            $chamado->setNomeUsuario($nomeUsuario);
-
-            // Obtém nome do equipamento
-            $equip = $rnObjeto->selecionarObjeto($chamado->getFkItemChamado());
-            $nomeEquip = $equip && method_exists($equip, "getDescricaoObjeto") ? $equip->getDescricaoObjeto() : "Sem equipamento";
-            $chamado->setNomeEquipamento($nomeEquip);
-        }
-
-        require_once __DIR__ . '/../views/features/chamados/gerenciarchamados.php';
-    }
+    require_once __DIR__ . '/../views/features/chamados/gerenciarchamados.php';
+}
 
     /** Carrega view de follow-up (uso simples) */
     function followupChamado()

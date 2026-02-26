@@ -100,7 +100,13 @@
                 </tr>
             </thead>
             <tbody>
+                <?php
+if (empty($listaChecklists)) {
+    echo '<p class="text-red-400 text-center mt-4">Nenhum checklist encontrado.</p>';
+}
+?>
                 <?php foreach ($listaChecklists as $checklist) { ?>
+                
                     <tr class="border-b border-gray-700 hover:bg-gray-700">
                         <td class="py-2 px-4"><a href="/syscheck/checklist/checklistFinalizado/<?= $checklist->getIdChecklist() ?>" class="text-blue-400 hover:underline"><?= $checklist->getIdChecklist() ?></a></td>
                         <td class="py-2 px-4"><?= $checklist->getDataInicio() ?></td>

@@ -14,9 +14,8 @@ class DaoInterface
 {
     private $conexao;
     private $idUsuarioSessao;
-    private $tbl_departamentos = tbl_deparmantos;
-    private $tbl_colaboradores = tbl_colaboradores;
-
+    private $tbl_departamentos = \TBL_ETREINAMENTO_DEPARTAMENTOS;
+    private $tbl_colaboradores = \TBL_ETREINAMENTO_COLABORADORES;
 
     function __construct($conexao, $idUsuarioSessao)
     {

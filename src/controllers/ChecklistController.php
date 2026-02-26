@@ -2,6 +2,10 @@
 
 namespace controllers;
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 require __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/../../config/initEnv.php';
 
@@ -48,47 +52,58 @@ class ChecklistController
         $this->rnChecklist = $rnChecklist;
     }
 
-
-
     function index()
     {
-        $usuario = (new RnUsuario(Sessao::idusuario()))->selecionarUsuario(Sessao::idusuario());
-        $horimetroPendente = (new UsuarioController((new RnUsuario(Sessao::idusuario()))))->verificarSeExisteHorimetroPendente(Sessao::idusuario());
-        $liberarNovoChecklist = true;
+        $idUsuario = Sessao::idusuario();
 
-        if (!empty($horimetroPendente)) {
-            $liberarNovoChecklist = false;
-        }
+        $usuario = (new RnUsuario($idUsuario))
+            ->selecionarUsuario($idUsuario);
+
+        $rnChecklist = new RnChecklist($idUsuario);
+        $rnUsuarioEmp = new RnusuarioEmpilhadeira($idUsuario);
+
+        // 🔹 Horímetro pendente (nova regra)
+        $horimetroPendente = (new RnChecklist(Sessao::idusuario()))
+            ->verificarSeExisteHorimetroPendente();
+        // 🔹 Expediente aberto (regra antiga que sumiu)
+        $checklistAberto = $rnUsuarioEmp->verificarChecklistAberto($idUsuario);
+        $existeChecklistAberto = !empty($checklistAberto);
 
         require_once __DIR__ . '/../views/features/checklists/index.php';
     }
 
     function iniciarChecklist()
     {
-        $usuario = (new RnUsuario(Sessao::idusuario()))->selecionarUsuario(Sessao::idusuario());
-        $listaTipos = (new RnTipoChecklist(Sessao::idusuario()))->retornarListaTiposChecklist();
+        $idUsuario = Sessao::idusuario();
 
-        if ($usuario->getUserTipoChecklist() == 0) {
-            // 0 = Empilhadeiras em geral
-            $tiposPermitidos = [3, 4, 14]; // seus tipos de empilhadeira
-            $listaTipos = array_filter($listaTipos, function ($tipoChecklist) use ($tiposPermitidos) {
-                return in_array($tipoChecklist->getIdTipoChecklist(), $tiposPermitidos);
-            });
-        } elseif ($usuario->getUserTipoChecklist() == 1) {
-            // 1 = Veicular
-            $listaTipos = array_filter($listaTipos, function ($tipoChecklist) {
-                return $tipoChecklist->getIdTipoChecklist() === 1;
-            });
-        } elseif ($usuario->getUserTipoChecklist() == 2) {
-            // 2 = TI e Veicular
-            $tiposPermitidos = [1, 6]; // IDs dos tipos de checklist para TI e Veicular
-            $listaTipos = array_filter($listaTipos, function ($tipoChecklist) use ($tiposPermitidos) {
-                return in_array($tipoChecklist->getIdTipoChecklist(), $tiposPermitidos);
-            });
+        if (!$idUsuario) {
+            header("Location: /login");
+            exit;
         }
+
+        // 🔹 Recupera usuário
+        $rnUsuario = new RnUsuario($idUsuario);
+        $usuario   = $rnUsuario->selecionarUsuario($idUsuario);
+
+        if (!$usuario) {
+            header("Location: /login");
+            exit;
+        }
+
+        // 🔹 Recupera lista de tipos ativos
+        $rnTipoChecklist = new RnTipoChecklist($idUsuario);
+        $listaTipos      = $rnTipoChecklist->retornarListaTiposChecklist();
+
+        // 🔹 Aplica regra de permissão por perfil
+        $rnChecklist = new RnChecklist($idUsuario);
+        $listaTipos  = $rnChecklist->filtrarTiposPorPerfil(
+            $listaTipos,
+            (int) $usuario->getFkPerfil()
+        );
+
         require_once __DIR__ . '/../views/features/checklists/checklists/iniciarchecklist.php';
     }
-
+   
     function iniciarChecklistVeicular($fkUsuario, $fkObjeto)
     {
         $fkTipo = 1;
@@ -537,9 +552,8 @@ class ChecklistController
         $filtros = [];
 
         $listaTipos = (new RnTipoChecklist(Sessao::idusuario()))->retornarListaTiposChecklist();
-        $listaObjetos = (new RnObjeto(Sessao::idusuario()))->listarObejetos();
+        $listaObjetos = (new RnObjeto(Sessao::idusuario()))->listarObjetos();
         $listaUsuarios = (new RnUsuario(Sessao::idusuario()))->listarUsuarios();
-
 
         if (isset($_GET['numero']) && !empty($_GET['numero'])) {
             $filtros['numero'] = $_GET['numero'];
@@ -567,11 +581,9 @@ class ChecklistController
             $filtros['status'] = 0;
         }
 
-        if (!empty($filtros)) {
-            $listaChecklists = $this->rnChecklist->listarComFiltros($filtros);
-        } else {
-            $listaChecklists = $this->rnChecklist->listarChecklists();
-        }
+        $listaChecklists = !empty($filtros) 
+            ? $this->rnChecklist->listarComFiltros($filtros) 
+            : $this->rnChecklist->listarChecklists();
 
         require_once __DIR__ . '/../views/features/checklists/checklists/listachecklists.php';
     }
@@ -596,13 +608,21 @@ class ChecklistController
         $fkTipo = end($partes);
 
         if (is_numeric($fkTipo)) {
-            $listaObjetos = (new RnObjeto(Sessao::idusuario()))->listarObjetosPeloTipo($fkTipo);
+
+            // 🔹 pegar usuário logado
+            $usuario = Sessao::retornarUsuarioLogado();
+            $fkEmpresa = $usuario->getFkEmpresa();
+
+            $listaObjetos = (new RnObjeto(Sessao::idusuario()))
+                ->listarObjetosPeloTipo($fkTipo);
 
             $option = '';
 
             foreach ($listaObjetos as $objeto) {
                 if ($objeto->getStatusObjeto() > 0) {
-                    $option .= '<option value="' . htmlspecialchars($objeto->getIdObjeto()) . '">' . htmlspecialchars($objeto->getDescricaoObjeto()) . '</option>';
+                    $option .= '<option value="' . htmlspecialchars($objeto->getIdObjeto()) . '">'
+                        . htmlspecialchars($objeto->getDescricaoObjeto())
+                        . '</option>';
                 }
             }
 

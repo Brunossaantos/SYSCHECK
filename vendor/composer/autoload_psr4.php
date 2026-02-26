@@ -10,6 +10,7 @@ return array(
     'testern\\' => array($baseDir . '/src/testeunitario/testesrn'),
     'teste\\' => array($baseDir . '/src/testeunitario'),
     'session\\' => array($baseDir . '/src/sessao'),
+    'service\\' => array($baseDir . '/src/service'),
     'rn\\' => array($baseDir . '/src/rn'),
     'models\\' => array($baseDir . '/src/models'),
     'lista\\' => array($baseDir . '/src/lista'),

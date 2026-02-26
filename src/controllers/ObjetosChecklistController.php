@@ -50,7 +50,7 @@ class ObjetosChecklistController
 
     function listarobjetos()
     {
-        $listaObjetos = (new RnObjeto(Sessao::idusuario()))->listarObejetos();
+        $listaObjetos = (new RnObjeto(Sessao::idusuario()))->listarObjetos();
         $listaTipos = (new RnTipoChecklist(Sessao::idusuario()))->retornarListaTiposChecklist();
 
         //recuperar lista de objetos

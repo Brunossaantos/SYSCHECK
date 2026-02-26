@@ -343,4 +343,125 @@ class DaoChamado
             return [];
         }
     }
+
+    public function listarChamadosPorUsuario($idUsuario)
+{
+    try {
+        $sql = "
+            SELECT 
+                c.ID_CHAMADO,
+                c.FK_ITEM_CHAMADO,
+                c.DESCRICAO_CHAMADO,
+                c.DATA_ABERTURA_CHAMADO,
+                c.DATA_FINALIZACAO_CHAMADO,
+                c.FK_USUARIO,
+                c.STATUS_CHAMADO,
+
+                u.NOME AS nomeUsuario,
+                o.DESCRICAO_OBJETO AS nomeEquipamento
+
+            FROM {$this->tbl_chamados} c
+            LEFT JOIN tbl_usuarios u ON u.ID_USUARIO = c.FK_USUARIO
+            LEFT JOIN tbl_objetos o ON o.ID_OBJETO = c.FK_ITEM_CHAMADO
+            WHERE c.FK_USUARIO = ?
+            ORDER BY c.ID_CHAMADO DESC
+        ";
+
+        $stmt = $this->conexao->prepare($sql);
+        if (!$stmt) {
+            throw new \Exception("Erro ao preparar SQL: ({$this->conexao->errno}) {$this->conexao->error}");
+        }
+
+        $stmt->bind_param("i", $idUsuario);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $lista = [];
+        while ($row = $result->fetch_assoc()) {
+            $chamado = new \models\Chamado(
+                $row['ID_CHAMADO'],
+                $row['FK_ITEM_CHAMADO'],
+                $row['DESCRICAO_CHAMADO'],
+                $row['DATA_ABERTURA_CHAMADO'],
+                $row['DATA_FINALIZACAO_CHAMADO'],
+                $row['FK_USUARIO'],
+                $row['STATUS_CHAMADO']
+            );
+
+            // Preenche dados adicionais
+            $chamado->setNomeUsuario($row['nomeUsuario'] ?? "Desconhecido");
+            $chamado->setNomeEquipamento($row['nomeEquipamento'] ?? "Sem equipamento");
+
+            $lista[] = $chamado;
+        }
+
+        return $lista;
+    } catch (\Exception $e) {
+        \Util\Util::inserirErro($e, "listarChamadosPorUsuario", $this->idUsuarioSessao);
+        return [];
+    }
+}
+
+public function listarChamadosPorPerfis(array $perfis)
+{
+    try {
+
+        // Monta placeholders (?, ?, ?) dinamicamente
+        $placeholders = implode(',', array_fill(0, count($perfis), '?'));
+        $types = str_repeat('i', count($perfis));
+
+        $sql = "
+            SELECT 
+                c.ID_CHAMADO,
+                c.FK_ITEM_CHAMADO,
+                c.DESCRICAO_CHAMADO,
+                c.DATA_ABERTURA_CHAMADO,
+                c.DATA_FINALIZACAO_CHAMADO,
+                c.FK_USUARIO,
+                c.STATUS_CHAMADO,
+
+                u.NOME AS nomeUsuario,
+                u.FK_PERFIL,
+                o.DESCRICAO_OBJETO AS nomeEquipamento
+
+            FROM {$this->tbl_chamados} c
+            LEFT JOIN tbl_usuarios u ON u.ID_USUARIO = c.FK_USUARIO
+            LEFT JOIN tbl_objetos o ON o.ID_OBJETO = c.FK_ITEM_CHAMADO
+
+            WHERE u.FK_PERFIL IN ($placeholders)
+            ORDER BY c.ID_CHAMADO DESC
+        ";
+
+        $stmt = $this->conexao->prepare($sql);
+        $stmt->bind_param($types, ...$perfis);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $lista = [];
+
+        while ($row = $result->fetch_assoc()) {
+
+            $chamado = new \models\Chamado(
+                $row['ID_CHAMADO'],
+                $row['FK_ITEM_CHAMADO'],
+                $row['DESCRICAO_CHAMADO'],
+                $row['DATA_ABERTURA_CHAMADO'],
+                $row['DATA_FINALIZACAO_CHAMADO'],
+                $row['FK_USUARIO'],
+                $row['STATUS_CHAMADO']
+            );
+
+            $chamado->setNomeUsuario($row['nomeUsuario'] ?? "Desconhecido");
+            $chamado->setNomeEquipamento($row['nomeEquipamento'] ?? "Sem equipamento");
+
+            $lista[] = $chamado;
+        }
+
+        return $lista;
+
+    } catch (\Exception $e) {
+        \Util\Util::inserirErro($e, "listarChamadosPorPerfis", $this->idUsuarioSessao);
+        return [];
+    }
+}
 }

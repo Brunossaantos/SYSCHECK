@@ -24,13 +24,16 @@ define("TBL_CARGA_BATERIA_COMUM", "tbl_carga_bateria_comum");
 define("TBL_LISTA_USO_VEICULO", "tbl_lista_uso_veiculo");
 define("TBL_LOG_FINALIZACAO_HORIMETRO", "tbl_log_finalizacao_horimetro");
 define("TBL_FOLLOW_UP_CHAMADOS", "tbl_follow_up_chamados");
-define("TBL_LOCAIS", 'tbl_locais');
-define("TBL_EQUIPAMENTOS_LOCAL", 'tbl_equipamentos_local');
+define("TBL_LOCAIS", "tbl_locais");
+define("TBL_EQUIPAMENTOS_LOCAL", "tbl_equipamentos_local");
 
+// NOVAS TABELAS - PERMISSÕES
+define("TBL_PERMISSOES", "tbl_permissoes");
+define("TBL_PERFIL_PERMISSAO", "tbl_perfil_permissao");
 
 //tabelas etreinamento
-define("tbl_deparmantos", "DEPARTAMENTOS");
-define("tbl_colaboradores", "COLABORADORES");
+define("TBL_ETREINAMENTO_DEPARTAMENTOS", "departamentos");
+define("TBL_ETREINAMENTO_COLABORADORES", "colaboradores");
 
 //views
 define("V_CHECKLIS_VISAO_GERAL", "v_checklist_visao_geral");

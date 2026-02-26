@@ -11,10 +11,22 @@ class Usuario
     private $nomeUsuario;
     private $senha;
     private $statusUsuario;
-    private $tipoChecklist;
+    private $checklistVeicular; // ALTERADO
+    private $fkEmpresa;
+    private $fkPerfil;
 
-    function __construct($idUsuario, $nome, $departamento, $cargo, $nomeUsuario, $senha, $statusUsuario, $tipoChecklist = 0)
-    {
+    function __construct(
+        $idUsuario,
+        $nome,
+        $departamento,
+        $cargo,
+        $nomeUsuario,
+        $senha,
+        $statusUsuario,
+        $checklistVeicular = 0,
+        $fkEmpresa = 0,
+        $fkPerfil = 0
+    ) {
         $this->setIdUsuario($idUsuario);
         $this->setNome($nome);
         $this->setDepartamento($departamento);
@@ -22,14 +34,18 @@ class Usuario
         $this->setNomeUsuario($nomeUsuario);
         $this->setSenha($senha);
         $this->setStatusUsuario($statusUsuario);
-        $this->setUserTipoChecklist($tipoChecklist);
+        $this->setChecklistVeicular($checklistVeicular);
+        $this->setFkEmpresa($fkEmpresa);
+        $this->setFkPerfil($fkPerfil);
     }
 
-    //set
+    // =========================
+    // SETTERS
+    // =========================
 
     function setIdUsuario($idUsuario)
     {
-        $this->idUsuario = $idUsuario;
+        $this->idUsuario = (int) $idUsuario;
     }
 
     function setNome($nome)
@@ -59,15 +75,27 @@ class Usuario
 
     function setStatusUsuario($statusUsuario)
     {
-        $this->statusUsuario = $statusUsuario;
+        $this->statusUsuario = (int) $statusUsuario;
     }
 
-    function setUserTipoChecklist($tipoChecklist)
+    function setChecklistVeicular($checklistVeicular)
     {
-        $this->tipoChecklist = $tipoChecklist;
+        $this->checklistVeicular = (int) $checklistVeicular;
     }
 
-    //get
+    function setFkEmpresa($fkEmpresa)
+    {
+        $this->fkEmpresa = (int) $fkEmpresa;
+    }
+
+    function setFkPerfil($fkPerfil)
+    {
+        $this->fkPerfil = (int) $fkPerfil;
+    }
+
+    // =========================
+    // GETTERS
+    // =========================
 
     function getIdUsuario()
     {
@@ -104,8 +132,18 @@ class Usuario
         return $this->statusUsuario;
     }
 
-    function getUserTipoChecklist()
+    function getChecklistVeicular()
     {
-        return $this->tipoChecklist;
+        return $this->checklistVeicular;
+    }
+
+    function getFkEmpresa()
+    {
+        return $this->fkEmpresa;
+    }
+
+    function getFkPerfil()
+    {
+        return $this->fkPerfil;
     }
 }

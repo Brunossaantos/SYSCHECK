@@ -25,6 +25,7 @@ class ComposerStaticInit8d070178755c320c69f93ee4800660ef
         's' => 
         array (
             'session\\' => 8,
+            'service\\' => 8,
         ),
         'r' => 
         array (
@@ -89,6 +90,10 @@ class ComposerStaticInit8d070178755c320c69f93ee4800660ef
         'session\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src/sessao',
+        ),
+        'service\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/src/service',
         ),
         'rn\\' => 
         array (

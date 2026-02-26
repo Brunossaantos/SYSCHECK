@@ -42,18 +42,24 @@ class RnusuarioEmpilhadeira
 
 
     function verificarChecklistAberto($fkUsuario)
-    {
+{
+    $checklistAberto = (new DaoUsuarioEmpilhadeira(
+        (new Conexao())->conectar(),
+        $this->idUsuarioSessao
+    ))->verificarChecklistAberto($fkUsuario);
 
-        $checklistAberto = (new DaoUsuarioEmpilhadeira((new Conexao())->conectar(), $this->idUsuarioSessao))->verificarChecklistAberto($fkUsuario);
-
-        if (!empty($checklistAberto) && $checklistAberto['DATA_FIM'] == 0) {
-            //echo "condicional atendida";
-            return $checklistAberto;
-        } else {
-            //echo "condicional não atendida";
-            return "";
-        }
+    if (
+        !empty($checklistAberto)
+        && (
+            empty($checklistAberto['DATA_HORA_ENCERRAMENTO']) ||
+            $checklistAberto['DATA_HORA_ENCERRAMENTO'] == 0
+        )
+    ) {
+        return $checklistAberto;
     }
+
+    return null;
+}
 
     function trocarBateria($fkChecklist)
     {
