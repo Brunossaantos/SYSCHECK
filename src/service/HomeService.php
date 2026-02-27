@@ -5,19 +5,25 @@ namespace service;
 use rn\RnObjeto;
 use rn\RnUsuarioEmpilhadeira;
 use rn\RnChecklist;
+use DAO\DaoChecklist;
 use Util\Util;
 
 class HomeService
 {
+    private $conexao;
     private int $idUsuario;
     private int $idPerfil;
+    private int $idEmpresa;
+
     private bool $existeBloqueio = false;
     private array $cards = [];
 
-    public function __construct(int $idUsuario, int $idPerfil)
+    public function __construct($conexao, int $idUsuario, int $idPerfil, int $idEmpresa)
     {
+        $this->conexao   = $conexao;
         $this->idUsuario = $idUsuario;
-        $this->idPerfil = $idPerfil;
+        $this->idPerfil  = $idPerfil;
+        $this->idEmpresa = $idEmpresa;
 
         $this->gerarCards();
     }
@@ -34,29 +40,52 @@ class HomeService
 
     private function gerarCards(): void
     {
+        // RN de usuário empilhadeira
         $rnUsuarioEmpilhadeira = new RnUsuarioEmpilhadeira($this->idUsuario);
         $statusUso = $rnUsuarioEmpilhadeira->verificarChecklistAberto($this->idUsuario);
 
-        $rnChecklist = new RnChecklist($this->idUsuario);
-        $checklistPendente = $rnChecklist->verificarChecklistPendente($this->idUsuario);
+        // DAOChecklist agora recebe os 3 argumentos obrigatórios
+        $daoChecklist = new DaoChecklist(
+            $this->conexao,   // conexão mysqli
+            $this->idUsuario, // ID do usuário logado
+            $this->idPerfil   // Perfil do usuário logado
+        );
+
+        $rnChecklist = new RnChecklist(
+            $daoChecklist,
+            $this->idUsuario,
+            $this->idPerfil,
+            $this->idEmpresa
+        );
+
+        // Checklist pendente e horímetro
+        $checklistPendente = $rnChecklist->verificarChecklistPendentes($this->idUsuario);
         $horimetroPendente = $rnChecklist->verificarSeExisteHorimetroPendente();
 
         $existeChecklist = !empty($checklistPendente);
+
+        // Objeto pendente do checklist
         $objetoPendente = $existeChecklist
-            ? (new RnObjeto($this->idUsuario))->selecionarObjeto($checklistPendente->getFkObjeto())
+            ? (new RnObjeto($this->idUsuario))
+                ->selecionarObjeto($checklistPendente->getFkObjeto())
             : null;
 
-        // =======================
-        // ALERTAS
-        // =======================
+        /* ==========================
+           ALERTA HORÍMETRO
+        ========================== */
         if (!empty($horimetroPendente)) {
+
             $objetoHorimetro = (new RnObjeto($this->idUsuario))
                 ->selecionarObjeto($horimetroPendente['empilhadeira']);
-            $descricaoObjeto = $objetoHorimetro ? $objetoHorimetro->getDescricaoObjeto() : "Empilhadeira";
+
+            $descricaoObjeto = $objetoHorimetro
+                ? $objetoHorimetro->getDescricaoObjeto()
+                : "Empilhadeira";
 
             $this->cards[] = [
                 'titulo' => 'Horímetro pendente',
-                'descricao' => "Você iniciou um checklist para <strong>{$descricaoObjeto}</strong> e não informou o horímetro final.<br>É necessário finalizar.",
+                'descricao' =>
+                "Você iniciou um checklist para <strong>{$descricaoObjeto}</strong> e não informou o horímetro final.<br>É necessário finalizar.",
                 'cor' => 'red',
                 'links' => [
                     [
@@ -68,12 +97,19 @@ class HomeService
             ];
         }
 
+        /* ==========================
+           ALERTA CHECKLIST
+        ========================== */
         if ($existeChecklist) {
-            $descricaoObjeto = $objetoPendente ? $objetoPendente->getDescricaoObjeto() : "Objeto não definido";
+
+            $descricaoObjeto = $objetoPendente
+                ? $objetoPendente->getDescricaoObjeto()
+                : "Objeto não definido";
 
             $this->cards[] = [
                 'titulo' => 'Checklist pendente',
-                'descricao' => "Você possui um checklist pendente para <strong>{$descricaoObjeto}</strong>.<br>Continue de onde parou.",
+                'descricao' =>
+                "Você possui um checklist pendente para <strong>{$descricaoObjeto}</strong>.<br>Continue de onde parou.",
                 'cor' => 'yellow',
                 'links' => [
                     [
@@ -85,13 +121,20 @@ class HomeService
             ];
         }
 
+        /* ==========================
+           ALERTA UTILIZAÇÃO
+        ========================== */
         if (!empty($statusUso)) {
-            $empilhadeira = (new RnObjeto($this->idUsuario))->selecionarObjeto($statusUso['FK_EMPILHADEIRA']);
+
+            $empilhadeira = (new RnObjeto($this->idUsuario))
+                ->selecionarObjeto($statusUso['FK_EMPILHADEIRA']);
+
             $dataFormatada = Util::formatarDataHora($statusUso['DATA_INICIO']);
 
             $this->cards[] = [
                 'titulo' => 'Utilização da empilhadeira',
-                'descricao' => "Você iniciou a utilização da empilhadeira <strong>{$empilhadeira->getDescricaoObjeto()}</strong> no dia <strong>{$dataFormatada}</strong>.<br>O que deseja fazer?",
+                'descricao' =>
+                "Você iniciou a utilização da empilhadeira <strong>{$empilhadeira->getDescricaoObjeto()}</strong> no dia <strong>{$dataFormatada}</strong>.<br>O que deseja fazer?",
                 'cor' => 'green',
                 'links' => [
                     [
@@ -108,9 +151,9 @@ class HomeService
             ];
         }
 
-        // =======================
-        // LINKS FIXOS POR PERFIL (com cor padrão azul)
-        // =======================
+        /* ==========================
+           CARDS FIXOS POR PERFIL
+        ========================== */
         $linkChecklists = [['texto' => 'Checklists', 'url' => '/syscheck/checklist', 'cor' => 'blue']];
         $linkChamados = [
             ['texto' => 'Abrir', 'url' => '/syscheck/chamado/abrirchamado', 'cor' => 'blue'],
@@ -125,7 +168,7 @@ class HomeService
         $linkLogs = [['texto' => 'Abrir logs', 'url' => '/syscheck/dev/logs.php', 'cor' => 'blue']];
 
         $cardsPerfis = [
-            1 => [ // ADM
+            1 => [
                 ['titulo' => 'Usuários', 'descricao' => 'Gerenciamento de usuários', 'links' => $linkUsuarios],
                 ['titulo' => 'Checklists', 'descricao' => 'Checklists', 'links' => $linkChecklists],
                 ['titulo' => 'Chamados', 'descricao' => 'Verificação de chamados abertos', 'links' => $linkChamados],
@@ -166,9 +209,6 @@ class HomeService
             ]
         ];
 
-        // =======================
-        // Adiciona cards do perfil
-        // =======================
         if (isset($cardsPerfis[$this->idPerfil])) {
             $this->cards = array_merge($this->cards, $cardsPerfis[$this->idPerfil]);
         }

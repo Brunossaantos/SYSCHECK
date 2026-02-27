@@ -116,6 +116,16 @@ class Sessao
         return $_SESSION['idUsuario'];
     }
 
+     public static function idempresa(): int
+    {
+        return $_SESSION['id_empresa'] ?? 0; // ajuste o índice conforme sua sessão
+    }
+
+    public static function empresaLogada(): int
+{
+    return $_SESSION['fk_empresa'] ?? 0;
+}
+
     public static function nomeUsuario()
     {
         if (session_status() == PHP_SESSION_NONE) {

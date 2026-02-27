@@ -36,6 +36,7 @@ use rn\RnBateria;
 use rn\RnHorimetro;
 use rn\RnPeriferico;
 use rn\RnusuarioEmpilhadeira;
+use service\PermissaoService;
 
 /** @var mixed $fkEmpilhadeira */
 /** @var mixed $idChecklist */
@@ -45,10 +46,12 @@ use rn\RnusuarioEmpilhadeira;
 
 class ChecklistController
 {
+    private $conexao;
     private $rnChecklist;
 
     function __construct($rnChecklist)
     {
+        $this->conexao = (new Conexao())->conectar();
         $this->rnChecklist = $rnChecklist;
     }
 
@@ -103,7 +106,7 @@ class ChecklistController
 
         require_once __DIR__ . '/../views/features/checklists/checklists/iniciarchecklist.php';
     }
-   
+
     function iniciarChecklistVeicular($fkUsuario, $fkObjeto)
     {
         $fkTipo = 1;
@@ -547,44 +550,49 @@ class ChecklistController
         require_once __DIR__ . '/../views/features/checklists/checklists/teste.php';
     }
 
-    function listarChecklists()
+    public function listarChecklists()
     {
         $filtros = [];
 
-        $listaTipos = (new RnTipoChecklist(Sessao::idusuario()))->retornarListaTiposChecklist();
-        $listaObjetos = (new RnObjeto(Sessao::idusuario()))->listarObjetos();
+        // Listas auxiliares para filtros
+        $listaTipos    = (new RnTipoChecklist(Sessao::idusuario()))->retornarListaTiposChecklist();
+        $listaObjetos  = (new RnObjeto(Sessao::idusuario()))->listarObjetos();
         $listaUsuarios = (new RnUsuario(Sessao::idusuario()))->listarUsuarios();
 
-        if (isset($_GET['numero']) && !empty($_GET['numero'])) {
+        // Filtros via GET
+        if (!empty($_GET['numero'])) {
             $filtros['numero'] = $_GET['numero'];
         }
-
-        if (isset($_GET['data_inicio']) && !empty($_GET['data_inicio'])) {
+        if (!empty($_GET['data_inicio'])) {
             $filtros['data_inicio'] = $_GET['data_inicio'];
         }
-
-        if (isset($_GET['tipo']) && !empty($_GET['tipo'])) {
+        if (!empty($_GET['tipo'])) {
             $filtros['tipo'] = $_GET['tipo'];
         }
-
-        if (isset($_GET['objeto']) && !empty($_GET['objeto'])) {
+        if (!empty($_GET['objeto'])) {
             $filtros['objeto'] = $_GET['objeto'];
         }
-
-        if (isset($_GET['usuario']) && !empty($_GET['usuario'])) {
+        if (!empty($_GET['usuario'])) {
             $filtros['usuario'] = $_GET['usuario'];
         }
+        $filtros['status'] = $_GET['status'] ?? 0;
 
-        if (isset($_GET['status']) && !empty($_GET['status'])) {
-            $filtros['status'] = $_GET['status'];
-        } else {
-            $filtros['status'] = 0;
-        }
+        // Instancia PermissaoService
+        $permissaoService = new \service\PermissaoService(
+            $this->conexao,
+            Sessao::idusuario(),
+            Sessao::empresaLogada() // <-- método que retorna id_empresa do usuário logado
+        );
 
-        $listaChecklists = !empty($filtros) 
-            ? $this->rnChecklist->listarComFiltros($filtros) 
-            : $this->rnChecklist->listarChecklists();
+        // Pega os usuários que o perfil pode visualizar
+        $usuariosPermitidos = $permissaoService->getUsuariosPermitidos();
 
+        // Lista checklists considerando filtros e permissões
+        $listaChecklists = !empty($filtros)
+            ? $this->rnChecklist->listarComFiltros($filtros, $usuariosPermitidos)
+            : $this->rnChecklist->listarChecklists($usuariosPermitidos);
+
+        // Chama a view
         require_once __DIR__ . '/../views/features/checklists/checklists/listachecklists.php';
     }
 

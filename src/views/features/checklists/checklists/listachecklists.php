@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
@@ -27,65 +27,105 @@
 
 <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-8">
 
+    <?php
+    // Filtragem segura dos inputs
+    $numero        = htmlspecialchars($_GET['numero'] ?? '', ENT_QUOTES, 'UTF-8');
+    $data_inicio   = htmlspecialchars($_GET['data_inicio'] ?? '', ENT_QUOTES, 'UTF-8');
+    $tipoFiltro    = htmlspecialchars($_GET['tipo'] ?? '', ENT_QUOTES, 'UTF-8');
+    $objetoFiltro  = htmlspecialchars($_GET['objeto'] ?? '', ENT_QUOTES, 'UTF-8');
+    $usuarioFiltro = htmlspecialchars($_GET['usuario'] ?? '', ENT_QUOTES, 'UTF-8');
+    $statusFiltro  = htmlspecialchars($_GET['status'] ?? '0', ENT_QUOTES, 'UTF-8');
+    ?>
 
-    <!-- Topo fixo com Home e Logout -->
-    <div class="w-full flex justify-between items-center  mb-8 max-w-6xl mx-auto">
-
+    <!-- Topo -->
+    <div class="w-full flex justify-between items-center mb-8 max-w-6xl mx-auto">
         <a href="/syscheck/checklist"
-            class="bg-gray-500 hover:bg-gray-600 w-20 h-12 flex items-center justify-center text-center rounded-lg text-white font-medium transition transform hover:scale-105 mt-2">
+            class="bg-gray-500 hover:bg-gray-600 w-20 h-12 flex items-center justify-center rounded-lg font-medium transition transform hover:scale-105">
             Voltar
         </a>
-
-        <!-- Home -->
-        <a href="/syscheck/" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg font-medium transition transform hover:scale-105">
+        <a href="/syscheck/"
+            class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg font-medium transition transform hover:scale-105">
             Home
         </a>
-
-        <!-- Logout -->
-        <a href="/syscheck/usuario/logout" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg font-medium transition transform hover:scale-105">
+        <a href="/syscheck/usuario/logout"
+            class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg font-medium transition transform hover:scale-105">
             Logout
         </a>
-
     </div>
 
     <h1 class="text-3xl font-bold mb-8 text-center">Consultar Checklists</h1>
 
-    <!-- Formulário de filtro -->
-    <form method="GET" action="/syscheck/checklist/listarChecklists" class="w-full max-w-6xl bg-gray-800 p-6 rounded-2xl shadow-2xl mb-8 animate-fadeIn">
+    <!-- Filtros -->
+    <form id="formFiltro" method="GET" action="/syscheck/checklist/listarChecklists"
+        class="w-full max-w-6xl bg-gray-800 p-6 rounded-2xl shadow-2xl mb-8 animate-fadeIn">
+
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <input type="text" name="numero" placeholder="Número" value="<?= $_GET['numero'] ?? '' ?>" class="p-2 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <input type="date" name="data_inicio" value="<?= $_GET['data_inicio'] ?? '' ?>" class="p-2 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <select name="tipo" class="p-2 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="" selected disabled>Tipo checklist</option>
-                <?php foreach ($listaTipos as $tipo) { ?>
-                    <option value="<?= $tipo->getDescricaoTipoChecklist() ?>"><?= $tipo->getDescricaoTipoChecklist() ?></option>
-                <?php } ?>
+
+            <input type="text" name="numero" placeholder="Número" value="<?= $numero ?>"
+                class="p-2 rounded-lg bg-gray-700 border border-gray-600 focus:ring-2 focus:ring-blue-500">
+
+            <input type="date" name="data_inicio" value="<?= $data_inicio ?>"
+                class="p-2 rounded-lg bg-gray-700 border border-gray-600 focus:ring-2 focus:ring-blue-500">
+
+            <!-- Tipo -->
+            <select name="tipo"
+                class="filtro-auto p-2 rounded-lg bg-gray-700 border border-gray-600 focus:ring-2 focus:ring-blue-500">
+                <option value="">Tipo checklist</option>
+                <?php foreach ($listaTipos as $tipo) :
+                    $descricao = htmlspecialchars($tipo->getDescricaoTipoChecklist(), ENT_QUOTES, 'UTF-8'); ?>
+                    <option value="<?= $descricao ?>" <?= ($tipoFiltro === $descricao) ? 'selected' : '' ?>>
+                        <?= $descricao ?>
+                    </option>
+                <?php endforeach; ?>
             </select>
-            <select name="objeto" class="p-2 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+            <!-- Objeto -->
+            <select name="objeto"
+                class="filtro-auto p-2 rounded-lg bg-gray-700 border border-gray-600 focus:ring-2 focus:ring-blue-500">
                 <option value="">Item checado</option>
-                <?php foreach ($listaObjetos as $objeto) { ?>
-                    <option value="<?= $objeto->getDescricaoObjeto() ?>"><?= $objeto->getDescricaoObjeto() ?></option>
-                <?php } ?>
+                <?php foreach ($listaObjetos as $objeto) :
+                    $descricao = htmlspecialchars($objeto->getDescricaoObjeto(), ENT_QUOTES, 'UTF-8'); ?>
+                    <option value="<?= $descricao ?>" <?= ($objetoFiltro === $descricao) ? 'selected' : '' ?>>
+                        <?= $descricao ?>
+                    </option>
+                <?php endforeach; ?>
             </select>
-            <select name="usuario" class="p-2 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+            <!-- Usuário -->
+            <select name="usuario"
+                class="filtro-auto p-2 rounded-lg bg-gray-700 border border-gray-600 focus:ring-2 focus:ring-blue-500">
                 <option value="">Usuário</option>
-                <?php foreach ($listaUsuarios as $usuario) { ?>
-                    <option value="<?= $usuario->getNome() ?>"><?= $usuario->getNome() ?></option>
-                <?php } ?>
+                <?php foreach ($listaUsuarios as $usuario) :
+                    $nome = htmlspecialchars($usuario->getNome(), ENT_QUOTES, 'UTF-8'); ?>
+                    <option value="<?= $nome ?>" <?= ($usuarioFiltro === $nome) ? 'selected' : '' ?>>
+                        <?= $nome ?>
+                    </option>
+                <?php endforeach; ?>
             </select>
-            <select name="status" class="p-2 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="0">Todos</option>
-                <option value="1" <?= isset($_GET['status']) && $_GET['status'] == '1' ? 'selected' : '' ?>>Em andamento</option>
-                <option value="3" <?= isset($_GET['status']) && $_GET['status'] == '3' ? 'selected' : '' ?>>Finalizado</option>
+
+            <!-- Status -->
+            <select name="status"
+                class="filtro-auto p-2 rounded-lg bg-gray-700 border border-gray-600 focus:ring-2 focus:ring-blue-500">
+                <option value="0" <?= ($statusFiltro === '0') ? 'selected' : '' ?>>Todos</option>
+                <option value="1" <?= ($statusFiltro === '1') ? 'selected' : '' ?>>Em andamento</option>
+                <option value="3" <?= ($statusFiltro === '3') ? 'selected' : '' ?>>Finalizado</option>
             </select>
+
         </div>
+
         <div class="flex gap-2 mt-4">
-            <button type="submit" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg font-medium transition transform hover:scale-105">Filtrar</button>
-            <a href="/syscheck/checklist/listarChecklists" class="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded-lg font-medium transition transform hover:scale-105">Limpar filtro</a>
+            <button type="submit"
+                class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg font-medium transition transform hover:scale-105">
+                Filtrar
+            </button>
+            <a href="/syscheck/checklist/listarChecklists"
+                class="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded-lg font-medium transition transform hover:scale-105">
+                Limpar filtro
+            </a>
         </div>
     </form>
 
-    <!-- Tabela de checklists -->
+    <!-- Tabela -->
     <div class="w-full max-w-6xl overflow-x-auto animate-fadeIn">
         <table class="min-w-full bg-gray-800 rounded-2xl overflow-hidden">
             <thead class="bg-gray-700">
@@ -100,41 +140,89 @@
                 </tr>
             </thead>
             <tbody>
-                <?php
-if (empty($listaChecklists)) {
-    echo '<p class="text-red-400 text-center mt-4">Nenhum checklist encontrado.</p>';
-}
-?>
-                <?php foreach ($listaChecklists as $checklist) { ?>
-                
-                    <tr class="border-b border-gray-700 hover:bg-gray-700">
-                        <td class="py-2 px-4"><a href="/syscheck/checklist/checklistFinalizado/<?= $checklist->getIdChecklist() ?>" class="text-blue-400 hover:underline"><?= $checklist->getIdChecklist() ?></a></td>
-                        <td class="py-2 px-4"><?= $checklist->getDataInicio() ?></td>
-                        <td class="py-2 px-4"><?= $checklist->getFkTipo() ?></td>
-                        <td class="py-2 px-4"><?= $checklist->getFkObjeto() ?></td>
-                        <td class="py-2 px-4"><?= $checklist->getDataFim() ?></td>
-                        <td class="py-2 px-4"><?= $checklist->getFkUsuario() ?></td>
-                        <td class="py-2 px-4">
-                            <?php if ($checklist->getStatusChecklist() == 1) { ?>
-                                <a href="/syscheck/etapaschecklist/continuarChecklist/<?= $checklist->getIdChecklist() ?>"
-                                    class="bg-yellow-500 hover:bg-yellow-600 w-32 h-16 flex items-center justify-center text-center rounded-lg text-white font-medium transition transform hover:scale-105">
-                                    Continuar checklist
-                                </a>
-                            <?php } else { ?>
-                                <a href="/syscheck/checklist/checklistFinalizado/<?= $checklist->getIdChecklist() ?>"
-                                    class="bg-green-500 hover:bg-green-600 w-27 h-16 flex items-center justify-center text-center rounded-lg text-white font-medium transition transform hover:scale-105">
-                                    Checklist finalizado
-                                </a>
-                            <?php } ?>
+
+                <?php if (empty($listaChecklists)) : ?>
+                    <tr>
+                        <td colspan="7" class="text-center text-black-400 py-6">
+                            Nenhum checklist encontrado.
                         </td>
                     </tr>
-                <?php } ?>
+                <?php else : ?>
+                    <?php foreach ($listaChecklists as $checklist) : ?>
+                        <tr class="border-b border-gray-700 hover:bg-gray-700">
+
+                            <td class="py-2 px-4">
+                                <a href="/syscheck/checklist/checklistFinalizado/<?= (int)$checklist->getIdChecklist() ?>"
+                                    class="text-blue-400 hover:underline">
+                                    <?= (int)$checklist->getIdChecklist() ?>
+                                </a>
+                            </td>
+
+                            <td class="py-2 px-4"><?= htmlspecialchars($checklist->getDataInicio(), ENT_QUOTES, 'UTF-8') ?></td>
+                            <td class="py-2 px-4"><?= htmlspecialchars($checklist->getFkTipo(), ENT_QUOTES, 'UTF-8') ?></td>
+                            <td class="py-2 px-4"><?= htmlspecialchars($checklist->getFkObjeto(), ENT_QUOTES, 'UTF-8') ?></td>
+                            <td class="py-2 px-4"><?= htmlspecialchars($checklist->getDataFim(), ENT_QUOTES, 'UTF-8') ?></td>
+                            <td class="py-2 px-4"><?= htmlspecialchars($checklist->getFkUsuario(), ENT_QUOTES, 'UTF-8') ?></td>
+
+                            <td class="py-2 px-4">
+                                <?php if ((int)$checklist->getStatusChecklist() === 1) : ?>
+                                    <a href="/syscheck/etapaschecklist/continuarChecklist/<?= (int)$checklist->getIdChecklist() ?>"
+                                        class="bg-yellow-500 hover:bg-yellow-600 w-40 h-14 flex items-center justify-center rounded-lg font-medium transition transform hover:scale-105">
+                                        Em andamento
+                                    </a>
+                                <?php else : ?>
+                                    <a href="/syscheck/checklist/checklistFinalizado/<?= (int)$checklist->getIdChecklist() ?>"
+                                        class="bg-green-500 hover:bg-green-600 w-40 h-14 flex items-center justify-center rounded-lg font-medium transition transform hover:scale-105">
+                                        Finalizado
+                                    </a>
+                                <?php endif; ?>
+                            </td>
+
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+
             </tbody>
         </table>
     </div>
 
-    <?php // include __DIR__ . '/../../../public/components/footer.php'; 
-    ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const form = document.getElementById('formFiltro');
+
+            function debounce(func, delay) {
+                let timeout;
+                return function() {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => {
+                        func();
+                    }, delay);
+                };
+            }
+
+            // SELECTS → envia imediatamente ao mudar
+            const selects = form.querySelectorAll('select');
+            selects.forEach(select => {
+                select.addEventListener('change', function() {
+                    form.submit();
+                });
+            });
+
+            // INPUTS text e date → envia com debounce
+            const inputs = form.querySelectorAll('input[type="text"], input[type="date"]');
+
+            const submitComDelay = debounce(function() {
+                form.submit();
+            }, 500);
+
+            inputs.forEach(input => {
+                input.addEventListener('keyup', submitComDelay);
+                input.addEventListener('change', submitComDelay);
+            });
+
+        });
+    </script>
 
 </body>
 

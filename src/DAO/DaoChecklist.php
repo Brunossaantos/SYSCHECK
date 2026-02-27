@@ -8,42 +8,50 @@ require __DIR__ . '/../../vendor/autoload.php';
 use models\Checklist;
 use Exception;
 use Util\Util;
+use service\PermissaoService;
 
 class DaoChecklist
 {
-    private $conexao;
-    private $idUsuarioSessao;
-    private $tbl_checklists = TBL_CHECKLISTS;
-    private $view_checklists = V_CHECKLIS_VISAO_GERAL;
-    private $view_checklists_horimetros = V_CHECKLISTS_HORIMETRO;
+    private \mysqli $conexao;
+    private int $idUsuarioSessao;
+    private int $idEmpresaSessao;
+    private string $tbl_checklists = TBL_CHECKLISTS;
+    private string $view_checklists = V_CHECKLIS_VISAO_GERAL;
+    private string $view_checklists_horimetros = V_CHECKLISTS_HORIMETRO;
 
-    function __construct($conexao, $idUsuarioSessao)
+    public function __construct($conexao, int $idUsuarioSessao, int $idEmpresaSessao)
     {
         $this->conexao = $conexao;
         $this->idUsuarioSessao = $idUsuarioSessao;
+        $this->idEmpresaSessao = $idEmpresaSessao;
     }
 
-    /* =========================================================
-       CHECKLIST CRUD
-       ========================================================= */
+    // =========================
+    // CRUD BÁSICO
+    // =========================
 
-    function iniciarCheckList(Checklist $checklist)
+    public function iniciarCheckList(Checklist $checklist): int
     {
         try {
-
             $stmt = $this->conexao->prepare("
-                INSERT INTO {$this->tbl_checklists}
+                INSERT INTO {$this->tbl_checklists} 
                 (FK_USUARIO, FK_TIPO, FK_OBJETO, DATA_INICIO, STATUS_CHECKLIST)
                 VALUES (?, ?, ?, ?, ?)
             ");
 
+            $fkUsuario       = $checklist->getFkUsuario();
+            $fkTipo          = $checklist->getFkTipo();
+            $fkObjeto        = $checklist->getFkObjeto();
+            $dataInicio      = $checklist->getDataInicio();
+            $statusChecklist = $checklist->getStatusChecklist();
+
             $stmt->bind_param(
                 "iiisi",
-                $checklist->getFkUsuario(),
-                $checklist->getFkTipo(),
-                $checklist->getFkObjeto(),
-                $checklist->getDataInicio(),
-                $checklist->getStatusChecklist()
+                $fkUsuario,
+                $fkTipo,
+                $fkObjeto,
+                $dataInicio,
+                $statusChecklist
             );
 
             return $stmt->execute() ? $stmt->insert_id : -1;
@@ -53,10 +61,9 @@ class DaoChecklist
         }
     }
 
-    function selecionarChecklist($idChecklist)
+    public function selecionarChecklist(int $idChecklist): ?Checklist
     {
         try {
-
             $stmt = $this->conexao->prepare("
                 SELECT ID_CHECKLIST, FK_USUARIO, FK_TIPO, FK_OBJETO,
                        DATA_INICIO, DATA_FIM, STATUS_CHECKLIST
@@ -68,9 +75,7 @@ class DaoChecklist
             $stmt->execute();
             $result = $stmt->get_result();
 
-            if ($result->num_rows === 0) {
-                return null;
-            }
+            if ($result->num_rows === 0) return null;
 
             $row = $result->fetch_assoc();
 
@@ -89,21 +94,24 @@ class DaoChecklist
         }
     }
 
-    function atualizarChecklist(Checklist $checklist)
+    public function atualizarChecklist(Checklist $checklist): int
     {
         try {
-
             $stmt = $this->conexao->prepare("
                 UPDATE {$this->tbl_checklists}
                 SET DATA_FIM = ?, STATUS_CHECKLIST = ?
                 WHERE ID_CHECKLIST = ?
             ");
 
+            $dataFim    = $checklist->getDataFim();
+            $status     = $checklist->getStatusChecklist();
+            $idChecklist = $checklist->getIdChecklist();
+
             $stmt->bind_param(
                 "sii",
-                $checklist->getDataFim(),
-                $checklist->getStatusChecklist(),
-                $checklist->getIdChecklist()
+                $dataFim,
+                $status,
+                $idChecklist
             );
 
             return $stmt->execute() ? $stmt->affected_rows : -1;
@@ -113,25 +121,17 @@ class DaoChecklist
         }
     }
 
-    /* =========================================================
-       HORÍMETRO
-       ========================================================= */
+    // =========================
+    // HORÍMETRO
+    // =========================
 
-    function recuperarHorimetrosPorChecklist($fkUsuario)
+    public function recuperarHorimetrosPorChecklist(int $fkUsuario): array
     {
         try {
-
             $stmt = $this->conexao->prepare("
-                SELECT
-                    ID_CHECKLIST,
-                    FK_USUARIO,
-                    FK_TIPO,
-                    FK_OBJETO,
-                    DATA_INICIO,
-                    DATA_FIM,
-                    STATUS_CHECKLIST,
-                    HORIMETRO_INICIAL,
-                    HORIMETRO_FINAL
+                SELECT ID_CHECKLIST, FK_USUARIO, FK_TIPO, FK_OBJETO, 
+                       DATA_INICIO, DATA_FIM, STATUS_CHECKLIST,
+                       HORIMETRO_INICIAL, HORIMETRO_FINAL
                 FROM {$this->view_checklists_horimetros}
                 WHERE FK_USUARIO = ?
                 ORDER BY ID_CHECKLIST DESC
@@ -142,7 +142,6 @@ class DaoChecklist
             $result = $stmt->get_result();
 
             $lista = [];
-
             while ($row = $result->fetch_assoc()) {
                 $lista[] = [
                     'idChecklist'      => $row['ID_CHECKLIST'],
@@ -153,7 +152,7 @@ class DaoChecklist
                     'dataFim'          => $row['DATA_FIM'],
                     'status'           => $row['STATUS_CHECKLIST'],
                     'horimetroInicial' => $row['HORIMETRO_INICIAL'],
-                    'horimetroFinal'   => $row['HORIMETRO_FINAL'], // <-- ESSENCIAL
+                    'horimetroFinal'   => $row['HORIMETRO_FINAL'],
                 ];
             }
 
@@ -164,19 +163,18 @@ class DaoChecklist
         }
     }
 
-    /* =========================================================
-       PENDÊNCIA CHECKLIST
-       ========================================================= */
+    // =========================
+    // PENDÊNCIA CHECKLIST
+    // =========================
 
-    function verificarChecklistPorUsuario($fkUsuario)
+    public function verificarChecklistPorUsuario(int $fkUsuario): ?Checklist
     {
         try {
-
             $stmt = $this->conexao->prepare("
                 SELECT *
                 FROM {$this->tbl_checklists}
                 WHERE FK_USUARIO = ?
-                AND STATUS_CHECKLIST = 1
+                  AND STATUS_CHECKLIST = 1
                 ORDER BY ID_CHECKLIST DESC
                 LIMIT 1
             ");
@@ -185,9 +183,7 @@ class DaoChecklist
             $stmt->execute();
             $result = $stmt->get_result();
 
-            if ($result->num_rows === 0) {
-                return null;
-            }
+            if ($result->num_rows === 0) return null;
 
             $row = $result->fetch_assoc();
 
@@ -206,21 +202,19 @@ class DaoChecklist
         }
     }
 
-    function verificarChecklistPendente($fkUsuario)
+    public function verificarChecklistPendente(int $fkUsuario): int
     {
         try {
-
             $stmt = $this->conexao->prepare("
                 SELECT COUNT(ID_CHECKLIST) AS QTD
                 FROM {$this->tbl_checklists}
                 WHERE FK_USUARIO = ?
-                AND STATUS_CHECKLIST = 1
+                  AND STATUS_CHECKLIST = 1
             ");
 
             $stmt->bind_param("i", $fkUsuario);
             $stmt->execute();
             $result = $stmt->get_result();
-
             $row = $result->fetch_assoc();
 
             return (int)$row['QTD'];
@@ -230,94 +224,40 @@ class DaoChecklist
         }
     }
 
-    /* =========================================================
-       CONTROLE VEICULAR
-       ========================================================= */
+    // =========================
+    // CONTROLE VEICULAR
+    // =========================
 
     public function veicularAtivo(): bool
     {
-        $sql = "SELECT checklist_veicular 
+        $stmt = $this->conexao->prepare("
+            SELECT checklist_veicular 
             FROM tbl_usuarios 
             WHERE ID_USUARIO = ? 
-            LIMIT 1";
+            LIMIT 1
+        ");
 
-        $stmt = $this->conexao->prepare($sql);
-
-        if (!$stmt) {
-            return false;
-        }
+        if (!$stmt) return false;
 
         $stmt->bind_param("i", $this->idUsuarioSessao);
         $stmt->execute();
-
         $result = $stmt->get_result();
 
-        if ($result->num_rows === 0) {
-            return false;
-        }
+        if ($result->num_rows === 0) return false;
 
         $dados = $result->fetch_assoc();
-
         return (int)$dados['checklist_veicular'] === 1;
     }
 
-    public function listarChecklists()
-    {
-        try {
+    // =========================
+    // FILTRAGEM E LISTAGEM
+    // =========================
 
-            $sql = "
-            SELECT *
-            FROM {$this->view_checklists}
-            ORDER BY ID_CHECKLIST DESC
-        ";
-
-            $result = $this->conexao->query($sql);
-
-            $lista = [];
-
-            while ($row = $result->fetch_assoc()) {
-                $lista[] = $row;
-            }
-
-            return $lista;
-        } catch (Exception $e) {
-            Util::inserirErro($e, "listarChecklists", $this->idUsuarioSessao);
-            return [];
-        }
-    }
-
-    function listaChecklists()
-    {
-        try {
-            $listaChecklists = [];
-            $stmt = $this->conexao->prepare("SELECT * FROM {$this->view_checklists} ORDER BY NUMERO_CHECKLIST DESC");
-            $stmt->execute();
-            $result = $stmt->get_result();
-
-            while ($row = $result->fetch_assoc()) {
-                $listaChecklists[] = new Checklist(
-                    $row['NUMERO_CHECKLIST'],
-                    $row['USUARIO'],
-                    $row['TIPO'],
-                    $row['OBJETO'],
-                    $row['DATA_INICIO'],
-                    $row['DATA_FIM'],
-                    $row['STATUS_CHECKLIST']
-                );
-            }
-
-            return $listaChecklists;
-        } catch (Exception $e) {
-            return [];
-        }
-    }
-
-    function filtrarChecklists($filtros)
+    public function filtrarChecklists(array $filtros): array
     {
         try {
             $sql = "SELECT NUMERO_CHECKLIST, USUARIO, TIPO, OBJETO, DATA_INICIO, DATA_FIM, STATUS_CHECKLIST
-                    FROM {$this->view_checklists}
-                    WHERE 1=1";
+                    FROM {$this->view_checklists} WHERE 1=1";
 
             $params = [];
             $types = "";
@@ -337,22 +277,12 @@ class DaoChecklist
                 }
             }
 
-            if (!empty($filtros['tipo'])) {
-                $sql .= " AND TIPO = ?";
-                $params[] = $filtros['tipo'];
-                $types .= "s";
-            }
-
-            if (!empty($filtros['objeto'])) {
-                $sql .= " AND OBJETO = ?";
-                $params[] = $filtros['objeto'];
-                $types .= "s";
-            }
-
-            if (!empty($filtros['usuario'])) {
-                $sql .= " AND USUARIO = ?";
-                $params[] = $filtros['usuario'];
-                $types .= "s";
+            foreach (['tipo', 'objeto', 'usuario'] as $campo) {
+                if (!empty($filtros[$campo])) {
+                    $sql .= " AND " . strtoupper($campo) . " = ?";
+                    $params[] = $filtros[$campo];
+                    $types .= "s";
+                }
             }
 
             if (!empty($filtros['status']) && $filtros['status'] != 0) {
@@ -366,7 +296,11 @@ class DaoChecklist
             $stmt = $this->conexao->prepare($sql);
 
             if (!empty($params)) {
-                $stmt->bind_param($types, ...$params);
+                $bindNames = [$types];
+                foreach ($params as $k => $param) {
+                    $bindNames[] = &$params[$k];
+                }
+                call_user_func_array([$stmt, 'bind_param'], $bindNames);
             }
 
             $stmt->execute();
@@ -387,69 +321,76 @@ class DaoChecklist
 
             return $checklists;
         } catch (Exception $e) {
+            Util::inserirErro($e, "filtrarChecklists", $this->idUsuarioSessao);
             return [];
         }
     }
 
-    public function listarChecklistVeicular()
+    public function listarChecklists(): array
     {
         try {
+            $permissaoService = new PermissaoService($this->conexao, $this->idUsuarioSessao, $this->idEmpresaSessao);
+            $usuariosPermitidos = $permissaoService->getUsuariosPermitidos();
 
-            $stmt = $this->conexao->prepare("
-            SELECT *
-            FROM {$this->view_checklists}
-            WHERE FK_TIPO = 1
-            ORDER BY ID_CHECKLIST DESC
-        ");
+            if (empty($usuariosPermitidos)) return [];
 
+            $placeholders = implode(',', array_fill(0, count($usuariosPermitidos), '?'));
+
+            $sql = "
+                SELECT NUMERO_CHECKLIST, USUARIO, TIPO, OBJETO, DATA_INICIO, DATA_FIM, STATUS_CHECKLIST
+                FROM {$this->view_checklists}
+                WHERE ID_USUARIO IN ($placeholders) AND ID_EMPRESA = ?
+                ORDER BY NUMERO_CHECKLIST DESC
+            ";
+
+            $stmt = $this->conexao->prepare($sql);
+
+            $usuariosPermitidos[] = $this->idEmpresaSessao;
+            $types = str_repeat('i', count($usuariosPermitidos));
+
+            $stmt->bind_param($types, ...$usuariosPermitidos);
             $stmt->execute();
             $result = $stmt->get_result();
 
-            $lista = [];
-
+            $listaChecklists = [];
             while ($row = $result->fetch_assoc()) {
-                $lista[] = $row;
+                $listaChecklists[] = new Checklist(
+                    $row['NUMERO_CHECKLIST'],
+                    $row['USUARIO'],
+                    $row['TIPO'],
+                    $row['OBJETO'],
+                    $row['DATA_INICIO'],
+                    $row['DATA_FIM'],
+                    $row['STATUS_CHECKLIST']
+                );
             }
 
-            return $lista;
+            return $listaChecklists;
         } catch (Exception $e) {
-            Util::inserirErro($e, "listarChecklistVeicular", $this->idUsuarioSessao);
+            Util::inserirErro($e, "listarChecklists", $this->idUsuarioSessao);
             return [];
         }
     }
 
-    public function buscarHorimetroPendente($fkUsuario)
+    public function buscarHorimetroPendente(int $fkUsuario): ?array
     {
         try {
-
             $stmt = $this->conexao->prepare("
-            SELECT
-                ID_CHECKLIST,
-                FK_USUARIO,
-                FK_TIPO,
-                FK_OBJETO,
-                DATA_INICIO,
-                DATA_FIM,
-                STATUS_CHECKLIST,
-                HORIMETRO_INICIAL,
-                HORIMETRO_FINAL
-            FROM {$this->view_checklists_horimetros}
-            WHERE FK_USUARIO = ?
-            AND DATA_FIM IS NOT NULL
-            AND (HORIMETRO_FINAL IS NULL OR HORIMETRO_FINAL = '')
-            ORDER BY ID_CHECKLIST DESC
-            LIMIT 1
-        ");
+                SELECT ID_CHECKLIST, FK_USUARIO, FK_TIPO, FK_OBJETO, DATA_INICIO, DATA_FIM, STATUS_CHECKLIST,
+                       HORIMETRO_INICIAL, HORIMETRO_FINAL
+                FROM {$this->view_checklists_horimetros}
+                WHERE FK_USUARIO = ?
+                  AND DATA_FIM IS NOT NULL
+                  AND (HORIMETRO_FINAL IS NULL OR HORIMETRO_FINAL = '')
+                ORDER BY ID_CHECKLIST DESC
+                LIMIT 1
+            ");
 
             $stmt->bind_param("i", $fkUsuario);
             $stmt->execute();
             $result = $stmt->get_result();
 
-            if ($result->num_rows === 0) {
-                return null;
-            }
-
-            return $result->fetch_assoc();
+            return $result->num_rows ? $result->fetch_assoc() : null;
         } catch (Exception $e) {
             Util::inserirErro($e, "buscarHorimetroPendente", $this->idUsuarioSessao);
             return null;

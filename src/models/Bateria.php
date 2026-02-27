@@ -10,7 +10,7 @@ class Bateria
     private $medidas;
     private $observacao;
 
-    function __construct($idBateria = 0, $numeroBateria, $descricaoBateria, $medidas, $observacao = "")
+    function __construct($idBateria, $numeroBateria, $descricaoBateria, $medidas, $observacao)
     {
         $this->setIdBateria($idBateria);
         $this->setNumeroBateria($numeroBateria);
