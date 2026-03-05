@@ -15,7 +15,6 @@ class DaoObjeto
     private $conexao;
     private $idUsuarioSessao;
     private $tbl_objetos = TBL_OBJETOS;
-
     function __construct($conexao, $idUsuarioSessao)
     {
         $this->conexao = $conexao;

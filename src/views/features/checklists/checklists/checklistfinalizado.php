@@ -1,102 +1,183 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página de Consulta</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/syscheck/src/views/public/css/styles.css">
+    <title>Consulta Checklist</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        .cabecalho {
-            border: 1px #000000 solid;
-            border-radius: 5px;
+        body {
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        body.loaded {
+            opacity: 1;
         }
     </style>
-
 </head>
 
-<body>
-    <?php
+<body class="bg-gray-900 min-h-screen flex items-center justify-center">
 
-    use controllers\FotosController;
+<div class="w-[95%] md:w-[85%] lg:w-[70%] 
+            bg-gray-800 text-gray-100 
+            shadow-2xl rounded-xl 
+            p-4 md:p-6 lg:p-8">
 
-    include __DIR__ . '/../../../public/components/navbar.php'; ?>
-
-    <div class="container mt-5">
-        <h2>Consulta</h2>
-        <table class="table cabecalho">
-            <tbody>
-                <tr>
-                    <td>Tipo do checklist</td>
-                    <td><?= $tipo->getDescricaoTipoChecklist() ?></td>
-                </tr>
-                <tr>
-                    <td>Item checado</td>
-                    <td><?= $item->getDescricaoObjeto() ?></td>
-                </tr>
-                <tr>
-                    <td>Data de início do checklist</td>
-                    <td><?= $checklist->getDataInicio() ?></td>
-                </tr>
-                <tr>
-                    <td>Data de finalização do checklist</td>
-                    <td><?= $checklist->getDataFim() ?></td>
-                </tr>
-                <tr>
-                    <td>Status do checklist</td>
-                    <td><?= $status ?></td>
-                </tr>
-                <tr>
-                    <td>Número do checklist</td>
-                    <td><?= $listaEtapas[0]['NUMERO'] ?></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <?php if (!empty($listaEtapas)) { ?>
-            <table class="table">
-                <thead>
-                    <th>Titulo Etapa</th>
-                    <th>Conteúdo etapa</th>
-                    <th>Numero Etapa</th>
-                    <th>Ação</th>
-                    <th>Observação</th>
-                    <th>Foto</th>
-                </thead>
-                <tbody>
-                    <?php foreach ($listaEtapas as $etapa) { ?>
-                        <tr>
-                            <td><?= $etapa['TITULO'] ?></td>
-                            <td><?= $etapa['CONTEUDO'] ?></td>
-                            <td><?= $etapa['NUMERO_ETAPA'] ?></td>
-                            <td><?= ($etapa['ACAO'] == 1) ? 'Aprovado' : 'Reprovado' ?></td>
-                            <td><?= $etapa['OBSERVACAO'] ?></td>
-                            <td>
-                                <?php
-                                foreach ($listaFotos as $foto) {
-                                    if ($foto->getNumeroEtapa() == $etapa['NUMERO_ETAPA']) {
-                                        $caminhoCompleto = "/syscheck/src/views/" . $foto->getCaminhoFoto();
-                                        echo "<a href='" . $caminhoCompleto . "' target='_blank'>Foto</a>";
-                                        break;
-                                    }
-                                }
-                                ?>
-                            </td>
-                        </tr>
-                    <?php } ?>
-                </tbody>
-            </table>
-        <?php } else {
-            echo "Não existem etapas para esse checklist.";
-        } ?>
+    <!-- BOTÃO FINALIZAR (LOGOUT) -->
+    <div class="mb-6 text-center">
+        <form method="POST" action="/syscheck/usuario/logout">
+            <button
+                type="submit"
+                class="w-full bg-red-600 hover:bg-red-700 
+                       text-white font-bold 
+                       text-lg md:text-xl lg:text-2xl
+                       py-3 md:py-4 lg:py-3 
+                       rounded-xl shadow-lg 
+                       transition duration-300 ease-in-out 
+                       hover:scale-[1.02]">
+                FINALIZAR CHECKLIST
+            </button>
+        </form>
     </div>
 
-    <?php include __DIR__ . '/../../../public/components/footer.php'; ?>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
+    <!-- TÍTULO -->
+    <h1 class="text-2xl md:text-3xl font-bold text-center mb-8">
+        Consulta de Checklist
+    </h1>
 
+    <!-- GRID RESPONSIVO CORRIGIDO -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
+
+        <div>
+            <label class="block text-sm mb-2">Tipo do Checklist</label>
+            <input type="text"
+                value="<?= $tipo->getDescricaoTipoChecklist() ?>"
+                readonly
+                class="w-full rounded-lg border border-gray-600 bg-gray-700 p-2 md:p-3 
+                       transition focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+
+        <div>
+            <label class="block text-sm mb-2">Item Checado</label>
+            <input type="text"
+                value="<?= $item->getDescricaoObjeto() ?>"
+                readonly
+                class="w-full rounded-lg border border-gray-600 bg-gray-700 p-2 md:p-3 
+                       transition focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+
+        <div>
+            <label class="block text-sm mb-2">Data Início</label>
+            <input type="text"
+                value="<?= $checklist->getDataInicio() ?>"
+                readonly
+                class="w-full rounded-lg border border-gray-600 bg-gray-700 p-2 md:p-3 
+                       transition focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+
+        <div>
+            <label class="block text-sm mb-2">Data Fim</label>
+            <input type="text"
+                value="<?= $checklist->getDataFim() ?>"
+                readonly
+                class="w-full rounded-lg border border-gray-600 bg-gray-700 p-2 md:p-3 
+                       transition focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+
+    </div>
+
+    <!-- CAMPO PRINCIPAL AJUSTADO -->
+    <div class="flex justify-center mb-10">
+        <input type="text"
+            value="<?= $listaEtapas[0]['NUMERO'] ?? '' ?>"
+            readonly
+            class="w-full md:w-[80%] lg:w-[60%]
+                   text-center 
+                   text-xl md:text-2xl lg:text-3xl
+                   tracking-widest 
+                   border-2 border-dashed border-gray-500 
+                   bg-gray-700 rounded-xl 
+                   p-3 md:p-4 lg:p-5 
+                   transition focus:ring-2 
+                   focus:ring-blue-500 focus:outline-none">
+    </div>
+
+    <!-- TABELA AJUSTADA -->
+    <?php if (!empty($listaEtapas)) { ?>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-700 text-sm md:text-base">
+
+                <thead class="bg-blue-600 text-white">
+                    <tr>
+                        <th class="px-3 py-2 md:px-4 md:py-3 text-left">Título</th>
+                        <th class="px-3 py-2 md:px-4 md:py-3 text-left">Conteúdo</th>
+                        <th class="px-3 py-2 md:px-4 md:py-3 text-left">Etapa</th>
+                        <th class="px-3 py-2 md:px-4 md:py-3 text-left">Status</th>
+                        <th class="px-3 py-2 md:px-4 md:py-3 text-left">Observação</th>
+                        <th class="px-3 py-2 md:px-4 md:py-3 text-left">Foto</th>
+                    </tr>
+                </thead>
+
+                <tbody class="divide-y divide-gray-700">
+
+                <?php foreach ($listaEtapas as $etapa) { ?>
+                    <tr class="hover:bg-gray-700 transition duration-200">
+
+                        <td class="px-3 py-2 md:px-4 md:py-3"><?= $etapa['TITULO'] ?></td>
+                        <td class="px-3 py-2 md:px-4 md:py-3"><?= $etapa['CONTEUDO'] ?></td>
+                        <td class="px-3 py-2 md:px-4 md:py-3"><?= $etapa['NUMERO_ETAPA'] ?></td>
+
+                        <td class="px-3 py-2 md:px-4 md:py-3">
+                            <?php if ($etapa['ACAO'] == 1) { ?>
+                                <span class="text-green-400 font-semibold">Aprovado</span>
+                            <?php } else { ?>
+                                <span class="text-red-400 font-semibold">Pendente</span>
+                            <?php } ?>
+                        </td>
+
+                        <td class="px-3 py-2 md:px-4 md:py-3"><?= $etapa['OBSERVACAO'] ?></td>
+
+                        <td class="px-3 py-2 md:px-4 md:py-3">
+                            <?php
+                            $fotoEncontrada = false;
+                            foreach ($listaFotos as $foto) {
+                                if ($foto->getNumeroEtapa() == $etapa['NUMERO_ETAPA']) {
+                                    $caminho = "/syscheck/src/views/" . $foto->getCaminhoFoto();
+                                    echo "<a href='$caminho' target='_blank' class='text-blue-400 hover:underline transition'>Ver Foto</a>";
+                                    $fotoEncontrada = true;
+                                    break;
+                                }
+                            }
+                            if (!$fotoEncontrada) {
+                                echo "<span class='text-gray-500'>Sem foto</span>";
+                            }
+                            ?>
+                        </td>
+
+                    </tr>
+                <?php } ?>
+
+                </tbody>
+            </table>
+        </div>
+
+    <?php } else { ?>
+
+        <div class="text-center text-gray-400 py-8">
+            Não existem etapas para esse checklist.
+        </div>
+
+    <?php } ?>
+
+</div>
+
+<script>
+    window.addEventListener("load", function() {
+        document.body.classList.add("loaded");
+    });
+</script>
+
+</body>
 </html>

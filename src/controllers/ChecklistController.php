@@ -9,7 +9,7 @@ error_reporting(E_ALL);
 require __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/../../config/initEnv.php';
 
-
+use DAO\DaoBaterias;
 use DAO\DaoErro;
 use DAO\DaoEtapaRealizada;
 use DAO\DaoFoto;
@@ -48,245 +48,305 @@ class ChecklistController
 {
     private $conexao;
     private $rnChecklist;
+    private $idUsuarioSessao;
+    private $idEmpresaSessao;
 
-    function __construct($rnChecklist)
+    public function __construct()
     {
-        $this->conexao = (new Conexao())->conectar();
-        $this->rnChecklist = $rnChecklist;
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+
+        $this->idUsuarioSessao = (int) ($_SESSION['idUsuario'] ?? 0);
+        $this->idEmpresaSessao = (int) ($_SESSION['fkEmpresa'] ?? 0);
+
+        if ($this->idUsuarioSessao <= 0 || $this->idEmpresaSessao <= 0) {
+
+            session_destroy();
+
+            header("Location: /syscheck/login.php");
+            exit;
+        }
+        $this->rnChecklist = new RnChecklist(
+            $this->idUsuarioSessao,
+            $this->idEmpresaSessao
+        );
     }
 
     function index()
     {
         $idUsuario = Sessao::idusuario();
 
-        $usuario = (new RnUsuario($idUsuario))
-            ->selecionarUsuario($idUsuario);
+        $usuario = (new RnUsuario($idUsuario))->selecionarUsuario($idUsuario);
 
-        $rnChecklist = new RnChecklist($idUsuario);
+        $rnChecklist = new RnChecklist(
+            $this->idUsuarioSessao,
+            $this->idEmpresaSessao
+        );
         $rnUsuarioEmp = new RnusuarioEmpilhadeira($idUsuario);
 
         // 🔹 Horímetro pendente (nova regra)
-        $horimetroPendente = (new RnChecklist(Sessao::idusuario()))
-            ->verificarSeExisteHorimetroPendente();
-        // 🔹 Expediente aberto (regra antiga que sumiu)
+        $horimetroPendente = $this->rnChecklist->verificarSeExisteHorimetroPendente();
+
+        // 🔹 Expediente aberto (regra antiga)
         $checklistAberto = $rnUsuarioEmp->verificarChecklistAberto($idUsuario);
         $existeChecklistAberto = !empty($checklistAberto);
 
         require_once __DIR__ . '/../views/features/checklists/index.php';
     }
 
+    public function listar(): void
+    {
+        try {
+            $checklists = $this->rnChecklist->listarChecklists();
+            require_once __DIR__ . '/../views/features/checklists/index.php';
+        } catch (\Exception $e) {
+            Util::inserirErro($e, "ChecklistController::listar", Sessao::idusuario());
+            echo "Erro ao carregar checklists.";
+        }
+    }
+
     function iniciarChecklist()
     {
-        $idUsuario = Sessao::idusuario();
+        $idUsuario = \Util\Sessao::idusuario();
+        $idEmpresa = \Util\Sessao::idempresa();
 
-        if (!$idUsuario) {
-            header("Location: /login");
-            exit;
-        }
-
-        // 🔹 Recupera usuário
-        $rnUsuario = new RnUsuario($idUsuario);
-        $usuario   = $rnUsuario->selecionarUsuario($idUsuario);
-
-        if (!$usuario) {
-            header("Location: /login");
-            exit;
-        }
-
-        // 🔹 Recupera lista de tipos ativos
-        $rnTipoChecklist = new RnTipoChecklist($idUsuario);
-        $listaTipos      = $rnTipoChecklist->retornarListaTiposChecklist();
-
-        // 🔹 Aplica regra de permissão por perfil
-        $rnChecklist = new RnChecklist($idUsuario);
-        $listaTipos  = $rnChecklist->filtrarTiposPorPerfil(
-            $listaTipos,
-            (int) $usuario->getFkPerfil()
+        // 🔹 Perfil
+        $conexao = (new \database\Conexao())->conectar();
+        $permissao = new \service\PermissaoService(
+            $conexao,
+            $idUsuario,
+            $idEmpresa
         );
+
+        $perfilId = $permissao->getPerfil();
+
+        // 🔹 Tipos
+        $rnTipoChecklist = new \rn\RnTipoChecklist($idUsuario);
+        $listaTipos = $rnTipoChecklist->retornarListaTiposChecklist();
+
+        // 🔹 Aplicar filtro por perfil
+        $rnChecklist = new \rn\RnChecklist($idUsuario, $idEmpresa);
+        $listaTipos = $rnChecklist->filtrarTiposPorPerfil($listaTipos, $perfilId);
 
         require_once __DIR__ . '/../views/features/checklists/checklists/iniciarchecklist.php';
     }
-
     function iniciarChecklistVeicular($fkUsuario, $fkObjeto)
     {
-        $fkTipo = 1;
+        $fkTipo = 1; // ID válido para veicular
         $dataInicio = (new DateTime())->format('d/m/Y H:i:s');
-        $checklist = new Checklist(1, $fkUsuario, $fkTipo, $fkObjeto, $dataInicio, "", 1);
-        $idChecklist = (new RnChecklist(Sessao::idusuario()))->iniciarChecklist($checklist);
+
+        $usuarioObj = (new RnUsuario(Sessao::idusuario()))->selecionarUsuario($fkUsuario);
+
+        $checklist = new Checklist(
+            1,
+            $usuarioObj,
+            $fkUsuario,
+            $fkTipo,       // ✅ agora sempre válido
+            $fkObjeto,
+            $dataInicio,
+            "",
+            1
+        );
+
+        $idChecklist = $this->rnChecklist->iniciarChecklist($checklist);
+
         header("Location:/syscheck/lista/");
+        exit;
     }
 
     function salvarInicioChecklist()
     {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $checklist = new Checklist(1, $_POST['fkusuario'], $_POST['fktipo'], $_POST['fkobjeto'], $_POST['datainicio'], "", 1);
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
 
-            $tipoEmpilhadeira = (new RnTipoChecklist(Sessao::idusuario()))->verificarTipoEmpilhadeira($checklist->getFkTipo());
-            $fkEmpilhadeira = $checklist->getFkObjeto();
+        $fkUsuario = $_POST['fkusuario'] ?? 0;
+        $fkTipo    = $_POST['fktipo'] ?? 0;
+        $fkObjeto  = $_POST['fkobjeto'] ?? 0;
+        $dataInicio = $_POST['datainicio'] ?? (new DateTime())->format('d/m/Y H:i:s');
 
-            // 🔎 Verifica horímetro aberto antes de iniciar novo checklist
-            if ($this->verificarHorimetroAberto($fkEmpilhadeira)) {
-                Sessao::salvarMensagemNaSessao(
-                    "Empilhadeira com registro de horímetro em aberto. Solicite que o último usuário encerre o uso do equipamento ou contate o líder."
-                );
-                header("Location:/syscheck/");
-                exit;
-            }
-
-            $idChecklist = (new RnChecklist(Sessao::idusuario()))->iniciarChecklist($checklist);
-
-            if (!empty($tipoEmpilhadeira)) {
-                $relacaoEmpilhadeira = $tipoEmpilhadeira[0];
-                switch ($relacaoEmpilhadeira['FK_TIPO_EMPILHADEIRA']) {
-                    case 1:
-                        $this->iniciarChecklistEmpilhadeiraGas($idChecklist);
-                        break;
-                    case 2:
-                        $this->iniciarChecklistBateriaComum($idChecklist);
-                        break;
-                    case 3:
-                        $this->iniciarChecklistBateriaLitio($idChecklist);
-                        break;
-                }
-            } else {
-                if ($idChecklist > 0) {
-                    header("Location: /syscheck/etapaschecklist/etapa/" . $idChecklist . "/" . $checklist->getFkTipo() . "/1");
-                } else {
-                    echo "não foi possível iniciar o checklist";
-                }
-            }
+        // IDs válidos da tabela tbl_tipos_checklist
+        $tiposValidos = [1, 2, 3, 4, 6, 14];
+        if (!in_array($fkTipo, $tiposValidos)) {
+            Sessao::salvarMensagemNaSessao("Tipo de checklist inválido: {$fkTipo}");
+            header("Location:/syscheck/");
+            exit;
         }
+
+        // Validar usuário
+        $usuarioObj = (new RnUsuario(Sessao::idusuario()))->selecionarUsuario($fkUsuario);
+        if (!$usuarioObj) {
+            Sessao::salvarMensagemNaSessao("Usuário inválido.");
+            header("Location:/syscheck/");
+            exit;
+        }
+
+        // Validar tipo de checklist
+        $tipoChecklist = (new RnTipoChecklist(Sessao::idusuario()))->selecionarTipoChecklist($fkTipo);
+        if (!$tipoChecklist) {
+            Sessao::salvarMensagemNaSessao("Tipo de checklist inválido.");
+            header("Location:/syscheck/");
+            exit;
+        }
+
+        // Criar checklist
+        $checklist = new Checklist(
+            1,
+            $usuarioObj,
+            $fkUsuario,
+            $tipoChecklist->getIdTipoChecklist(),
+            $fkObjeto,
+            $dataInicio,
+            "",
+            1
+        );
+
+        // Verificar horímetro aberto (se for empilhadeira)
+        $fkEmpilhadeira = $checklist->getFkObjeto();
+        if ($this->verificarHorimetroAberto($fkEmpilhadeira)) {
+            Sessao::salvarMensagemNaSessao(
+                "Empilhadeira com registro de horímetro em aberto. Solicite que o último usuário encerre o uso do equipamento."
+            );
+            header("Location:/syscheck/");
+            exit;
+        }
+
+        // Iniciar checklist
+        $idChecklist = $this->rnChecklist->iniciarChecklist($checklist);
+
+        // Redirecionar para a primeira etapa
+        header("Location: /syscheck/etapaschecklist/etapa/{$idChecklist}/" . $checklist->getFkTipo() . "/1");
+        exit;
     }
 
+    /**
+     * Verifica se a empilhadeira possui horímetro aberto
+     * Retorna true se houver horímetro aberto
+     */
     private function verificarHorimetroAberto($fkEmpilhadeira)
     {
-        $rnUsuarioEmp = new \rn\RnusuarioEmpilhadeira(Sessao::idusuario());
-        $registroUso = $rnUsuarioEmp->listarHorimetrosAbertos($fkEmpilhadeira); // agora retorna a última linha ou []
+        $rnUsuarioEmp = new RnusuarioEmpilhadeira(Sessao::idusuario());
+        $registroUso = $rnUsuarioEmp->listarHorimetrosAbertos($fkEmpilhadeira);
 
         if (!empty($registroUso)) {
-            $encerramento = $registroUso['DATA_HORA_ENCERRAMENTO'];
-            // Verifique valores que você usa no banco para "não encerrado" (p.ex. "0" ou "")
-            if ($encerramento === null || $encerramento === "" || $encerramento === "0") {
-                Sessao::salvarMensagemNaSessao("Empilhadeira com registro de horímetro em aberto. Solicite que o último usuário encerre o uso do equipamento ou contate o líder.");
-                header("Location:/syscheck/");
-                exit;
+            $encerramento = $registroUso['DATA_HORA_ENCERRAMENTO'] ?? null;
+            if (empty($encerramento) || $encerramento === "0") {
+                return true;
             }
         }
+        return false;
     }
 
     function iniciarChecklistBateriaLitio($idChecklist)
     {
-
-        /*
-        //checklist bateria de litio        
+        // Lista de baterias de lítio
         $listaBaterias = (new RnBateria(Sessao::idusuario()))->gerarListaBaterias();
 
-        $verificacaoExpediente = (new RnusuarioEmpilhadeira(Sessao::idusuario()))->verificarChecklistAberto(Sessao::idusuario());        
+        // Verifica se o usuário tem checklist aberto
+        $verificacaoExpediente = (new RnusuarioEmpilhadeira(Sessao::idusuario()))
+            ->verificarChecklistAberto(Sessao::idusuario());
 
-        //var_dump($verificacaoExpediente);
+        // Inicia expediente se não houver checklist aberto
+        if (empty($verificacaoExpediente)) {
+            (new RnusuarioEmpilhadeira(Sessao::idusuario()))
+                ->iniciarExpediente($idChecklist);
+        }
 
-        if(empty($verificacaoExpediente)){
-            $expediente = (new RnusuarioEmpilhadeira(Sessao::idusuario()))->iniciarExpediente($idChecklist);
-        }       
-
-        require_once __DIR__ . '/../views/features/checklists/empilhadeiraeletrica/empilhadeiraeletrica.php';     
-        */
-
+        // Carrega view específica para bateria de lítio
         require_once __DIR__ . '/../views/features/checklists/empilhadeiraeletrica/empilhadeiraeletricabateriacomum.php';
     }
 
+    function iniciarChecklistBateriaComum($idChecklist)
+    {
+        // Lista de baterias comuns
+        $listaBaterias = (new RnBateria(Sessao::idusuario()))->gerarListaBaterias();
+
+        $verificacaoExpediente = (new RnusuarioEmpilhadeira(Sessao::idusuario()))
+            ->verificarChecklistAberto(Sessao::idusuario());
+
+        if (empty($verificacaoExpediente)) {
+            (new RnusuarioEmpilhadeira(Sessao::idusuario()))
+                ->iniciarExpediente($idChecklist);
+        }
+
+        require_once __DIR__ . '/../views/features/checklists/empilhadeiraeletrica/empilhadeiraeletrica.php';
+    }
 
     function salvarHorimetro()
     {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $fkChecklist = $_POST['idchecklist'];
-            $fkempilhadeira = $_POST['fkempilhadeira'];
-            $horimetro = $_POST['horimetro'];
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
 
-            (new RnHorimetro(Sessao::idusuario()))->salvarHorimetro($fkChecklist, $fkempilhadeira, $horimetro);
+        $fkChecklist = $_POST['idchecklist'] ?? 0;
+        $fkEmpilhadeira = $_POST['fkempilhadeira'] ?? 0;
+        $horimetro = $_POST['horimetro'] ?? 0;
 
-            /*if((new RnHorimetro(Sessao::idusuario()))->salvarHorimetro($fkChecklist, $fkempilhadeira, $horimetro) > 0){
-                
-            }*/
+        if ($fkChecklist && $fkEmpilhadeira && $horimetro !== null) {
+            (new RnHorimetro(Sessao::idusuario()))
+                ->salvarHorimetro($fkChecklist, $fkEmpilhadeira, $horimetro);
+            echo "sucesso";
+        } else {
+            echo "dados inválidos";
         }
     }
-
 
     function verificarFotoPorEtapa($fkChecklist, $numeroEtapa)
     {
-        $foto = (new RnFoto(Sessao::idusuario()))->selecionarFotoEtapa($fkChecklist, $numeroEtapa);
+        $foto = (new RnFoto(Sessao::idusuario()))
+            ->selecionarFotoEtapa($fkChecklist, $numeroEtapa);
 
-        /*echo "<pre>";
-        var_dump($foto->getCaminhoFoto());*/
-
-        if ($foto != null) {
-            echo $foto->getCaminhoFoto();
-        } else {
-            echo "";
-        }
+        echo ($foto != null) ? $foto->getCaminhoFoto() : "";
     }
-
 
     function salvarinfobateria()
     {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
 
-            $idChecklist = $_POST['idchecklist'];
-            $fkbateria = $_POST['fkbateria'];
-            $nivelBateria = $_POST['nivelbateria'];
+        $idChecklist = $_POST['idchecklist'] ?? 0;
+        $fkBateria = $_POST['fkbateria'] ?? 0;
+        $nivelBateria = $_POST['nivelbateria'] ?? 0;
 
-            //(new RnBateria(Sessao::idusuario()))->salvarBateriaDeUso($idChecklist, $fkbateria, $nivelBateria);
-
-            if ((new RnBateria(Sessao::idusuario()))->salvarBateriaDeUso($idChecklist, $fkbateria, $nivelBateria)) {
-                echo "sucesso";
-            } else {
-                echo "falhou";
-            }
+        if ((new RnBateria(Sessao::idusuario()))
+            ->salvarBateriaDeUso($idChecklist, $fkBateria, $nivelBateria)
+        ) {
+            echo "sucesso";
+        } else {
+            echo "falhou";
         }
     }
 
     function salvaInfoBateriaComum()
     {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            (new RnBateria(Sessao::idusuario()))->salvarNivelBateriaComum($_POST['idchecklist'], $_POST['nivelbateria']);
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
+
+        $idChecklist = $_POST['idchecklist'] ?? 0;
+        $nivelBateria = $_POST['nivelbateria'] ?? 0;
+
+        if ($idChecklist && $nivelBateria !== null) {
+            (new RnBateria(Sessao::idusuario()))
+                ->salvarNivelBateriaComum($idChecklist, $nivelBateria);
+            echo "sucesso";
+        } else {
+            echo "falhou";
         }
-    }
-
-    function iniciarChecklistBateriaComum($idChecklist)
-    {
-
-        //checklist bateria de litio        
-        $listaBaterias = (new RnBateria(Sessao::idusuario()))->gerarListaBaterias();
-
-        $verificacaoExpediente = (new RnusuarioEmpilhadeira(Sessao::idusuario()))->verificarChecklistAberto(Sessao::idusuario());
-
-        //var_dump($verificacaoExpediente);
-
-        if (empty($verificacaoExpediente)) {
-            $expediente = (new RnusuarioEmpilhadeira(Sessao::idusuario()))->iniciarExpediente($idChecklist);
-        }
-
-        require_once __DIR__ . '/../views/features/checklists/empilhadeiraeletrica/empilhadeiraeletrica.php';
-
-        /*
-        require_once __DIR__ . '/../views/features/checklists/empilhadeiraeletrica/empilhadeiraeletricabateriacomum.php';
-        */
-        //header("Location: /syscheck/checklist/horimetro/".$idChecklist);
     }
 
     function horimetro($idChecklist)
     {
-        $checklist = (new RnChecklist(Sessao::idusuario()))->selecionarChecklist($idChecklist);
-        $empilhadeira = (new RnObjeto(Sessao::idusuario()))->selecionarObjeto($checklist->getFkObjeto());
+        $checklist = (new RnChecklist($this->idUsuarioSessao, $this->idEmpresaSessao))
+            ->selecionarChecklist($idChecklist);
+
+        $empilhadeira = (new RnObjeto(Sessao::idusuario()))
+            ->selecionarObjeto($checklist->getFkObjeto());
 
         require_once __DIR__ . '/../views/features/checklists/empilhadeiras/horimetro.php';
     }
 
     function iniciarChecklistEmpilhadeiraGas($idChecklist)
     {
+        $checklist = (new RnChecklist($this->idUsuarioSessao, $this->idEmpresaSessao))
+            ->selecionarChecklist($idChecklist);
 
-        $checklist = (new RnChecklist(Sessao::idusuario()))->selecionarChecklist($idChecklist);
-        $empilhadeira = (new RnObjeto(Sessao::idusuario()))->selecionarObjeto($checklist->getFkObjeto());
+        $empilhadeira = (new RnObjeto(Sessao::idusuario()))
+            ->selecionarObjeto($checklist->getFkObjeto());
 
         require_once __DIR__ . '/../views/features/checklists/empilhadeiras/horimetro.php';
     }
@@ -298,64 +358,71 @@ class ChecklistController
 
     function encerrarUsoEmpilhadeiraEletrica($fkChecklist)
     {
-        (new RnusuarioEmpilhadeira(Sessao::idusuario()))->encerrarExpediente($fkChecklist);
+        (new RnusuarioEmpilhadeira(Sessao::idusuario()))
+            ->encerrarExpediente($fkChecklist);
+
         header("Location:/syscheck/");
+        exit;
     }
 
     function finalizarChecklist($idChecklist)
     {
-
         $checklist = $this->rnChecklist->selecionarChecklist($idChecklist);
-        $fkTipoChecklist = $checklist->getFkTipo();
-        $enviarEmail = false;
-
-        if ($checklist != null) {
-            $checklist->setDataFim((new DateTime())->format('d/m/Y H:i:s'));
-            $checklist->setStatusChecklist(3);
-
-            $atualizarChecklist = $this->rnChecklist->atualizarChecklist($checklist);
-
-            if ($atualizarChecklist > 0) {
-                //echo "<pre>";
-                //print_r($checklist);
-                //echo "Checklist finalizado com sucesso.";
-
-                $listaEtapasRealizadas = (new RnEtapaRealizada(Sessao::idusuario()))->montarChecklist($checklist->getIdChecklist());
-                foreach ($listaEtapasRealizadas as $etapa) {
-                    if ($etapa['ACAO'] != 1) {
-                        $enviarEmail = true;
-                        break;
-                    }
-                }
-
-                if ($enviarEmail) {
-                    $this->enviarEmail($idChecklist);
-                }
-
-                header("Location:/syscheck/checklist/checklistfinalizado/" . $idChecklist);
-            }
-        } else {
+        if (!$checklist) {
             echo "Checklist inválido";
+            return;
+        }
+
+        $checklist->setDataFim((new \DateTime())->format('d/m/Y H:i:s'));
+        $checklist->setStatusChecklist(3);
+
+        $atualizarChecklist = $this->rnChecklist->atualizarChecklist($checklist);
+
+        if ($atualizarChecklist > 0) {
+            $enviarEmail = false;
+
+            $listaEtapasRealizadas = (new RnEtapaRealizada(Sessao::idusuario()))
+                ->montarChecklist($checklist->getIdChecklist());
+
+            foreach ($listaEtapasRealizadas as $etapa) {
+                if ($etapa['ACAO'] != 1) {
+                    $enviarEmail = true;
+                    break;
+                }
+            }
+
+            if ($enviarEmail) {
+                $this->enviarEmail($idChecklist);
+            }
+
+            header("Location:/syscheck/checklist/checklistfinalizado/" . $idChecklist);
+            exit;
+        } else {
+            echo "Falha ao atualizar checklist";
         }
     }
-
     private function enviarEmail($idChecklist)
     {
         $checklist = $this->rnChecklist->selecionarChecklist($idChecklist);
-        $listaEtapasRealizadas = (new RnEtapaRealizada(Sessao::idusuario()))->montarChecklist($checklist->getIdChecklist());
+        if (!$checklist) {
+            echo "Checklist inválido";
+            return;
+        }
 
-        //recuperar dados de usuário e item checado
-        $usuario = (new RnUsuario(Sessao::idusuario()))->selecionarUsuario($checklist->getFkUsuario());
-        $itemChecado = (new RnObjeto(Sessao::idusuario()))->selecionarObjeto($checklist->getFkObjeto());
+        $listaEtapasRealizadas = (new RnEtapaRealizada(Sessao::idusuario()))
+            ->montarChecklist($checklist->getIdChecklist());
+
+        $usuario = (new RnUsuario(Sessao::idusuario()))
+            ->selecionarUsuario($checklist->getFkUsuario());
+        $itemChecado = (new RnObjeto(Sessao::idusuario()))
+            ->selecionarObjeto($checklist->getFkObjeto());
 
         $listaEtapasReprovadas = [];
-        $listaFotosApontamentos = [];
-        $listaResponsaveis = [];
 
-        //popular lista de etapas com apontamentos de e reprovadas
         foreach ($listaEtapasRealizadas as $etapa) {
             if ($etapa['ACAO'] != 1) {
-                $etapaReprovada = (new RnEtapasChecklist(Sessao::idusuario()))->selecionarEtapaPeloId($etapa['FK_ETAPA']);
+                $etapaReprovada = (new RnEtapasChecklist(Sessao::idusuario()))
+                    ->selecionarEtapaPeloId($etapa['FK_ETAPA']);
 
                 $listaEtapasReprovadas[] = [
                     'TITULO' => $etapaReprovada->getTituloEtapa(),
@@ -363,21 +430,14 @@ class ChecklistController
                     'OBSERVACAO' => $etapa['OBSERVACAO'],
                     'ACAO' => $etapa['ACAO']
                 ];
-
-                //recuperar lista de fotos
-                /*$foto = (new DaoFoto((new Conexao())->conectar(), Sessao::idusuario()))->selecionarFotoEtapa($etapa['NUMERO'], $etapa['NUMERO_ETAPA']);
-                $listaFotosApontamentos[] = $foto;                
-                
-                var_dump($listaFotosApontamentos);*/
             }
         }
 
-        //selecionando os dados do responsavel pelo tipo do checklist
-        $fkResponsavel = (new RnTipoChecklist(Sessao::idusuario()))->retornarResponsavel($checklist->getFkTipo());
-        $responsavel = (new RnResponsavel(Sessao::idusuario()))->selecionarResponsavel($fkResponsavel);
+        $fkResponsavel = (new RnTipoChecklist(Sessao::idusuario()))
+            ->retornarResponsavel($checklist->getFkTipo());
+        $responsavel = (new RnResponsavel(Sessao::idusuario()))
+            ->selecionarResponsavel($fkResponsavel);
 
-
-        //fazer o envio do email dos itens reprovados
         $email = new PHPMailer(true);
         try {
             $email->isSMTP();
@@ -389,36 +449,29 @@ class ChecklistController
             $email->Port       = $_ENV['SMTP_PORT'];
             $email->CharSet    = $_ENV['SMTP_CHARSET'];
 
-            //Destinarios
             $email->setFrom('suporte.ti@udlog.com.br', 'Syscheck');
-            switch ((int) $fkResponsavel) {
 
-                // VEICULAR
-                case 1:
+            switch ((int)$fkResponsavel) {
+                case 1: // VEICULAR
                     $email->addAddress('priscila.braz@udlog.com.br', 'Priscila');
                     $email->addAddress('jessika.rodrigues@udlog.com.br', 'Jessika');
                     $email->addAddress('ronaldo.cruz@udlog.com.br', 'Ronaldo');
                     break;
-
-                // TI
-                case 2:
+                case 2: // TI
                     $email->addAddress('suporte.ti@udlog.com.br', 'TI');
-
                     break;
-
-                // EMPILHADEIRAS
-                case 3:
+                case 3: // EMPILHADEIRAS
                     $email->addAddress('priscila.braz@udlog.com.br', 'Priscila');
                     break;
-
                 default:
                     throw new Exception(
                         "FK_RESPONSAVEL ({$fkResponsavel}) sem regra de e-mail definida."
                     );
             }
 
-            //carregando o template do email
-            $emailTemplate = file_get_contents(__DIR__ . '/../views/features/checklists/checklists/email_template.html');
+            $emailTemplate = file_get_contents(
+                __DIR__ . '/../views/features/checklists/checklists/email_template.html'
+            );
 
             $emailTemplate = str_replace('{{item}}', $itemChecado->getDescricaoObjeto(), $emailTemplate);
             $emailTemplate = str_replace('{{numero_checklist}}', $checklist->getIdChecklist(), $emailTemplate);
@@ -427,93 +480,125 @@ class ChecklistController
             $emailTemplate = str_replace('{{usuario}}', $usuario->getNome(), $emailTemplate);
 
             $linhasTabela = "";
-
             foreach ($listaEtapasReprovadas as $etapaTemplate) {
                 $linhasTabela .= "<tr>
-                                    <td>{$etapaTemplate['TITULO']}</td>
-                                    <td>{$etapaTemplate['CONTEUDO']}</td>
-                                    <td>{$etapaTemplate['OBSERVACAO']}</td>
-                                    <td>Item reprovado</td>
-                                </tr>";
+                                <td>{$etapaTemplate['TITULO']}</td>
+                                <td>{$etapaTemplate['CONTEUDO']}</td>
+                                <td>{$etapaTemplate['OBSERVACAO']}</td>
+                                <td>Item reprovado</td>
+                              </tr>";
             }
 
             $emailTemplate = str_replace('{{tabela}}', $linhasTabela, $emailTemplate);
 
-            //echo $emailTemplate;            
-
-            //conteúdo do email
             $email->isHTML(true);
             $email->Subject = "Syscheck - {$itemChecado->getDescricaoObjeto()} - Checklist Finalizado com apontamentos";
-            $email->Body = $emailTemplate;
-            $email->AltBody = "Checklist finalizado com apontamentos, acesse o sistema para verificar o checklist número {$checklist->getIdChecklist()}";
+            $email->Body    = $emailTemplate;
+            $email->AltBody = "Checklist finalizado com apontamentos. Verifique o checklist número {$checklist->getIdChecklist()} no sistema.";
 
             $email->send();
-            //echo 'Email enviado com sucesso';
         } catch (Exception $e) {
             Util::inserirErro($e, 'enviarEmail', Sessao::idusuario());
             echo "Erro ao enviar o email: {$email->ErrorInfo}";
         }
-
-
-
-        //debug
-        //echo "<pre>";
-        //var_dump($responsavel);
-        //var_dump($listaEtapasReprovadas);
-
     }
-
 
     function enviaralertabateriabaixa()
     {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $idchecklist = $_POST['idchecklist'];
-            $fkbateria = $_POST['fkbateria'];
-            $nivelbateria = $_POST['nivelbateria'];
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
+
+        $idChecklist = $_POST['idchecklist'] ?? 0;
+        $fkBateria = $_POST['fkbateria'] ?? 0;
+        $nivelBateria = $_POST['nivelbateria'] ?? 0;
+
+        if ($idChecklist && $fkBateria && $nivelBateria !== null) {
+            // 🔹 Obter conexão e idUsuarioSessao
+            $conexao = (new Conexao())->conectar();
+            $idUsuarioSessao = Sessao::idusuario();
+
+            // 🔹 Criar DAO com os argumentos corretos
+            $dao = new DaoBaterias($conexao, $idUsuarioSessao);
+
+            $alerta = [
+                'fk_checklist' => $idChecklist,
+                'fk_bateria' => $fkBateria,
+                'nivel_bateria' => $nivelBateria,
+                'data_alerta' => (new DateTime())->format('Y-m-d H:i:s'),
+                'id_usuario' => $idUsuarioSessao
+            ];
+
+            $dao->inserirAlerta($alerta);
+
+            echo "alerta enviado";
+        } else {
+            echo "dados inválidos";
         }
     }
 
     function abrirChamado()
     {
-        $listaPerifericos = (new RnPeriferico(Sessao::idusuario()))->listarPerifericos();
+        $listaPerifericos = (new RnPeriferico(Sessao::idusuario()))
+            ->listarPerifericos();
         $dataHora = (new DateTime())->format("d/m/Y H:i:s");
-
 
         require_once __DIR__ . '/../views/features/checklists/empilhadeiraeletrica/chamadosperifericos.php';
     }
 
     function salvarChamado()
     {
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $chamado = new Chamado(1, $_POST['itemchamado'], $_POST['descricaochamado'], $_POST['datahora'], null, Sessao::idusuario(), 1);
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
 
-            $isSucces = (new RnChamado(Sessao::idusuario()))->abrirChamado($chamado);
+        $itemChamado = $_POST['itemchamado'] ?? '';
+        $descricaoChamado = $_POST['descricaochamado'] ?? '';
+        $dataHora = $_POST['datahora'] ?? (new DateTime())->format("d/m/Y H:i:s");
 
-            if ($isSucces > 0) {
-                echo "chamado aberto com sucesso";
-            } else {
-                echo "falha ao abrir chamado";
-            }
-        }
+        $chamado = new Chamado(1, $itemChamado, $descricaoChamado, $dataHora, null, Sessao::idusuario(), 1);
+
+        $isSuccess = (new RnChamado(Sessao::idusuario()))->abrirChamado($chamado);
+
+        echo ($isSuccess > 0) ? "chamado aberto com sucesso" : "falha ao abrir chamado";
     }
 
     function checklistFinalizado($idChecklist)
     {
         $checklist = $this->rnChecklist->selecionarChecklist($idChecklist);
 
-        $tipo = (new RnTipoChecklist(Sessao::idusuario()))->selecionarTipoChecklist($checklist->getFkTipo());
+        if (!$checklist) {
+            echo "Checklist inválido";
+            exit;
+        }
+
+        $fkTipoChecklist = $checklist->getFkTipo();
+        $fkObjeto = $checklist->getFkObjeto();
+
+        // Validar tipo de checklist
+        $tipo = (new RnTipoChecklist(Sessao::idusuario()))
+            ->selecionarTipoChecklist($fkTipoChecklist);
+
+        if (!$tipo) {
+            $objeto = (new RnObjeto(Sessao::idusuario()))->selecionarObjeto($checklist->getFkObjeto());
+            $fkObjeto = $checklist->getFkObjeto();
+            $fkTipoDoObjeto = $objeto ? $objeto->getFkTipoChecklist() : 'n/a';
+            echo "Tipo de checklist inválido. FK_TIPO recebido: {$fkTipoChecklist} para checklist ID: {$idChecklist}. ";
+            echo "Objeto ID: {$fkObjeto} com FK_TIPO_OBJETO: {$fkTipoDoObjeto}";
+            exit;
+        }
+
         $empilhadeiraEletrica = false;
         $empilhadeira = false;
         $empilhadeiraBateriaComum = false;
-        $item = (new RnObjeto(Sessao::idusuario()))->selecionarObjeto($checklist->getFkObjeto());
-        $status = Util::statusChecklist((int) $checklist->getStatusChecklist());
+
+        $item = (new RnObjeto(Sessao::idusuario()))
+            ->selecionarObjeto($checklist->getFkObjeto());
+
+        $status = Util::statusChecklist((int)$checklist->getStatusChecklist());
 
         $listaEtapas = $this->montarChecklist($idChecklist);
         $listaFotos = $this->recuperarListaFotos($idChecklist);
 
         $listaTitulos = [];
-
-        $usuario = (new RnUsuario(Sessao::idusuario()))->selecionarUsuario($checklist->getFkUsuario());
+        $usuario = (new RnUsuario(Sessao::idusuario()))
+            ->selecionarUsuario($checklist->getFkUsuario());
 
         foreach ($listaEtapas as $etapa) {
             if (!in_array($etapa['TITULO'], $listaTitulos)) {
@@ -521,92 +606,69 @@ class ChecklistController
             }
         }
 
-        //echo "<pre>";
-        //var_dump($listaFotos);
+        $itemChecado = (new RnObjeto(Sessao::idusuario()))
+            ->selecionarObjeto($checklist->getFkObjeto());
+        $responsavel = (new RnUsuario(Sessao::idusuario()))
+            ->selecionarUsuario($checklist->getFkUsuario());
 
-        //$tipoChecklist = (new RnTipoChecklist(Sessao::idusuario()))->selecionarTipoChecklist($checklist->getFkTipo());
-        $itemChecado = (new RnObjeto(Sessao::idusuario()))->selecionarObjeto($checklist->getFkObjeto());
-        $responsavel = (new RnUsuario(Sessao::idusuario()))->selecionarUsuario($checklist->getFkUsuario());
-
-        if ($tipo->getIdTipoChecklist() == 4 || $tipo->getIdTipoChecklist() == 3 || $tipo->getIdTipoChecklist() == 10) {
+        // Checklist de empilhadeira
+        if (in_array($tipo->getIdTipoChecklist(), [3, 4, 10])) {
             $empilhadeira = true;
-            $listaHorimetros = (new RnHorimetro(Sessao::idusuario()))->recuperarListaHorimetros($idChecklist);
+            $listaHorimetros = (new RnHorimetro(Sessao::idusuario()))
+                ->recuperarListaHorimetros($idChecklist);
         }
 
+        // Checklist bateria comum
         if ($tipo->getIdTipoChecklist() == 10) {
             $empilhadeiraBateriaComum = true;
-            $infoNivelBateria = (new RnBateria(Sessao::idusuario()))->selecionarNivelBateriaComum($idChecklist);
-            $nivelBateria = $infoNivelBateria['NIVEL_BATERIA'];
+            $infoNivelBateria = (new RnBateria(Sessao::idusuario()))
+                ->selecionarNivelBateriaComum($idChecklist);
+            $nivelBateria = $infoNivelBateria['NIVEL_BATERIA'] ?? null;
         }
 
+        // Checklist empilhadeira elétrica
         if ($tipo->getIdTipoChecklist() == 3) {
             $empilhadeiraEletrica = true;
-            $listaBaterias = (new RnBateria(Sessao::idusuario()))->selecionarBateriasParaChecklist($idChecklist);
+            $listaBaterias = (new RnBateria(Sessao::idusuario()))
+                ->selecionarBateriasParaChecklist($idChecklist);
         }
 
-
-
-        //require_once __DIR__ . '/../views/features/checklists/checklists/checklistfinalizado.php';
-        require_once __DIR__ . '/../views/features/checklists/checklists/teste.php';
+        require_once __DIR__ . '/../views/features/checklists/checklists/checklistfinalizado.php';
     }
 
     public function listarChecklists()
     {
         $filtros = [];
 
-        // Listas auxiliares para filtros
         $listaTipos    = (new RnTipoChecklist(Sessao::idusuario()))->retornarListaTiposChecklist();
         $listaObjetos  = (new RnObjeto(Sessao::idusuario()))->listarObjetos();
         $listaUsuarios = (new RnUsuario(Sessao::idusuario()))->listarUsuarios();
 
         // Filtros via GET
-        if (!empty($_GET['numero'])) {
-            $filtros['numero'] = $_GET['numero'];
-        }
-        if (!empty($_GET['data_inicio'])) {
-            $filtros['data_inicio'] = $_GET['data_inicio'];
-        }
-        if (!empty($_GET['tipo'])) {
-            $filtros['tipo'] = $_GET['tipo'];
-        }
-        if (!empty($_GET['objeto'])) {
-            $filtros['objeto'] = $_GET['objeto'];
-        }
-        if (!empty($_GET['usuario'])) {
-            $filtros['usuario'] = $_GET['usuario'];
-        }
+        $filtros['numero'] = $_GET['numero'] ?? null;
+        $filtros['data_inicio'] = $_GET['data_inicio'] ?? null;
+        $filtros['tipo'] = $_GET['tipo'] ?? null;
+        $filtros['objeto'] = $_GET['objeto'] ?? null;
+        $filtros['usuario'] = $_GET['usuario'] ?? null;
         $filtros['status'] = $_GET['status'] ?? 0;
 
-        // Instancia PermissaoService
-        $permissaoService = new \service\PermissaoService(
-            $this->conexao,
-            Sessao::idusuario(),
-            Sessao::empresaLogada() // <-- método que retorna id_empresa do usuário logado
-        );
+        $listaChecklists = !empty(array_filter($filtros))
+            ? $this->rnChecklist->listarComFiltros($filtros)
+            : $this->rnChecklist->listarChecklists();
 
-        // Pega os usuários que o perfil pode visualizar
-        $usuariosPermitidos = $permissaoService->getUsuariosPermitidos();
-
-        // Lista checklists considerando filtros e permissões
-        $listaChecklists = !empty($filtros)
-            ? $this->rnChecklist->listarComFiltros($filtros, $usuariosPermitidos)
-            : $this->rnChecklist->listarChecklists($usuariosPermitidos);
-
-        // Chama a view
         require_once __DIR__ . '/../views/features/checklists/checklists/listachecklists.php';
     }
 
-
     function montarChecklist(int $idChecklist)
     {
-        $listaEtapas = (new RnEtapaRealizada(Sessao::idusuario()))->montarChecklist($idChecklist);
-        return $listaEtapas;
+        return (new RnEtapaRealizada(Sessao::idusuario()))
+            ->montarChecklist($idChecklist);
     }
 
     function recuperarListaFotos(int $idChecklist)
     {
-        $listaFotos = (new RnFoto(Sessao::idusuario()))->selecionarFotoChecklist($idChecklist);
-        return $listaFotos;
+        return (new RnFoto(Sessao::idusuario()))
+            ->selecionarFotoChecklist($idChecklist);
     }
 
     function listarItens()
@@ -615,30 +677,28 @@ class ChecklistController
         $partes = explode('/', $url);
         $fkTipo = end($partes);
 
-        if (is_numeric($fkTipo)) {
-
-            // 🔹 pegar usuário logado
-            $usuario = Sessao::retornarUsuarioLogado();
-            $fkEmpresa = $usuario->getFkEmpresa();
-
-            $listaObjetos = (new RnObjeto(Sessao::idusuario()))
-                ->listarObjetosPeloTipo($fkTipo);
-
-            $option = '';
-
-            foreach ($listaObjetos as $objeto) {
-                if ($objeto->getStatusObjeto() > 0) {
-                    $option .= '<option value="' . htmlspecialchars($objeto->getIdObjeto()) . '">'
-                        . htmlspecialchars($objeto->getDescricaoObjeto())
-                        . '</option>';
-                }
-            }
-
-            header('Content-Type: text/html');
-            echo $option;
-        } else {
+        if (!is_numeric($fkTipo)) {
             header('HTTP/1.1 400 Bad Request');
             echo '<option value="">ID inválido</option>';
+            return;
         }
+
+        $usuario = Sessao::retornarUsuarioLogado();
+        $fkEmpresa = $usuario->getFkEmpresa();
+
+        $listaObjetos = (new RnObjeto(Sessao::idusuario()))
+            ->listarObjetosPeloTipo($fkTipo);
+
+        $option = '';
+        foreach ($listaObjetos as $objeto) {
+            if ($objeto->getStatusObjeto() > 0) {
+                $option .= '<option value="' . htmlspecialchars($objeto->getIdObjeto()) . '">'
+                    . htmlspecialchars($objeto->getDescricaoObjeto())
+                    . '</option>';
+            }
+        }
+
+        header('Content-Type: text/html');
+        echo $option;
     }
 }

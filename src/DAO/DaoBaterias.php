@@ -205,4 +205,22 @@ class DaoBaterias
             return null;
         }
     }
+
+     public function inserirAlerta(array $dados)
+    {
+        $stmt = $this->conexao->prepare("
+            INSERT INTO alertas_bateria (fk_checklist, fk_bateria, nivel_bateria, data_alerta, id_usuario)
+            VALUES (?, ?, ?, ?, ?)
+        ");
+        $stmt->bind_param(
+            "iidsi",
+            $dados['fk_checklist'],
+            $dados['fk_bateria'],
+            $dados['nivel_bateria'],
+            $dados['data_alerta'],
+            $dados['id_usuario']
+        );
+        $stmt->execute();
+        $stmt->close();
+    }
 }

@@ -52,9 +52,7 @@ class HomeService
         );
 
         $rnChecklist = new RnChecklist(
-            $daoChecklist,
             $this->idUsuario,
-            $this->idPerfil,
             $this->idEmpresa
         );
 
@@ -67,7 +65,7 @@ class HomeService
         // Objeto pendente do checklist
         $objetoPendente = $existeChecklist
             ? (new RnObjeto($this->idUsuario))
-                ->selecionarObjeto($checklistPendente->getFkObjeto())
+            ->selecionarObjeto($checklistPendente->getFkObjeto())
             : null;
 
         /* ==========================

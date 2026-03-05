@@ -1,8 +1,4 @@
 <?php
-ini_set('display_errors', 0);      // não mostra no navegador
-ini_set('log_errors', 1);          // registra em arquivo
-ini_set('error_log', __DIR__ . '/../../../../logs/error.log'); // caminho do log
-error_reporting(E_ALL);            // captura todos os erros
 
 require_once __DIR__ . '/../../../../functions/log.php';
 require_once __DIR__ . '/../../../../proteger.php';
@@ -33,8 +29,10 @@ $idEmpresa = $usuario->getFkEmpresa();
 $conexaoObj = new Conexao();
 $conexao = $conexaoObj->conectar();
 
-$daoChecklist = new DaoChecklist($conexao, $idUsuario, $idEmpresa);
-$rnChecklist = new RnChecklist($daoChecklist, $idUsuario, $idPerfil, $idEmpresa);
+$rnChecklist = new RnChecklist(
+    $idUsuario,
+    $idEmpresa
+);
 
 // =======================
 // Serviço de permissões

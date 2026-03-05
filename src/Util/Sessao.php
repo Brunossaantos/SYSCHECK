@@ -102,29 +102,33 @@ class Sessao
     }
 
 
-    public static function idusuario()
+    public static function idusuario(): int
     {
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start(); // Inicia a sessão apenas se não estiver já ativa
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
         }
 
         if (!isset($_SESSION['idUsuario'])) {
-            header("Location: /syscheck"); // Redireciona se o ID do usuário não estiver definido
-            exit(); // Garante que o script pare após o redirecionamento
+            header("Location: /syscheck");
+            exit();
         }
 
-        return $_SESSION['idUsuario'];
+        return (int) $_SESSION['idUsuario'];
     }
 
-     public static function idempresa(): int
+    public static function idempresa(): int
     {
-        return $_SESSION['id_empresa'] ?? 0; // ajuste o índice conforme sua sessão
-    }
+        if (!isset($_SESSION['fkEmpresa'])) {
+            header("Location: /syscheck");
+            exit();
+        }
 
+        return (int) $_SESSION['fkEmpresa'];
+    }
     public static function empresaLogada(): int
-{
-    return $_SESSION['fk_empresa'] ?? 0;
-}
+    {
+        return $_SESSION['fkEmpresa'] ?? 0;
+    }
 
     public static function nomeUsuario()
     {

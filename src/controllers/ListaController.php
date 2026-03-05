@@ -55,7 +55,10 @@ class ListaController
 
         $listaCarros = (new RnObjeto(Sessao::idusuario()))->listarObjetosPeloTipo(1);
 
-        $listaChecklists = (new RnChecklist(Sessao::idusuario()))->listarChecklistsVeiculares();
+        $listaChecklists = (new \rn\RnChecklist(
+            Sessao::idusuario(),
+            Sessao::idempresa()
+        ))->listarChecklistsVeiculares();
 
         foreach ($listaChecklists as $checklist) {
             switch ($checklist->getStatusChecklist()) {

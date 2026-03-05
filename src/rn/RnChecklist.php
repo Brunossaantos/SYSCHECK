@@ -9,28 +9,22 @@ class RnChecklist
 {
     private DaoChecklist $dao;
     private int $idUsuario;
-    private int $idPerfil;
     private int $idEmpresa;
 
-    public function __construct($daoOrInt, ?int $idUsuario = null, ?int $idPerfil = null, ?int $idEmpresa = null)
+    private int $idPerfil;
+
+    public function __construct(int $idUsuario, int $idEmpresa)
     {
-        if (is_int($daoOrInt)) {
-            $conexaoObj = new \database\Conexao();
-            $conexao = $conexaoObj->conectar();
+        $conexao = (new \database\Conexao())->conectar();
 
-            $this->idUsuario = $idUsuario ?? 1;
-            $this->idPerfil  = $idPerfil ?? 1;
-            $this->idEmpresa = $idEmpresa ?? 1;
+        $this->idUsuario = $idUsuario;
+        $this->idEmpresa = $idEmpresa;
 
-            $this->dao = new \DAO\DaoChecklist($conexao, $this->idUsuario, $this->idEmpresa);
-        } elseif ($daoOrInt instanceof DaoChecklist) {
-            $this->dao = $daoOrInt;
-            $this->idUsuario = $idUsuario;
-            $this->idPerfil  = $idPerfil;
-            $this->idEmpresa = $idEmpresa;
-        } else {
-            throw new \InvalidArgumentException("Argumento inválido para RnChecklist");
-        }
+        $this->dao = new \DAO\DaoChecklist(
+            $conexao,
+            $idUsuario,
+            $idEmpresa
+        );
     }
 
     // =========================
@@ -64,7 +58,6 @@ class RnChecklist
             ? $this->dao->listarChecklists()
             : [];
     }
-
     public function listarComFiltros(array $filtros): array
     {
         return method_exists($this->dao, 'filtrarChecklists')
@@ -142,5 +135,10 @@ class RnChecklist
         return method_exists($this->dao, 'veicularAtivo')
             ? $this->dao->veicularAtivo()
             : false;
+    }
+
+    public function listarChecklistsVeiculares()
+    {
+        return $this->dao->listarChecklistsVeiculares();
     }
 }

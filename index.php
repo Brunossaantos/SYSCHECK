@@ -57,7 +57,7 @@ if (!empty($url)) {
             $controller = new TiposChecklistController(new RnTipoChecklist(1));
             break;
         case 'checklist':
-            $controller = new ChecklistController(new RnChecklist(1));
+            $controller = new ChecklistController(new RnChecklist(1, 1));
             break;
         case 'etapaschecklist':
             $controller = new EtapasChecklistController(new RnEtapasChecklist(1));
