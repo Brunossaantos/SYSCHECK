@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-8">
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-2">
     <?php
 
     require_once __DIR__ . '/../../../../../proteger.php';
@@ -18,27 +18,32 @@
     $idUsuario = Sessao::idusuario();
     $data = (new DateTime())->format('d/m/y H:i:s');
     ?>
-
     <!-- Barra superior -->
-    <div class="w-full flex justify-center space-x-3 gap-6 p-6">
+    <div class="w-full flex justify-center space-x-1 gap-4 p-2">
         <a href="/syscheck/checklist"
-            class="bg-gray-500 hover:bg-gray-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+            class="bg-gray-500 hover:bg-gray-600 px-6 py-3 rounded-lg font-medium 
+               transition transform hover:scale-105
+               sm:px-6 sm:py-3 px-3 py-1">
             Voltar
         </a>
 
         <a href="/syscheck/index2.php"
-            class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+            class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium 
+               transition transform hover:scale-105
+               sm:px-6 sm:py-3 px-3 py-2">
             Home
         </a>
 
         <a href="/syscheck/usuario/logout"
-            class="bg-red-500 hover:bg-red-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+            class="bg-red-500 hover:bg-red-600 px-6 py-3 rounded-lg font-medium 
+               transition transform hover:scale-105
+               sm:px-6 sm:py-3 px-3 py-2">
             Logout
         </a>
     </div>
     <!-- Card iniciar checklist -->
-    <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-4xl">
-        <h1 class="text-2xl font-bold mb-6 text-center">Iniciar Checklist</h1>
+    <div class="bg-gray-800 p-6 rounded-2xl shadow-2xl w-full max-w-4xl">
+        <h1 class="text-2xl font-bold mb-4 text-center">Iniciar Checklist</h1>
 
         <form action="/syscheck/checklist/salvarInicioChecklist" method="POST" class="space-y-6">
             <input type="hidden" name="fkusuario" value="<?= $idUsuario ?>">
@@ -57,7 +62,7 @@
 
             <!-- Objeto/item checado -->
 
-             <!-- alteraçao aqui -->
+            <!-- alteraçao aqui -->
             <div>
                 <label for="fkobjeto" class="block mb-2 font-medium">Item checado</label>
                 <select name="fkobjeto" id="fkobjeto" required

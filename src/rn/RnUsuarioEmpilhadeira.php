@@ -21,7 +21,8 @@ class RnusuarioEmpilhadeira
 
     function iniciarExpediente($fkChecklist)
     {
-        $checklist = (new RnChecklist(Sessao::idusuario()))->selecionarChecklist($fkChecklist);
+        $checklist = (new RnChecklist(Sessao::idusuario(), Sessao::idempresa()))
+            ->selecionarChecklist($fkChecklist);
 
         $dataHoraInicio = (new DateTime("now", new DateTimeZone("America/Sao_Paulo")))->format("Y-m-d H:i:s");
 
@@ -42,24 +43,24 @@ class RnusuarioEmpilhadeira
 
 
     function verificarChecklistAberto($fkUsuario)
-{
-    $checklistAberto = (new DaoUsuarioEmpilhadeira(
-        (new Conexao())->conectar(),
-        $this->idUsuarioSessao
-    ))->verificarChecklistAberto($fkUsuario);
+    {
+        $checklistAberto = (new DaoUsuarioEmpilhadeira(
+            (new Conexao())->conectar(),
+            $this->idUsuarioSessao
+        ))->verificarChecklistAberto($fkUsuario);
 
-    if (
-        !empty($checklistAberto)
-        && (
-            empty($checklistAberto['DATA_HORA_ENCERRAMENTO']) ||
-            $checklistAberto['DATA_HORA_ENCERRAMENTO'] == 0
-        )
-    ) {
-        return $checklistAberto;
+        if (
+            !empty($checklistAberto)
+            && (
+                empty($checklistAberto['DATA_HORA_ENCERRAMENTO']) ||
+                $checklistAberto['DATA_HORA_ENCERRAMENTO'] == 0
+            )
+        ) {
+            return $checklistAberto;
+        }
+
+        return null;
     }
-
-    return null;
-}
 
     function trocarBateria($fkChecklist)
     {

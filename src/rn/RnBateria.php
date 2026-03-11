@@ -27,8 +27,14 @@ class RnBateria
 
     function salvarBateriaDeUso($idChecklist, $fkBateria, $nivelBateria)
     {
+
+        if ($fkBateria <= 0) {
+        throw new Exception("Bateria não selecionada.");
+    }
+
         // Recupera o checklist
-        $checklist = (new RnChecklist($this->idUsuarioSessao))->selecionarChecklist($idChecklist);
+        $checklist = (new RnChecklist($this->idUsuarioSessao, \Util\Sessao::idempresa()))
+            ->selecionarChecklist($idChecklist);
 
         // Verifica se o checklist foi encontrado
         if (!$checklist) {
@@ -76,7 +82,8 @@ class RnBateria
 
     function salvarNivelBateriaComum($fkChecklist, $nivelBateria)
     {
-        $checklist = (new RnChecklist($this->idUsuarioSessao))->selecionarChecklist($fkChecklist);
+        $checklist = (new RnChecklist($this->idUsuarioSessao, \Util\Sessao::idempresa()))
+            ->selecionarChecklist($fkChecklist);
         $dataHora = (new DateTime())->format('d/m/Y H:i:s');
 
         $cargaBateriaComum = [

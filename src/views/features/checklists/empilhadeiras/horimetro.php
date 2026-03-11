@@ -1,126 +1,90 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verificação de bateria</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-
-        .table-container {
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .table th {
-            background-color: #007bff;
-            color: #fff;
-        }
-
-        .table td {
-            text-align: center;
-            vertical-align: middle;
-            font-size: 1.2rem;
-        }
-
-        .content-cell {
-            height: 300px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #e9ecef;
-            border-radius: 10px;
-            text-align: center;
-            width: 100%;
-        }
-
-        .btn-group-custom .btn {
-            width: 120px;
-            margin: 0 5px;
-            font-size: 1rem;
-        }
-    </style>
+    <title>Horímetro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body>
-    <?php
-    include_once __DIR__ . "/../../../public/components/navbar.php"
-    ?>
-    <div class="container mt-5">
-        <div class="table-container">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>--</th>
-                        <th>Horímetro</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="2">
-                            <div class="content-cell">
-                                <table style="border: 0px">
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <form action="/syscheck/checklist/salvarHorimetro" method="POST">
-                                                    <input type="hidden" name="idchecklist" value="<?= $checklist->getIdChecklist() ?>">
-                                                    <input type="hidden" name="fkempilhadeira" value="<?= $checklist->getFkObjeto() ?>">
-                                                    <div class="form-group">
-                                                        <label for="horimetro">Digite o valor que visor horímetro mostra nesse momento</label>
-                                                        <input type="number" class="form-control" name="horimetro" placeholder="Digite o valor que visor horímetro mostra" autocomplete="off" require>
-                                                    </div>
-                                                    <button class="btn btn-success">Salvar horimetro</button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+<body class="bg-slate-900 text-slate-200 min-h-screen">
 
-    <!-- Modal para observações -->
-    <div class="modal fade" id="modalObservacao" tabindex="-1" role="dialog" aria-labelledby="modalObservacaoLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalObservacaoLabel">Adicionar Observação</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+    <div class="flex items-center justify-center mt-20 px-4">
+
+        <div class="w-full max-w-md bg-slate-800 border border-slate-700 rounded-xl shadow-xl p-8">
+
+            <h2 class="text-2xl font-semibold text-center mb-6">
+                Registro de Horímetro
+            </h2>
+
+            <form action="/syscheck/checklist/salvarHorimetro" method="POST" id="formHorimetro">
+
+                <input type="hidden" name="idchecklist" value="<?= $checklist->getIdChecklist() ?>">
+                <input type="hidden" name="fkempilhadeira" value="<?= $checklist->getFkObjeto() ?>">
+
+                <!-- Input horímetro -->
+                <div class="mb-5">
+                    <label class="block mb-2 text-sm text-slate-300">
+                        Digite o valor exibido no visor
+                    </label>
+
+                    <input
+                        type="number"
+                        name="horimetro"
+                        id="horimetro"
+                        placeholder="Ex: 4521"
+                        autocomplete="off"
+                        required
+                        class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
-            </div>
+
+                <!-- erro -->
+                <div
+                    id="erroHorimetro"
+                    class="hidden bg-red-900 text-red-200 p-3 rounded-lg text-sm mb-4">
+                    Erro
+                </div>
+
+                <!-- botão -->
+                <button
+                    type="submit"
+                    class="w-full bg-green-600 hover:bg-green-700 transition rounded-lg py-3 font-semibold">
+                    Salvar horímetro
+                </button>
+
+            </form>
+
         </div>
+
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            document.querySelector("form").addEventListener("submit", function(event) {
-                let horimetroInput = document.querySelector("input[name='horimetro']");
+        const input = document.getElementById("horimetro");
+        const erro = document.getElementById("erroHorimetro");
+        const form = document.getElementById("formHorimetro");
 
-                if (!horimetroInput.value.trim()) {
-                    alert("Por favor, preencha o valor do horímetro antes de continuar.");
-                    horimetroInput.focus();
-                    event.preventDefault(); // Impede o envio do formulário
-                }
-            });
+        /* aceitar apenas números positivos inteiros */
+        input.addEventListener("input", () => {
+            // remove qualquer ponto ou vírgula
+            input.value = input.value.replace(/[.,]/g, "");
+
+            // se for negativo, limpa
+            if (input.value < 0) input.value = "";
+        });
+
+        form.addEventListener("submit", function(e) {
+            const valor = parseInt(input.value);
+
+            if (isNaN(valor) || valor <= 0) {
+                e.preventDefault();
+                erro.innerText = "Digite um valor válido.";
+                erro.classList.remove("hidden");
+                return;
+            }
         });
     </script>
 
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 </body>
 
 </html>

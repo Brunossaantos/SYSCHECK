@@ -14,23 +14,23 @@
 </head>
 
 
-    <!-- Botões superiores -->
-    <div class="w-full flex justify-center space-x-5 gap-6 p-6">
-        <a href="/syscheck/checklist"
-            class="bg-gray-500 hover:bg-gray-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
-            Voltar
-        </a>
+<!-- Botões superiores -->
+<div class="w-full flex justify-center space-x-5 gap-6 p-6">
+    <a href="/syscheck/checklist"
+        class="bg-gray-500 hover:bg-gray-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+        Voltar
+    </a>
 
-        <a href="/syscheck/index2.php"
-            class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
-            Home
-        </a>
+    <a href="/syscheck/index2.php"
+        class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+        Home
+    </a>
 
-        <a href="/syscheck/usuario/logout"
-            class="bg-red-500 hover:bg-red-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
-            Logout
-        </a>
-    </div>
+    <a href="/syscheck/usuario/logout"
+        class="bg-red-500 hover:bg-red-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+        Logout
+    </a>
+</div>
 
 <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-8">
 
@@ -41,9 +41,9 @@
         <h2 class="text-2xl font-bold mb-6 text-center">Cadastro de etapas</h2>
 
         <form onsubmit="return verificarCampos()"
-              action="/syscheck/etapaschecklist/cadastrarnovaetapa"
-              method="POST"
-              class="space-y-6">
+            action="/syscheck/etapaschecklist/cadastrarnovaetapa"
+            method="POST"
+            class="space-y-6">
 
             <input type="hidden" name="fktipo" value="<?= $fkTipo ?>">
 
@@ -51,38 +51,38 @@
             <div>
                 <label class="block mb-2 font-medium">Checklist</label>
                 <input type="text"
-                       value="<?= $tipoChecklist->getDescricaoTipoChecklist() ?>"
-                       disabled
-                       class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none">
+                    value="<?= $tipoChecklist->getDescricaoTipoChecklist() ?>"
+                    disabled
+                    class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none">
             </div>
 
             <!-- Título -->
             <div>
                 <label class="block mb-2 font-medium">Título da etapa</label>
                 <input type="text"
-                       name="titulo"
-                       placeholder="Título da etapa"
-                       required
-                       class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    name="titulo"
+                    placeholder="Título da etapa"
+                    required
+                    class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
 
             <!-- Conteúdo -->
             <div>
                 <label class="block mb-2 font-medium">Conteúdo da etapa</label>
                 <textarea name="conteudo"
-                          rows="5"
-                          required
-                          class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    rows="5"
+                    required
+                    class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
             </div>
 
             <!-- Número -->
             <div>
                 <label class="block mb-2 font-medium">Número da etapa</label>
                 <input type="text"
-                       name="numero"
-                       value="<?= $quantidadeEtapas ?>"
-                       readonly
-                       class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none">
+                    name="numero"
+                    value="<?= $quantidadeEtapas ?>"
+                    readonly
+                    class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none">
             </div>
 
             <!-- Checkboxes -->
@@ -102,8 +102,8 @@
             <div>
                 <label class="block mb-2 font-medium">Status da etapa</label>
                 <select name="status"
-                        id="status"
-                        class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    id="status"
+                    class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value="--" selected disabled>Status</option>
                     <option value="1">Ativo</option>
                     <option value="0">Inativo</option>
@@ -113,12 +113,12 @@
             <!-- Botões -->
             <div class="flex gap-4 pt-4">
                 <button type="submit"
-                        class="bg-green-500 hover:bg-green-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+                    class="bg-green-500 hover:bg-green-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
                     Salvar etapa
                 </button>
 
                 <a href="/syscheck/etapaschecklist/finalizarcadastro/<?= $fkTipo ?>"
-                   class="bg-red-500 hover:bg-red-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+                    class="bg-red-500 hover:bg-red-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
                     Finalizar cadastro de etapas
                 </a>
             </div>
@@ -141,4 +141,5 @@
     </script>
 
 </body>
+
 </html>

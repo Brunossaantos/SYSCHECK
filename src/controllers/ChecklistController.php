@@ -213,8 +213,34 @@ class ChecklistController
         // Iniciar checklist
         $idChecklist = $this->rnChecklist->iniciarChecklist($checklist);
 
-        // Redirecionar para a primeira etapa
-        header("Location: /syscheck/etapaschecklist/etapa/{$idChecklist}/" . $checklist->getFkTipo() . "/1");
+        // 🔎 Verifica se é tipo empilhadeira
+        $tipoEmpilhadeira = (new RnTipoChecklist(Sessao::idusuario()))
+            ->verificarTipoEmpilhadeira($checklist->getFkTipo());
+
+        if (!empty($tipoEmpilhadeira)) {
+
+            $relacaoEmpilhadeira = $tipoEmpilhadeira[0];
+
+            switch ($relacaoEmpilhadeira['FK_TIPO_EMPILHADEIRA']) {
+
+                case 1:
+                    $this->iniciarChecklistEmpilhadeiraGas($idChecklist);
+                    break;
+
+                case 2:
+                    $this->iniciarChecklistBateriaComum($idChecklist);
+                    break;
+
+                case 3:
+                    $this->iniciarChecklistBateriaLitio($idChecklist);
+                    break;
+            }
+        } else {
+
+            // outros tipos (ex: veicular)
+            header("Location: /syscheck/etapaschecklist/executarChecklist/{$idChecklist}/{$fkTipo}/1");
+        }
+
         exit;
     }
 
@@ -225,7 +251,13 @@ class ChecklistController
     private function verificarHorimetroAberto($fkEmpilhadeira)
     {
         $rnUsuarioEmp = new RnusuarioEmpilhadeira(Sessao::idusuario());
-        $registroUso = $rnUsuarioEmp->listarHorimetrosAbertos($fkEmpilhadeira);
+        if (!empty($registroUso)) {
+            foreach ($registroUso as $registro) {
+                if (empty($registro['DATA_HORA_ENCERRAMENTO'])) {
+                    return true;
+                }
+            }
+        }
 
         if (!empty($registroUso)) {
             $encerramento = $registroUso['DATA_HORA_ENCERRAMENTO'] ?? null;
@@ -337,9 +369,20 @@ class ChecklistController
         $empilhadeira = (new RnObjeto(Sessao::idusuario()))
             ->selecionarObjeto($checklist->getFkObjeto());
 
+        // pegar lista de horímetros já registrados
+        $listaHorimetros = (new RnHorimetro(Sessao::idusuario()))
+            ->recuperarListaHorimetros($idChecklist);
+
+        // pegar último
+        $ultimoHorimetro = 0;
+
+        if (!empty($listaHorimetros)) {
+            $ultimo = end($listaHorimetros);
+            $ultimoHorimetro = $ultimo['HORIMETRO'] ?? 0;
+        }
+
         require_once __DIR__ . '/../views/features/checklists/empilhadeiras/horimetro.php';
     }
-
     function iniciarChecklistEmpilhadeiraGas($idChecklist)
     {
         $checklist = (new RnChecklist($this->idUsuarioSessao, $this->idEmpresaSessao))
@@ -379,6 +422,11 @@ class ChecklistController
         $atualizarChecklist = $this->rnChecklist->atualizarChecklist($checklist);
 
         if ($atualizarChecklist > 0) {
+
+            // 🔵 ENCERRA EXPEDIENTE DA EMPILHADEIRA
+            (new RnusuarioEmpilhadeira(Sessao::idusuario()))
+                ->encerrarExpediente($idChecklist);
+
             $enviarEmail = false;
 
             $listaEtapasRealizadas = (new RnEtapaRealizada(Sessao::idusuario()))
@@ -700,5 +748,12 @@ class ChecklistController
 
         header('Content-Type: text/html');
         echo $option;
+    }
+
+    public function finalizarChecklistAsync($idChecklist)
+    {
+        // lógica de finalizar checklist igual ao método normal
+        http_response_code(200);
+        echo json_encode(['success' => true]);
     }
 }

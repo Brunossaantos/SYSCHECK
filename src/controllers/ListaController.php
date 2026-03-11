@@ -14,13 +14,12 @@ use Util\Sessao;
 class ListaController
 {
 
-    /*private $rnLista;
+    private RnLista $rn;
 
-    function __construct(RnLista $rnLista)
+    public function __construct(RnLista $rn)
     {
-       $this-> rnLista = $rnLista;
-
-    }*/
+        $this->rn = $rn;
+    }
 
     function index()
     {

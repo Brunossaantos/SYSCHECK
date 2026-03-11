@@ -71,11 +71,11 @@ class ChamadoController
      * Enriquecimento dos modelos com nome do usuário e nome do equipamento.
      */
     function gerenciarChamados()
-{
-    $listaChamados = (new RnChamado(Sessao::idusuario()))->listarChamados();
+    {
+        $listaChamados = (new RnChamado(Sessao::idusuario()))->listarChamados();
 
-    require_once __DIR__ . '/../views/features/chamados/gerenciarchamados.php';
-}
+        require_once __DIR__ . '/../views/features/chamados/gerenciarchamados.php';
+    }
 
     /** Carrega view de follow-up (uso simples) */
     function followupChamado()

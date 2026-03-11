@@ -228,12 +228,14 @@ $listaChecklists = $listaChecklists ?? [];
 <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('#tabelaChecklists').DataTable({
             pageLength: 10, // quantidade por página
             lengthMenu: [5, 10, 25, 50],
             ordering: true,
-            order: [[0, 'desc']], // ordena pelo ID (Número) do mais recente para o mais antigo
+            order: [
+                [0, 'desc']
+            ], // ordena pelo ID (Número) do mais recente para o mais antigo
             searching: true,
             info: true,
             paging: true,

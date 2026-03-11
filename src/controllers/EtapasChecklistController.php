@@ -123,10 +123,19 @@ class EtapasChecklistController
         }
     }
 
+    function executarChecklist($idChecklist, $fkTipo)
+    {
+        $rnEtapasChecklist = new \rn\RnEtapasChecklist(\Util\Sessao::idusuario());
+
+        $etapas = $rnEtapasChecklist->listarEtapasChecklist($fkTipo);
+
+        require __DIR__ . '/../views/features/checklists/checklists/executarchecklist.php';
+    }
 
     function continuarChecklist($idChecklist)
     {
-        $checklist = (new RnChecklist(Sessao::idusuario()))->selecionarChecklist($idChecklist);
+        $checklist = (new RnChecklist(Sessao::idusuario(), Sessao::idempresa()))
+            ->selecionarChecklist($idChecklist);
 
         //echo "<pre>";        
         //var_dump($checklist);
@@ -136,9 +145,10 @@ class EtapasChecklistController
         //var_dump($ultimaEtapaRealizada);
 
         if ($checklist != null && $ultimaEtapaRealizada != null) {
-            header("Location: /syscheck/etapaschecklist/etapa/" . $checklist->getIdChecklist() . "/" . $checklist->getFkTipo() . "/" . $ultimaEtapaRealizada->getNumeroEtapa() + 1);
+            header("Location: /syscheck/etapaschecklist/executarChecklist/" . $checklist->getIdChecklist() . "/" . $checklist->getFkTipo());
+            exit;
         } else {
-            header("Location: /syscheck/etapaschecklist/etapa/" . $checklist->getIdChecklist() . "/" . $checklist->getFkTipo() . "/1");
+            header("Location: /syscheck/etapaschecklist/executarChecklist/" . $checklist->getIdChecklist() . "/" . $checklist->getFkTipo() . "/1");
             //echo "Não é possível recuperar os dados do checklist";
         }
     }

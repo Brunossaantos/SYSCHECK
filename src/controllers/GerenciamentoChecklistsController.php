@@ -32,7 +32,7 @@ class GerenciamentoChecklistsController
         $rnGerenciamentoChecklist = new RnGerenciamentoChecklists(Sessao::idusuario());
         $listaChecklists = $rnGerenciamentoChecklist->listaChecklists();
 
-        $rnChecklist = new RnChecklist(Sessao::idusuario());
+        $rnChecklist = new RnChecklist(Sessao::idusuario(), Sessao::idempresa());
         $rnUsuario = new RnUsuario(Sessao::idusuario());
         $rnTipo = new RnTipoChecklist(Sessao::idusuario());
         $rnObjeto = new RnObjeto(Sessao::idusuario());
@@ -62,7 +62,8 @@ class GerenciamentoChecklistsController
 
     function finalizarhorimetro($idChecklist)
     {
-        $checklist = (new RnChecklist(Sessao::idusuario()))->selecionarChecklist($idChecklist);
+        $checklist = (new RnChecklist(Sessao::idusuario(), Sessao::idempresa()))
+            ->selecionarChecklist($idChecklist);
         $empilhadeira = (new RnObjeto(Sessao::idusuario()))->selecionarObjeto($checklist->getFkObjeto());
 
         $logHorimetro = [

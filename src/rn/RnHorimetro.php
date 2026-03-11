@@ -13,10 +13,12 @@ use Util\Sessao;
 class RnHorimetro
 {
     private $idUsuarioSessao;
+    private $idEmpresaSessao;
 
     function __construct($idUsuarioSessao)
     {
         $this->idUsuarioSessao = $idUsuarioSessao;
+        $this->idEmpresaSessao = Sessao::idempresa();
     }
 
     function salvarHorimetro($fkChecklist, $fkEmpilhadeira, $horimetro)
@@ -26,10 +28,13 @@ class RnHorimetro
 
         if (sizeof($qtdHorimetrosRegistrados) === 0) {
             $isSucess = (new DaoHorimetro((new Conexao())->conectar(), $this->idUsuarioSessao))->salvarHorimetro($fkChecklist, $fkEmpilhadeira, $horimetro);
-            $checklist = (new RnChecklist($this->idUsuarioSessao))->selecionarChecklist($fkChecklist);
+            $checklist = (new RnChecklist(
+                $this->idUsuarioSessao,
+                $this->idEmpresaSessao
+            ))->selecionarChecklist($fkChecklist);
 
             if ($isSucess > 0) {
-                header("Location: /syscheck/etapaschecklist/etapa/" . $fkChecklist . "/" . $checklist->getFkTipo() . "/1");
+                header("Location: /syscheck/etapaschecklist/executarChecklist/" . $fkChecklist . "/" . $checklist->getFkTipo() . "/1");
                 exit;
             }
         } else {
@@ -41,12 +46,18 @@ class RnHorimetro
     {
         $isSucess = (new DaoHorimetro((new Conexao())->conectar(), $this->idUsuarioSessao))->salvarHorimetro($fkChecklist, $fkEmpilhadeira, $horimetro);
         //atualizar a finalização do uso da empilhadeira
-        $checklist = (new RnChecklist($this->idUsuarioSessao))->selecionarChecklist($fkChecklist);
+        $checklist = (new RnChecklist(
+            $this->idUsuarioSessao,
+            $this->idEmpresaSessao
+        ))->selecionarChecklist($fkChecklist);
         $dataFinalizacaoUso = (new DateTime())->format('d/m/Y H:i:s');
 
         $checklist->setDataFim($dataFinalizacaoUso);
 
-        $qtdChecklistAlterados = (new RnChecklist($this->idUsuarioSessao))->atualizarChecklist($checklist);
+        $qtdChecklistAlterados = (new RnChecklist(
+            $this->idUsuarioSessao,
+            $this->idEmpresaSessao
+        ))->atualizarChecklist($checklist);
 
         if ($qtdChecklistAlterados > 0) {
             Sessao::salvarMensagemNaSessao("Uso da empilhadeira finalizado com sucesso");

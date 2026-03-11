@@ -77,7 +77,7 @@ class TesteUnitarioController
 
     function testeListaHorimetros()
     {
-        $rnChecklist = new RnChecklist(Sessao::idusuario());
+        $rnChecklist = new RnChecklist(Sessao::idusuario(), Sessao::idempresa());
         $listaHorimetros = $rnChecklist->recuperarHorimetrosPorChecklist(25);
 
         echo "<pre>";

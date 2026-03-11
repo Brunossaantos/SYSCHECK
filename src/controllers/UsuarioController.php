@@ -211,16 +211,16 @@ class UsuarioController
         exit;
     }
     public function ativarUsuario($idUsuario)
-{
-    $usuario = $this->rnUsuario->selecionarUsuario($idUsuario);
-    $usuario->setStatusUsuario(1);
-    $this->rnUsuario->alterarUsuario($usuario);
+    {
+        $usuario = $this->rnUsuario->selecionarUsuario($idUsuario);
+        $usuario->setStatusUsuario(1);
+        $this->rnUsuario->alterarUsuario($usuario);
 
-    \Util\Sessao::salvarMensagemNaSessao("Usuário ativado com sucesso.");
+        \Util\Sessao::salvarMensagemNaSessao("Usuário ativado com sucesso.");
 
-    header("Location: /syscheck/usuario/gerenciarUsuarios");
-    exit;
-}
+        header("Location: /syscheck/usuario/gerenciarUsuarios");
+        exit;
+    }
 
     // =========================
     // Logout

@@ -18,6 +18,14 @@ class HomeService
     private bool $existeBloqueio = false;
     private array $cards = [];
 
+    private const CORES = [
+        'CRITICO' => 'red',
+        'ALERTA'  => 'orange',
+        'AVISO'   => 'yellow',
+        'ACAO'    => 'blue',
+        'OK'      => 'green'
+    ];
+
     public function __construct($conexao, int $idUsuario, int $idPerfil, int $idEmpresa)
     {
         $this->conexao   = $conexao;
@@ -40,15 +48,14 @@ class HomeService
 
     private function gerarCards(): void
     {
-        // RN de usuário empilhadeira
+
         $rnUsuarioEmpilhadeira = new RnUsuarioEmpilhadeira($this->idUsuario);
         $statusUso = $rnUsuarioEmpilhadeira->verificarChecklistAberto($this->idUsuario);
 
-        // DAOChecklist agora recebe os 3 argumentos obrigatórios
         $daoChecklist = new DaoChecklist(
-            $this->conexao,   // conexão mysqli
-            $this->idUsuario, // ID do usuário logado
-            $this->idPerfil   // Perfil do usuário logado
+            $this->conexao,
+            $this->idUsuario,
+            $this->idPerfil
         );
 
         $rnChecklist = new RnChecklist(
@@ -56,22 +63,22 @@ class HomeService
             $this->idEmpresa
         );
 
-        // Checklist pendente e horímetro
         $checklistPendente = $rnChecklist->verificarChecklistPendentes($this->idUsuario);
         $horimetroPendente = $rnChecklist->verificarSeExisteHorimetroPendente();
 
         $existeChecklist = !empty($checklistPendente);
 
-        // Objeto pendente do checklist
         $objetoPendente = $existeChecklist
-            ? (new RnObjeto($this->idUsuario))
-            ->selecionarObjeto($checklistPendente->getFkObjeto())
+            ? (new RnObjeto($this->idUsuario))->selecionarObjeto($checklistPendente->getFkObjeto())
             : null;
 
         /* ==========================
            ALERTA HORÍMETRO
         ========================== */
-        if (!empty($horimetroPendente)) {
+
+        if ($horimetroPendente && $horimetroPendente['horimetroFinal'] === null) {
+
+            $this->existeBloqueio = true;
 
             $objetoHorimetro = (new RnObjeto($this->idUsuario))
                 ->selecionarObjeto($horimetroPendente['empilhadeira']);
@@ -84,12 +91,12 @@ class HomeService
                 'titulo' => 'Horímetro pendente',
                 'descricao' =>
                 "Você iniciou um checklist para <strong>{$descricaoObjeto}</strong> e não informou o horímetro final.<br>É necessário finalizar.",
-                'cor' => 'red',
+                'cor' => self::CORES['CRITICO'],
                 'links' => [
                     [
                         'texto' => 'Finalizar horímetro',
                         'url' => "/syscheck/checklist/Horimetro/{$horimetroPendente['idChecklist']}",
-                        'cor' => 'red'
+                        'cor' => self::CORES['CRITICO']
                     ]
                 ]
             ];
@@ -98,7 +105,10 @@ class HomeService
         /* ==========================
            ALERTA CHECKLIST
         ========================== */
+
         if ($existeChecklist) {
+
+            $this->existeBloqueio = true;
 
             $descricaoObjeto = $objetoPendente
                 ? $objetoPendente->getDescricaoObjeto()
@@ -108,12 +118,12 @@ class HomeService
                 'titulo' => 'Checklist pendente',
                 'descricao' =>
                 "Você possui um checklist pendente para <strong>{$descricaoObjeto}</strong>.<br>Continue de onde parou.",
-                'cor' => 'yellow',
+                'cor' => self::CORES['ALERTA'],
                 'links' => [
                     [
                         'texto' => 'Continuar checklist',
-                        'url' => "/syscheck/etapaschecklist/etapa/{$checklistPendente->getIdChecklist()}/{$checklistPendente->getFkTipo()}/1",
-                        'cor' => 'yellow'
+                        'url' => "/syscheck/etapaschecklist/executarChecklist/{$checklistPendente->getIdChecklist()}/{$checklistPendente->getFkTipo()}/1",
+                        'cor' => self::CORES['ALERTA']
                     ]
                 ]
             ];
@@ -122,7 +132,10 @@ class HomeService
         /* ==========================
            ALERTA UTILIZAÇÃO
         ========================== */
+
         if (!empty($statusUso)) {
+
+            $this->existeBloqueio = true;
 
             $empilhadeira = (new RnObjeto($this->idUsuario))
                 ->selecionarObjeto($statusUso['FK_EMPILHADEIRA']);
@@ -133,17 +146,17 @@ class HomeService
                 'titulo' => 'Utilização da empilhadeira',
                 'descricao' =>
                 "Você iniciou a utilização da empilhadeira <strong>{$empilhadeira->getDescricaoObjeto()}</strong> no dia <strong>{$dataFormatada}</strong>.<br>O que deseja fazer?",
-                'cor' => 'green',
+                'cor' => self::CORES['OK'],
                 'links' => [
                     [
                         'texto' => 'Trocar bateria',
                         'url' => "/syscheck/checklist/iniciarChecklistBateriaLitio/{$statusUso['FK_CHECKLIST']}",
-                        'cor' => 'green'
+                        'cor' => self::CORES['ACAO']
                     ],
                     [
                         'texto' => 'Encerrar uso',
                         'url' => "/syscheck/checklist/encerrarusoempilhadeiraeletrica/{$statusUso['FK_CHECKLIST']}",
-                        'cor' => 'red'
+                        'cor' => self::CORES['CRITICO']
                     ]
                 ]
             ];
@@ -152,18 +165,22 @@ class HomeService
         /* ==========================
            CARDS FIXOS POR PERFIL
         ========================== */
-        $linkChecklists = [['texto' => 'Checklists', 'url' => '/syscheck/checklist', 'cor' => 'blue']];
+
+        $linkChecklists = [['texto' => 'Checklists', 'url' => '/syscheck/checklist', 'cor' => self::CORES['ACAO']]];
+
         $linkChamados = [
-            ['texto' => 'Abrir', 'url' => '/syscheck/chamado/abrirchamado', 'cor' => 'blue'],
-            ['texto' => 'Consultar', 'url' => '/syscheck/chamado/gerenciarChamados', 'cor' => 'blue']
+            ['texto' => 'Abrir', 'url' => '/syscheck/chamado/abrirchamado', 'cor' => self::CORES['ACAO']],
+            ['texto' => 'Consultar', 'url' => '/syscheck/chamado/gerenciarChamados', 'cor' => self::CORES['ACAO']]
         ];
+
         $linkRelatorios = [
-            ['texto' => 'Aprovados', 'url' => '/syscheck/src/views/features/Relatorios/index.php', 'cor' => 'blue'],
-            ['texto' => 'Reprovados', 'url' => '/syscheck/src/views/features/Relatorios/index_reprovados.php', 'cor' => 'blue']
+            ['texto' => 'Aprovados', 'url' => '/syscheck/src/views/features/Relatorios/index.php', 'cor' => self::CORES['ACAO']],
+            ['texto' => 'Reprovados', 'url' => '/syscheck/src/views/features/Relatorios/index_reprovados.php', 'cor' => self::CORES['ACAO']]
         ];
-        $linkUsuarios = [['texto' => 'Gerenciar', 'url' => '/syscheck/usuario', 'cor' => 'blue']];
-        $linkListaVeicular = [['texto' => 'Abrir lista', 'url' => '/syscheck/lista', 'cor' => 'blue']];
-        $linkLogs = [['texto' => 'Abrir logs', 'url' => '/syscheck/dev/logs.php', 'cor' => 'blue']];
+
+        $linkUsuarios = [['texto' => 'Gerenciar', 'url' => '/syscheck/usuario', 'cor' => self::CORES['ACAO']]];
+        $linkListaVeicular = [['texto' => 'Abrir lista', 'url' => '/syscheck/lista', 'cor' => self::CORES['ACAO']]];
+        $linkLogs = [['texto' => 'Abrir logs', 'url' => '/syscheck/dev/logs.php', 'cor' => self::CORES['ACAO']]];
 
         $cardsPerfis = [
             1 => [
@@ -207,7 +224,7 @@ class HomeService
             ]
         ];
 
-        if (isset($cardsPerfis[$this->idPerfil])) {
+        if (!$this->existeBloqueio && isset($cardsPerfis[$this->idPerfil])) {
             $this->cards = array_merge($this->cards, $cardsPerfis[$this->idPerfil]);
         }
     }
