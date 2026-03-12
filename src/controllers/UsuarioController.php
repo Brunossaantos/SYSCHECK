@@ -149,8 +149,7 @@ class UsuarioController
                     require_once __DIR__ . '/../../index2.php';
                     exit;
                 } else {
-                    Sessao::salvarMensagemNaSessao("Usuário ou senha inválidos.");
-                    header("Location: /syscheck");
+                    header("Location: /syscheck/login.php?erro=1");
                     exit;
                 }
             }

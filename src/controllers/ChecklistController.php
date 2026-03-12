@@ -164,13 +164,12 @@ class ChecklistController
         $fkObjeto  = $_POST['fkobjeto'] ?? 0;
         $dataInicio = $_POST['datainicio'] ?? (new DateTime())->format('d/m/Y H:i:s');
 
-        // IDs válidos da tabela tbl_tipos_checklist
-        $tiposValidos = [1, 2, 3, 4, 6, 14];
-        if (!in_array($fkTipo, $tiposValidos)) {
-            Sessao::salvarMensagemNaSessao("Tipo de checklist inválido: {$fkTipo}");
-            header("Location:/syscheck/");
-            exit;
-        }
+        // $tiposValidos = [1, 2, 3, 4, 6, 14];
+        // if (!in_array($fkTipo, $tiposValidos)) {
+        //     Sessao::salvarMensagemNaSessao("Tipo de checklist inválido: {$fkTipo}");
+        //     header("Location:/syscheck/");
+        //     exit;
+        // }
 
         // Validar usuário
         $usuarioObj = (new RnUsuario(Sessao::idusuario()))->selecionarUsuario($fkUsuario);
@@ -654,14 +653,17 @@ class ChecklistController
             }
         }
 
-        $itemChecado = (new RnObjeto(Sessao::idusuario()))
+        /*$itemChecado = (new RnObjeto(Sessao::idusuario()))
             ->selecionarObjeto($checklist->getFkObjeto());
         $responsavel = (new RnUsuario(Sessao::idusuario()))
-            ->selecionarUsuario($checklist->getFkUsuario());
+            ->selecionarUsuario($checklist->getFkUsuario());*/
 
-        // Checklist de empilhadeira
-        if (in_array($tipo->getIdTipoChecklist(), [3, 4, 10])) {
-            $empilhadeira = true;
+        // 1. Inicia a variável vazia para evitar o erro "Undefined variable" na View
+        $listaHorimetros = []; 
+
+        // 2. Inverte a lógica: Se o ID NÃO for 1 (Veicular) e NÃO for 6 (TI), ele puxa o horímetro
+        if (!in_array($tipo->getIdTipoChecklist(), [1, 6])) {
+            $empilhadeira = true; // Mantive a sua variável para não quebrar nada
             $listaHorimetros = (new RnHorimetro(Sessao::idusuario()))
                 ->recuperarListaHorimetros($idChecklist);
         }

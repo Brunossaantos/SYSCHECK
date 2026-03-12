@@ -54,14 +54,20 @@
 
     <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md animate-fadeIn">
         <h2 class="text-2xl font-bold text-center mb-6">LOGIN</h2>
+
+        <?php if (isset($_GET['erro'])): ?>
+            <div class="bg-red-500 text-white p-3 rounded-lg mb-4 text-center">
+                Usuário ou senha incorretos
+            </div>
+        <?php endif; ?>
+
         <form action="/syscheck/usuario/login" method="POST" class="flex flex-col gap-4">
             <div class="flex flex-col">
                 <label for="username" class="mb-1">Usuário</label>
-                <input type="text" name="usuario" id="username" placeholder="Digite seu usuário"
+                <input type="text" name="usuario" id="username" placeholder="Digite seu usuário" required
                     class="p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <div class="flex flex-col">
-                <label for="password" class="mb-1">Senha</label>
                 <input type="password" name="senha" id="password" placeholder="Digite sua senha"
                     class="p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>

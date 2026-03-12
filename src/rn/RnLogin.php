@@ -25,16 +25,14 @@ class RnLogin
     //Caso seja o primeiro acesso retorna true, caso não seja, retorna false;
     function verficarPrimerioAcesso(Login $login)
     {
-        $usuario = (new DaoLogin((new Conexao())->conectar(), $this->idUsuarioSessao))->selecionarUsuarioPeloNome($login);
+        $usuario = (new DaoLogin((new Conexao())->conectar(), $this->idUsuarioSessao))
+            ->selecionarUsuarioPeloNome($login);
 
-        if ($usuario != null) {
-
-            if (empty($usuario->getSenha())) {
-                return true;
-            } else {
-                return false;
-            }
+        if ($usuario === null) {
+            return false;
         }
+
+        return empty($usuario->getSenha());
     }
 
     function realizarLogin(Login $login)

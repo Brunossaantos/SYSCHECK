@@ -26,30 +26,32 @@ class DaoLogin
     {
         try {
             $sql = "
-                SELECT 
-                    ID_USUARIO,
-                    NOME,
-                    DEPARTAMENTO,
-                    CARGO,
-                    NOME_USUARIO,
-                    SENHA,
-                    STATUS_USUARIO,
-                    TIPO_CHECKLIST,
-                    FK_EMPRESA,
-                    FK_PERFIL
-                FROM {$this->tbl_usuarios}
-                WHERE NOME_USUARIO LIKE ?
-            ";
+            SELECT 
+                ID_USUARIO,
+                NOME,
+                DEPARTAMENTO,
+                CARGO,
+                NOME_USUARIO,
+                SENHA,
+                STATUS_USUARIO,
+                TIPO_CHECKLIST,
+                FK_EMPRESA,
+                FK_PERFIL
+            FROM {$this->tbl_usuarios}
+            WHERE NOME_USUARIO = ?
+            LIMIT 1
+        ";
 
             $stmt = $this->conexao->prepare($sql);
 
-            $nomeUsuario = "%" . $login->getNomeUsuario() . "%";
+            $nomeUsuario = $login->getNomeUsuario();
             $stmt->bind_param("s", $nomeUsuario);
 
             $stmt->execute();
             $result = $stmt->get_result();
 
-            if ($result->num_rows > 0) {
+            if ($result->num_rows === 1) {
+
                 $row = $result->fetch_assoc();
 
                 return new Usuario(
@@ -61,8 +63,8 @@ class DaoLogin
                     $row['SENHA'],
                     $row['STATUS_USUARIO'],
                     $row['TIPO_CHECKLIST'],
-                    $row['FK_EMPRESA'], // fkEmpresa
-                    $row['FK_PERFIL'] // fkPerfil correto
+                    $row['FK_EMPRESA'],
+                    $row['FK_PERFIL']
                 );
             }
 
@@ -76,27 +78,35 @@ class DaoLogin
     function realizarLogin(Login $login)
     {
         try {
+
             $sql = "
-                SELECT NOME_USUARIO, SENHA
-                FROM {$this->tbl_usuarios}
-                WHERE NOME_USUARIO LIKE ?
-            ";
+            SELECT NOME_USUARIO, SENHA
+            FROM {$this->tbl_usuarios}
+            WHERE NOME_USUARIO = ?
+            LIMIT 1
+        ";
 
             $stmt = $this->conexao->prepare($sql);
 
-            $nomeUsuario = "%" . $login->getNomeUsuario() . "%";
+            $nomeUsuario = $login->getNomeUsuario();
             $stmt->bind_param("s", $nomeUsuario);
 
             $stmt->execute();
             $result = $stmt->get_result();
 
-            if ($result->num_rows > 0) {
+            if ($result->num_rows === 1) {
+
                 $row = $result->fetch_assoc();
-                return new Login($row['NOME_USUARIO'], $row['SENHA']);
+
+                return new Login(
+                    $row['NOME_USUARIO'],
+                    $row['SENHA']
+                );
             }
 
             return null;
         } catch (Exception $e) {
+
             Util::inserirErro($e, "realizarLogin", $this->idUsuarioSessao);
             return null;
         }

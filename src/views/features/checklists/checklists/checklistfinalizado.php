@@ -69,7 +69,7 @@
         }
         ?>
         <!-- GRID RESPONSIVO -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
 
             <div>
                 <label class="block text-sm mb-2">Tipo do Checklist</label>
@@ -95,6 +95,13 @@
             <div>
                 <label class="block text-sm mb-2">Data Fim</label>
                 <input type="text" value="<?= $checklist->getDataFim() ?>" readonly
+                    class="w-full rounded-lg border border-gray-600 bg-gray-700 p-2 md:p-3
+            transition focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+
+            <div>
+                <label class="block text-sm mb-2">Responsável</label>
+                <input type="text" value="<?= $usuario->getNome() ?>" readonly
                     class="w-full rounded-lg border border-gray-600 bg-gray-700 p-2 md:p-3
             transition focus:ring-2 focus:ring-blue-500 focus:outline-none">
             </div>
