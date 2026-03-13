@@ -146,14 +146,14 @@ $statusList = [
 <body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
 
     <!-- MENU -->
-    <div class="w-full flex justify-center items-center space-x-20 max-w-6xl mt-16 mx-auto top-links">
+    <div class="w-full flex justify-center items-center space-x-20 max-w-6xl mt-4 mx-auto top-links">
         <a href="/syscheck/index2.php" class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium transition">Home</a>
         <a href="/syscheck/usuario/logout" class="bg-red-500 hover:bg-red-600 px-6 py-3 rounded-lg font-medium transition">Logout</a>
     </div>
 
-    <main class="flex-grow p-6 mt-12">
+    <main class="flex-grow p-2 mt-2">
         <div class="bg-gray-800 rounded-2xl shadow-lg p-6 w-full max-w-7xl 2xl:max-w-[1600px] mx-auto">
-            <h2 class="text-2xl font-bold text-center text-white mb-6">Gerenciamento de Chamados Abertos</h2>
+            <h2 class="text-2xl font-bold text-center text-white mb-6">Chamados Abertos</h2>
 
             <table id="chamadosTable" class="display w-full">
                 <thead class="bg-gray-700">

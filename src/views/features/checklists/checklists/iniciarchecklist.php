@@ -19,30 +19,25 @@
     $data = (new DateTime())->format('d/m/y H:i:s');
     ?>
     <!-- Barra superior -->
-    <div class="w-full flex justify-center space-x-1 gap-4 p-2">
+    <div class="w-full flex justify-between items-center mb-8 max-w-3xl mx-auto">
         <a href="/syscheck/checklist"
-            class="bg-gray-500 hover:bg-gray-600 px-6 py-3 rounded-lg font-medium 
-               transition transform hover:scale-105
-               sm:px-6 sm:py-3 px-3 py-1">
+            class="bg-gray-500 hover:bg-gray-600 px-4 py-2 rounded-lg font-medium ">
             Voltar
         </a>
 
         <a href="/syscheck/index2.php"
-            class="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-medium 
-               transition transform hover:scale-105
-               sm:px-6 sm:py-3 px-3 py-2">
+            class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg font-medium ">
             Home
         </a>
 
         <a href="/syscheck/usuario/logout"
-            class="bg-red-500 hover:bg-red-600 px-6 py-3 rounded-lg font-medium 
-               transition transform hover:scale-105
-               sm:px-6 sm:py-3 px-3 py-2">
+            class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg font-medium">
             Logout
         </a>
     </div>
+
     <!-- Card iniciar checklist -->
-    <div class="bg-gray-800 p-6 rounded-2xl shadow-2xl w-full max-w-4xl">
+    <div class="bg-gray-800 p-4 rounded-2xl shadow-2xl w-full max-w-4xl">
         <h1 class="text-2xl font-bold mb-4 text-center">Iniciar Checklist</h1>
 
         <form action="/syscheck/checklist/salvarInicioChecklist" method="POST" class="space-y-6">
@@ -50,7 +45,7 @@
 
             <!-- Tipo do checklist -->
             <div>
-                <label for="fktipo" class="block mb-2 font-medium">Tipo do checklist</label>
+                <label for="fktipo" class="block mb-1 font-medium">Tipo do checklist</label>
                 <select name="fktipo" id="fktipo" required
                     class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
                     <option value="" disabled selected>Selecione o tipo</option>
@@ -64,7 +59,7 @@
 
             <!-- alteraçao aqui -->
             <div>
-                <label for="fkobjeto" class="block mb-2 font-medium">Item checado</label>
+                <label for="fkobjeto" class="block mb-1 font-medium">Item checado</label>
                 <select name="fkobjeto" id="fkobjeto" required
                     class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
                     <option value="" disabled selected>Selecione o item/local</option>
@@ -73,7 +68,7 @@
 
             <!-- Data e hora -->
             <div>
-                <label for="datainicio" class="block mb-2 font-medium">Data e hora de início</label>
+                <label for="datainicio" class="block mb-1 font-medium">Data e hora de início</label>
                 <input type="text" id="datainicio" name="datainicio" value="<?= $data ?>" readonly
                     class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none">
             </div>

@@ -76,10 +76,10 @@ function gerarCard(string $titulo, string $descricao, array $links = []): void
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-8">
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-2">
 
     <div class="w-full flex justify-between items-center mb-8 max-w-6xl mx-auto">
-        <a href="/syscheck/index2.php" class="bg-gray-500 hover:bg-gray-600 w-20 h-12 flex items-center justify-center rounded-lg font-medium">Voltar</a>
+        <a href="/syscheck/index2.php" class="bg-gray-500 hover:bg-gray-600 px-4  py-2 rounded-lg font-medium">Voltar</a>
         <a href="/syscheck/index2.php" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg font-medium">Home</a>
         <a href="/syscheck/usuario/logout" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg font-medium">Logout</a>
     </div>

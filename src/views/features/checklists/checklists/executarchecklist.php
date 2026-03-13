@@ -94,10 +94,10 @@
                     <?= $etapa->getConteudoEtapa() ?>
                 </div>
 
-                <img
+                <!--<img
                     id="miniatura_<?= $etapa->getNumeroEtapa() ?>"
                     class="hidden mb-4 rounded border border-slate-600"
-                    style="max-height:120px;">
+                    style="max-height:120px;"> -->
 
                 <div class="grid grid-cols-2 gap-3">
 
@@ -164,7 +164,7 @@
     <div id="modalFoto"
         class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center">
 
-        <div class="bg-white rounded-lg p-6 w-80">
+        <div class="bg-white rounded-lg p-6 w-full max-w-sm mx-4">
 
             <h2 class="text-lg font-bold mb-4">Enviar Foto</h2>
 
@@ -190,7 +190,7 @@
                     required
                     class="mb-4">
 
-                <img id="preview" class="hidden mb-4 rounded">
+                <!-- <img id="preview" class="hidden mb-4 rounded"> -->
 
                 <div class="flex justify-end gap-2">
 
@@ -353,7 +353,7 @@
             document.getElementById("numeroEtapa").value = numero;
 
             document.getElementById("urlRetorno").value =
-                window.location.pathname + "#etapa_" + (numero + 1);
+            window.location.pathname + "#etapa_" + numero;
 
             document.getElementById("modalFoto").classList.remove("hidden");
 
@@ -419,20 +419,16 @@
 
                         let previewURL = URL.createObjectURL(blob);
 
-                        let preview = document.getElementById("preview");
-                        preview.src = previewURL;
-                        preview.classList.remove("hidden");
-
                         if (etapaFoto) {
 
                             fotos[etapaFoto] = previewURL;
 
-                            let mini = document.getElementById("miniatura_" + etapaFoto);
+                           /* let mini = document.getElementById("miniatura_" + etapaFoto);
 
                             if (mini) {
                                 mini.src = previewURL;
                                 mini.classList.remove("hidden");
-                            }
+                            } */
 
                             let status = document.getElementById("foto_status_" + etapaFoto);
 
@@ -449,7 +445,6 @@
                             }
 
                             salvarProgresso();
-
                         }
 
                     }, "image/jpeg", 0.85);
@@ -499,14 +494,14 @@
 
             for (let numero in fotos) {
 
-                let mini = document.getElementById("miniatura_" + numero);
+                /*let mini = document.getElementById("miniatura_" + numero);
 
                 if (mini) {
 
                     mini.src = fotos[numero];
                     mini.classList.remove("hidden");
 
-                }
+                }*/
 
                 let status = document.getElementById("foto_status_" + numero);
 
@@ -621,20 +616,20 @@
                 });
         }
 
-                    function scrollProximaEtapa(numero) {
+        function scrollProximaEtapa(numero) {
 
-                let proxima = document.getElementById("etapa_" + (numero + 1));
+            let proxima = document.getElementById("etapa_" + (numero + 1));
 
-                if (proxima) {
+            if (proxima) {
 
-                    proxima.scrollIntoView({
-                        behavior: "smooth",
-                        block: "center"
-                    });
-
-                }
+                proxima.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
 
             }
+
+        }
 
 
         restaurarFotos();
