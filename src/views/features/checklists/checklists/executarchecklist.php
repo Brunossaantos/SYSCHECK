@@ -45,7 +45,7 @@
         <div class="max-w-3xl mx-auto p-4">
 
             <h1 class="text-lg font-bold text-white mb-2">
-                Checklist Empilhadeira
+                Checklist
             </h1>
 
             <div class="flex justify-between text-xs text-slate-300 mb-1">

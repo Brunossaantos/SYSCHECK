@@ -5,30 +5,39 @@
 // =======================
 function registrarLog($mensagem, $nivel = 'ERROR')
 {
-    $logFile = __DIR__ . '/../logs/system.log';
-    $logDir = dirname($logFile);
+    $nivel = strtoupper($nivel);
 
-    // Cria pasta /logs se não existir
+    $logDir = __DIR__ . '/../logs/';
+
+    // Define qual arquivo usar
+    $arquivo = match ($nivel) {
+        'ACCESS' => 'access.log',
+        'DEBUG'  => 'debug.log',
+        default  => 'system.log'
+    };
+
+    $logFile = $logDir . $arquivo;
+
+    // Cria pasta logs se não existir
     if (!file_exists($logDir)) {
         mkdir($logDir, 0777, true);
     }
 
-    // Cria o arquivo se não existir
+    // Cria arquivo se não existir
     if (!file_exists($logFile)) {
         file_put_contents($logFile, "");
     }
 
-    $nivel = strtoupper($nivel);
     $data = date('Y-m-d H:i:s');
+
     $linha = "[$data] [$nivel] $mensagem" . PHP_EOL;
 
-    file_put_contents($logFile, $linha, FILE_APPEND);
+    file_put_contents($logFile, $linha, FILE_APPEND | LOCK_EX);
 }
 
 
-
 // =======================
-//  SESSÃO (para alguns erros aparecerem com usuário)
+//  SESSÃO
 // =======================
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -37,9 +46,8 @@ if (session_status() === PHP_SESSION_NONE) {
 $usuario = $_SESSION['nomeUsuario'] ?? 'DESCONHECIDO';
 
 
-
 // =======================
-//  CAPTURAR TODOS OS TIPOS DE ERRO PHP
+//  CAPTURAR ERROS PHP
 // =======================
 set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($usuario) {
 
@@ -63,22 +71,22 @@ set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($usuario) 
     };
 
     registrarLog(
-        "[$descricaoTipo] Usuário: $usuario | $errstr - Arquivo: $errfile - Linha: $errline",
+        "[$descricaoTipo] Usuário: $usuario | $errstr | Arquivo: $errfile | Linha: $errline",
         "ERROR"
     );
 });
 
 
-
 // =======================
-//  CAPTURAR EXCEÇÕES NÃO TRATADAS
+//  CAPTURAR EXCEÇÕES
 // =======================
 set_exception_handler(function ($ex) use ($usuario) {
+
     registrarLog(
-        "EXCEÇÃO NÃO TRATADA: Usuário: $usuario | " .
+        "EXCEÇÃO NÃO TRATADA | Usuário: $usuario | " .
         $ex->getMessage() .
-        " - Arquivo: " . $ex->getFile() .
-        " - Linha: " . $ex->getLine(),
+        " | Arquivo: " . $ex->getFile() .
+        " | Linha: " . $ex->getLine(),
         "ERROR"
     );
 });

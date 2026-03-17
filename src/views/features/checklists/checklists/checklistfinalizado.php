@@ -172,7 +172,7 @@
                                     <?php if ($etapa['ACAO'] == 1) { ?>
                                         <span class="text-green-400 font-semibold">Aprovado</span>
                                     <?php } else { ?>
-                                        <span class="text-red-400 font-semibold">Pendente</span>
+                                        <span class="text-red-400 font-semibold">Reprovado</span>
                                     <?php } ?>
                                 </td>
 

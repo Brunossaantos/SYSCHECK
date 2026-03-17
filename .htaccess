@@ -1,9 +1,27 @@
 RewriteEngine On
 RewriteBase /syscheck/
 
-# Redirecionar todas as requisições para o index.php, exceto para arquivos e diretórios existentes
+# =============================
+# SEGURANÇA
+# =============================
+
+# impedir listagem de diretórios
+Options -Indexes
+
+# bloquear acesso a arquivos sensíveis
+<FilesMatch "\.(env|log|ini|conf|sql)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# bloquear acesso direto às pastas internas
+RewriteRule ^(controllers|models|rn|views|functions|logs)/ - [F,L]
+
+# =============================
+# ROUTER DO SISTEMA
+# =============================
+
+# redirecionar tudo para index.php exceto arquivos existentes
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
-
-

@@ -13,8 +13,16 @@ class EtapasChecklist
     private $campoAdicional;
     private $statusEtapa;
 
-    function __construct($idEtapaChecklist, $fkTipoChecklist, $tituloEtapa, $conteudoEtapa, $numeroEtapa = 0, $fotoObrigatoria, $campoAdicional, $statusEtapa)
-    {
+    function __construct(
+        $idEtapaChecklist,
+        $fkTipoChecklist,
+        $tituloEtapa,
+        $conteudoEtapa,
+        $numeroEtapa = 0,
+        $fotoObrigatoria = 0, // Adicionado valor padrão
+        $campoAdicional = null, // Adicionado valor padrão
+        $statusEtapa = 1 // Adicionado valor padrão
+    ) {
         $this->setIdEtapaChecklist($idEtapaChecklist);
         $this->setFkTipoChecklist($fkTipoChecklist);
         $this->setTituloEtapa($tituloEtapa);

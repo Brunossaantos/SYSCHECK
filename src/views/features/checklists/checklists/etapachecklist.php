@@ -25,13 +25,6 @@ $idChecklist = $partes[4];
 
 <body class="bg-slate-900">
 
-    <?php
-
-    require_once __DIR__ . '/../../../../../functions/log.php';
-    require_once __DIR__ . '/../../../../../proteger.php';
-
-    ?>
-
     <div class="max-w-4xl mx-auto mt-10 px-4">
 
         <div class="bg-slate-800 rounded-xl shadow-lg p-6">

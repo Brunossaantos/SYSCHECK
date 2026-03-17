@@ -1,10 +1,5 @@
 <?php
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-require_once __DIR__ . '/functions/log.php';
-require_once __DIR__ . '/proteger.php';
 require_once __DIR__ . '/vendor/autoload.php';
 
 use Util\Sessao;
@@ -14,15 +9,7 @@ use database\Conexao;
 // =======================
 // Usuário logado
 // =======================
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
 $usuario = Sessao::retornarUsuarioLogado();
-if (!$usuario) {
-    header("Location: /syscheck/login.php");
-    exit;
-}
 
 $idUsuario = $usuario->getIdUsuario();
 $idPerfil  = $usuario->getFkPerfil();
@@ -79,26 +66,34 @@ $existeBloqueio = $homeService->existeBloqueio();
 
     <div class="flex flex-col items-center w-full gap-6">
 
-            <?php foreach ($cards as $card): ?>
-                <div class="bg-gradient-to-br from-gray-800 to-gray-700 p-6 rounded-2xl max-w-md w-full text-center shadow-lg animate-fadeIn">
-                    <h2 class="text-xl font-bold mb-3"><?= htmlspecialchars($card['titulo']) ?></h2>
-                    <p class="text-gray-300 mb-4"><?= $card['descricao'] ?></p>
+        <?php foreach ($cards as $card): ?>
+            <div class="bg-gradient-to-br from-gray-800 to-gray-700 p-6 rounded-2xl max-w-md w-full text-center shadow-lg animate-fadeIn">
+                <h2 class="text-xl font-bold mb-3"><?= htmlspecialchars($card['titulo']) ?></h2>
+                <p class="text-gray-300 mb-4"><?= $card['descricao'] ?></p>
 
-                    <?php if (!empty($card['links'])): ?>
-                        <div class="flex flex-col gap-2">
-                            <?php foreach ($card['links'] as $link): ?>
-                                <a href="<?= htmlspecialchars($link['url']) ?>"
-                                    class="px-6 py-2 rounded-lg font-medium text-white 
-                                          bg-<?= htmlspecialchars($link['cor'] ?? 'blue') ?>-500 
-                                          hover:bg-<?= htmlspecialchars($link['cor'] ?? 'blue') ?>-600 
-                                          transition transform hover:scale-105">
-                                    <?= htmlspecialchars($link['texto']) ?>
-                                </a>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php endif; ?>
-                </div>
-            <?php endforeach; ?>
+                <?php if (!empty($card['links'])): ?>
+                    <div class="flex flex-col gap-2">
+                        <?php foreach ($card['links'] as $link): ?>
+                            <a href="<?= htmlspecialchars($link['url']) ?>"
+                                class="px-6 py-2 rounded-lg font-medium text-white transition transform hover:scale-105 
+                        <?php
+                            // Mapeamento de classes fixas para o Tailwind não remover
+                            echo match ($link['cor']) {
+                                'red'    => 'bg-red-600 hover:bg-red-700',
+                                'orange' => 'bg-orange-500 hover:bg-orange-600',
+                                'blue'   => 'bg-blue-600 hover:bg-blue-700',
+                                'green'  => 'bg-green-600 hover:bg-green-700',
+                                'yellow' => 'bg-yellow-500 hover:bg-yellow-600 text-black',
+                                default  => 'bg-blue-600 hover:bg-blue-700',
+                            };
+                        ?>">
+                                <?= htmlspecialchars($link['texto']) ?>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        <?php endforeach; ?>
 
         <?php include_once __DIR__ . '/work/components/footer.php'; ?>
     </div>

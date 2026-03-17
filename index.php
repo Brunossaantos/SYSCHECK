@@ -3,6 +3,9 @@ date_default_timezone_set('America/Sao_Paulo');
 
 require __DIR__ . '/vendor/autoload.php';
 
+require_once __DIR__ . '/functions/log.php';
+require_once __DIR__ . '/proteger.php';
+
 //controladores
 
 use controllers\ChamadoController;

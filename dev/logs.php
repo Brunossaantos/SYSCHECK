@@ -1,84 +1,129 @@
 <?php
 session_start();
 
-if (!isset($_SESSION['idUsuario']) || $_SESSION['idUsuario'] !=2) {
+if (!isset($_SESSION['idUsuario']) || $_SESSION['idUsuario'] != 2) {
     http_response_code(403);
     exit('Acesso negado');
 }
 
+/* =========================
+CONFIGURAÇÃO
+========================= */
 
+$tipoLog = $_GET['tipo'] ?? 'system';
 
-$logFile = __DIR__ . '/../logs/system.log';
+$arquivos = [
+    "system" => "system.log",
+    "access" => "access.log",
+    "debug" => "debug.log"
+];
 
+$logFile = __DIR__ . '/../logs/' . ($arquivos[$tipoLog] ?? "system.log");
+
+$cores = [
+    "ERROR" => "bg-red-600",
+    "ACCESS" => "bg-blue-600",
+    "DEBUG" => "bg-yellow-600"
+];
 
 $contagem = [
     "ERROR" => 0,
+    "ACCESS" => 0,
+    "DEBUG" => 0
 ];
 
 
-// =======================
-// Entrada do usuário
-// =======================
+/* =========================
+ENTRADA
+========================= */
+
 $nivel = $_GET['nivel'] ?? '';
 $buscar = $_GET['buscar'] ?? '';
 $page = max(1, intval($_GET['page'] ?? 1));
 $porPagina = 50;
 
 
-// =======================
-// Carregar linhas do log
-// =======================
-$linhas = file_exists($logFile) ? file($logFile) : [];
+/* =========================
+CARREGAR LOG
+========================= */
+
+$linhas = file_exists($logFile)
+? file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES)
+: [];
 
 
-// =======================
-// Filtragem
-// =======================
+/* =========================
+CONTAGEM
+========================= */
+
+foreach ($linhas as $l) {
+
+    foreach ($contagem as $k => $_) {
+
+        if (strpos($l, "[$k]") !== false) {
+            $contagem[$k]++;
+        }
+
+    }
+
+}
+
+
+/* =========================
+FILTRO
+========================= */
+
 $linhasFiltradas = array_filter($linhas, function ($linha) use ($nivel, $buscar) {
 
     if ($nivel && strpos($linha, "[$nivel]") === false) return false;
     if ($buscar && stripos($linha, $buscar) === false) return false;
+
     return true;
+
 });
 
 
-// =======================
-// Contagem por nível
-// =======================
-foreach ($linhas as $l) {
-    foreach ($contagem as $k => $_) {
-        if (strpos($l, "[$k]") !== false) $contagem[$k]++;
-    }
-}
+/* =========================
+PAGINAÇÃO
+========================= */
 
-
-// =======================
-// Paginação
-// =======================
 $total = count($linhasFiltradas);
 $paginas = max(1, ceil($total / $porPagina));
 $offset = ($page - 1) * $porPagina;
+
 $linhasPagina = array_slice($linhasFiltradas, $offset, $porPagina);
 
 
-// =======================
-// Download dos logs filtrados
-// =======================
+/* =========================
+DOWNLOAD
+========================= */
+
 if (isset($_GET['downloadFiltro'])) {
+
     header('Content-Type: text/plain');
     header('Content-Disposition: attachment; filename="logs_filtrados.log"');
-    foreach ($linhasFiltradas as $l) echo $l;
+
+    foreach ($linhasFiltradas as $l) {
+        echo $l . PHP_EOL;
+    }
+
     exit;
+
 }
 
 
-// =======================
-// Limpar log
-// =======================
+/* =========================
+LIMPAR LOG
+========================= */
+
 if (isset($_GET['limpar'])) {
-    file_put_contents($logFile, "");
+
+    file_put_contents($logFile, "", LOCK_EX);
+
     header("Location: logs.php");
+
     exit;
+
 }
 ?>
 
@@ -86,150 +131,206 @@ if (isset($_GET['limpar'])) {
 <html lang="pt-br">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Logs do Sistema - Dev</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+<meta charset="UTF-8">
+<title>Logs do Sistema</title>
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
-
-<div class="w-full flex justify-between items-center  mb-8 max-w-6xl mx-auto">
-
-    <a href="/syscheck/index2.php"
-        class="bg-gray-500 hover:bg-gray-600 w-20 h-12 flex items-center justify-center text-center rounded-lg text-white font-medium transition transform hover:scale-105 mt-2">
-        Voltar
-    </a>
-
-    <!-- Home -->
-    <a href="/syscheck/index2.php" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg font-medium transition transform hover:scale-105">
-        Home
-    </a>
-
-    <!-- Logout -->
-    <a href="/syscheck/usuario/logout" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg font-medium transition transform hover:scale-105">
-        Logout
-    </a>
-
-</div>
 
 <body class="bg-gray-900 text-gray-200 p-6">
 
-    <div class="max-w-6xl mx-auto">
+<div class="max-w-6xl mx-auto">
 
-        <!-- HEADER -->
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold text-red-400">Logs</h1>
-        </div>
+<!-- HEADER -->
 
-        <!-- DASHBOARD -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+<div class="flex justify-between items-center mb-8">
 
-            <?php foreach ($contagem as $k => $qtd): ?>
-                <div class="p-4 rounded-xl shadow bg-gray-800 border border-gray-700">
-                    <div class="flex justify-between items-center">
-                        <span class="font-semibold"><?= $k ?></span>
-                        <span class="px-3 py-1 rounded-lg text-white text-sm <?= $cores[$k] ?>">
-                            <?= $qtd ?>
-                        </span>
-                    </div>
-                </div>
-            <?php endforeach; ?>
+<h1 class="text-3xl font-bold text-red-400">Logs do Sistema</h1>
 
-        </div>
+<div class="flex gap-4">
 
-        <!-- FILTROS -->
-        <div class="bg-gray-800 p-6 rounded-xl shadow-lg mb-6 border border-gray-700">
-            <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+<a href="/syscheck/index2.php"
+class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg">
+Home
+</a>
 
-                <div>
-                    <label class="text-sm text-gray-400">Nível</label>
-                    <select name="nivel" class="w-full p-2 bg-gray-700 text-gray-200 rounded-lg">
-                        <option value="">Todos</option>
-                        <option value="ERROR" <?= $nivel == "ERROR" ? "selected" : "" ?>>ERROR</option>
-                    </select>
-                </div>
+<a href="/syscheck/usuario/logout"
+class="bg-red-600 hover:bg-red-500 px-4 py-2 rounded-lg">
+Logout
+</a>
 
-                <div class="md:col-span-2">
-                    <label class="text-sm text-gray-400">Buscar</label>
-                    <input type="text" name="buscar" value="<?= htmlspecialchars($buscar) ?>"
-                        class="w-full p-2 bg-gray-700 text-gray-200 rounded-lg"
-                        placeholder="Mensagem do erro, arquivo, linha...">
-                </div>
+</div>
 
-                <div class="flex items-end">
-                    <button class="w-full bg-red-600 hover:bg-red-500 text-white p-2 rounded-lg font-semibold">
-                        Filtrar
-                    </button>
-                </div>
+</div>
 
-            </form>
-        </div>
 
-        <!-- AÇÕES -->
-        <div class="flex flex-wrap gap-4 mb-6">
-            <a href="?downloadFiltro=1&nivel=<?= $nivel ?>&buscar=<?= $buscar ?>"
-                class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg font-semibold text-white">
-                Baixar log filtrado
-            </a>
+<!-- DASHBOARD -->
 
-            <a href="?limpar=1"
-                onclick="return confirm('Tem certeza que deseja limpar o log?')"
-                class="bg-red-600 hover:bg-red-500 px-4 py-2 rounded-lg font-semibold text-white">
-                Limpar Log
-            </a>
-        </div>
+<div class="grid grid-cols-3 gap-4 mb-6">
 
-        <!-- LISTA DE LOGS -->
-        <div class="bg-black p-4 rounded-xl shadow-inner border border-gray-700 max-h-[700px] overflow-auto">
+<?php foreach ($contagem as $k => $qtd): ?>
 
-            <?php
-            $dataAtual = "";
+<div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
 
-            if (!empty($linhasPagina)):
-                foreach ($linhasPagina as $linha):
+<div class="flex justify-between">
 
-                    preg_match('/\[(.*?)\] \[(.*?)\] (.*)/', $linha, $p);
+<span><?= $k ?></span>
 
-                    $data = substr($p[1] ?? '', 0, 10);
-                    $hora = substr($p[1] ?? '', 11);
-                    $nivelLinha = $p[2] ?? '';
-                    $msg = $p[3] ?? '';
+<span class="px-3 py-1 text-xs text-white rounded-lg <?= $cores[$k] ?>">
+<?= $qtd ?>
+</span>
 
-                    $cor = $cores[$nivelLinha] ?? "bg-gray-600";
+</div>
 
-                    // Cabeçalho de data
-                    if ($data !== $dataAtual):
-                        $dataAtual = $data;
-                        echo "<h2 class='text-lg text-red-400 font-bold mt-4 mb-2 border-b border-gray-700 pb-1'>$data</h2>";
-                    endif;
-            ?>
+</div>
 
-                    <div class="flex gap-3 border-b border-gray-800 py-2">
-                        <span class="text-gray-400 min-w-[70px]"><?= $hora ?></span>
-                        <span class="tag px-2 py-1 rounded-lg text-white text-xs <?= $cor ?>"><?= $nivelLinha ?></span>
-                        <span class="text-gray-300"><?= htmlspecialchars($msg) ?></span>
-                    </div>
+<?php endforeach; ?>
 
-            <?php
-                endforeach;
-            else:
-                echo "<p class='text-gray-500 text-center py-10'>Nenhum log encontrado </p>";
-            endif;
-            ?>
+</div>
 
-        </div>
 
-        <!-- PAGINAÇÃO -->
-        <div class="flex justify-center mt-6 gap-2">
-            <?php for ($i = 1; $i <= $paginas; $i++): ?>
-                <a href="?page=<?= $i ?>&nivel=<?= $nivel ?>&buscar=<?= $buscar ?>"
-                    class="px-4 py-2 rounded-lg 
-                   <?= $i == $page ? 'bg-gray-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600' ?>">
-                    <?= $i ?>
-                </a>
-            <?php endfor; ?>
-        </div>
+<!-- FILTROS -->
 
-    </div>
+<div class="bg-gray-800 p-6 rounded-xl border border-gray-700 mb-6">
+
+<form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+<div>
+
+<label class="text-sm text-gray-400">Arquivo</label>
+
+<select name="tipo" class="w-full p-2 bg-gray-700 rounded">
+
+<option value="system" <?= $tipoLog=="system"?'selected':'' ?>>system.log</option>
+<option value="access" <?= $tipoLog=="access"?'selected':'' ?>>access.log</option>
+<option value="debug" <?= $tipoLog=="debug"?'selected':'' ?>>debug.log</option>
+
+</select>
+
+</div>
+
+
+<div>
+
+<label class="text-sm text-gray-400">Nível</label>
+
+<select name="nivel" class="w-full p-2 bg-gray-700 rounded">
+
+<option value="">Todos</option>
+<option value="ERROR">ERROR</option>
+<option value="ACCESS">ACCESS</option>
+<option value="DEBUG">DEBUG</option>
+
+</select>
+
+</div>
+
+
+<div class="md:col-span-2">
+
+<label class="text-sm text-gray-400">Buscar</label>
+
+<input type="text"
+name="buscar"
+value="<?= htmlspecialchars($buscar) ?>"
+class="w-full p-2 bg-gray-700 rounded">
+
+</div>
+
+
+<div class="flex items-end">
+
+<button class="w-full bg-red-600 hover:bg-red-500 p-2 rounded-lg">
+Filtrar
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+
+<!-- AÇÕES -->
+
+<div class="flex gap-4 mb-6">
+
+<a href="?downloadFiltro=1"
+class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg">
+Baixar Log
+</a>
+
+<a href="?limpar=1"
+onclick="return confirm('Limpar log?')"
+class="bg-red-600 hover:bg-red-500 px-4 py-2 rounded-lg">
+Limpar Log
+</a>
+
+</div>
+
+
+<!-- LOGS -->
+
+<div class="bg-black p-4 rounded-xl border border-gray-700 max-h-[700px] overflow-auto">
+
+<?php
+
+$dataAtual = "";
+
+foreach ($linhasPagina as $linha) {
+
+preg_match('/\[(.*?)\] \[(.*?)\] (.*)/', $linha, $p);
+
+$data = substr($p[1] ?? '',0,10);
+$hora = substr($p[1] ?? '',11);
+$nivelLinha = $p[2] ?? '';
+$msg = $p[3] ?? '';
+
+$cor = $cores[$nivelLinha] ?? "bg-gray-600";
+
+if ($data != $dataAtual) {
+
+$dataAtual = $data;
+
+echo "<h2 class='text-red-400 font-bold mt-4 mb-2 border-b border-gray-700'>$data</h2>";
+
+}
+
+?>
+
+<div class="flex gap-3 border-b border-gray-800 py-2">
+
+<span class="text-gray-400 min-w-[70px]"><?= $hora ?></span>
+
+<span class="px-2 py-1 text-xs text-white rounded <?= $cor ?>">
+<?= $nivelLinha ?>
+</span>
+
+<span><?= htmlspecialchars($msg) ?></span>
+
+</div>
+
+<?php } ?>
+
+</div>
+
+
+<!-- PAGINAÇÃO -->
+
+<div class="flex justify-center mt-6 gap-2">
+
+<?php for ($i=1;$i<=$paginas;$i++): ?>
+
+<a href="?page=<?= $i ?>&tipo=<?= $tipoLog ?>&nivel=<?= $nivel ?>&buscar=<?= $buscar ?>"
+class="px-4 py-2 rounded
+<?= $i==$page ? 'bg-gray-600' : 'bg-gray-700 hover:bg-gray-600' ?>">
+<?= $i ?>
+</a>
+
+<?php endfor; ?>
+
+</div>
+
+</div>
 
 </body>
-
 </html>

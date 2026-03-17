@@ -5,43 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Login</title>
+    <title>Login - SYSCHECK</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
     <style>
-        /* FUNDO ANIMADO */
-
         body {
-            background: linear-gradient(-45deg, #0f172a, #1e293b, #111827, #1e3a8a);
-            background-size: 400% 400%;
-            animation: bgMove 15s ease infinite;
+            background-color: #1f2937;
         }
-
-        @keyframes bgMove {
-
-            0% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-
-            100% {
-                background-position: 0% 50%;
-            }
-
-        }
-
-        /* CARD ENTRADA */
 
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(20px);
             }
 
             to {
@@ -51,120 +27,36 @@
         }
 
         .animate-fadeIn {
-            animation: fadeIn .6s ease;
+            animation: fadeIn .5s ease-in-out;
         }
 
-        /* PAINEL FLUTUANDO */
 
-        @keyframes floating {
 
-            0% {
-                transform: translateY(0px);
-            }
-
-            50% {
-                transform: translateY(-8px);
-            }
-
-            100% {
-                transform: translateY(0px);
-            }
-
-        }
-
-        .floating {
-            animation: floating 4s ease-in-out infinite;
-        }
-
-        /* TEXTO SYSCHECK GRADIENTE */
-
-        .syscheck-animate {
-
-            font-weight: 700;
-
-            background: linear-gradient(90deg,
-                    #3b82f6,
-                    #60a5fa,
-                    #93c5fd,
-                    #60a5fa,
-                    #3b82f6);
-
-            background-size: 300%;
+        .logo {
+            background: linear-gradient(90deg, #3b82f6, #60a5fa, #93c5fd);
 
             background-clip: text;
+
             -webkit-background-clip: text;
 
-            color: transparent;
+
             -webkit-text-fill-color: transparent;
-
-            animation: gradientMove 4s linear infinite;
-
-        }
-
-        @keyframes gradientMove {
-
-            0% {
-                background-position: 0%;
-            }
-
-            100% {
-                background-position: 300%;
-            }
-
-        }
-
-        /* INPUT FOCUS */
-
-        .input-focus:focus {
-            box-shadow: 0 0 0 2px #3b82f6;
-        }
-
-        /* ERRO */
-
-        @keyframes shake {
-
-            0% {
-                transform: translateX(0)
-            }
-
-            25% {
-                transform: translateX(-5px)
-            }
-
-            50% {
-                transform: translateX(5px)
-            }
-
-            75% {
-                transform: translateX(-5px)
-            }
-
-            100% {
-                transform: translateX(0)
-            }
-
-        }
-
-        .shake {
-            animation: shake .3s;
         }
     </style>
 
 </head>
 
-<body class="flex flex-col items-center justify-center min-h-screen text-white p-4">
+<body class="flex flex-col items-center justify-center min-h-screen text-white p-8">
 
-    <!-- TEXTO SYSCHECK -->
+    <div class="text-center mb-10">
 
-    <div class="text-center mb-6">
-
-        <h1 class="text-5xl tracking-wide syscheck-animate">
+        <h1 class="text-5xl font-extrabold logo tracking-widest">
             SYSCHECK
         </h1>
 
-        <p class="text-gray-300 text-sm tracking-widest mt-2">
+        <h2 class="text-xl text-gray-300 mt-2">
             SISTEMA DE CHECKLIST
-        </p>
+        </h2>
 
     </div>
 
@@ -183,49 +75,50 @@
 
     ?>
 
-    <!-- PAINEL LOGIN -->
+    <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md animate-fadeIn">
 
-    <div class="bg-gray-800 p-6 rounded-3xl shadow-2xl w-full max-w-md animate-fadeIn floating">
+        <h2 class="text-2xl font-bold text-center mb-6">
+            LOGIN
+        </h2>
 
-        <h2 class="text-2xl font-bold text-center mb-4">LOGIN</h2>
-
-        <?php if (isset($_GET['erro'])): ?>
-            <div class="bg-red-500 text-white p-3 rounded-lg mb-4 text-center shake">
-                Usuário ou senha incorretos
-            </div>
-        <?php endif; ?>
-
-        <form action="/syscheck/usuario/login" method="POST" class="flex flex-col gap-5">
+        <form action="/syscheck/usuario/login" method="POST" class="flex flex-col gap-4">
 
             <div class="flex flex-col">
 
-                <label for="username" class="mb-1 text-gray-300">Usuário</label>
+                <label class="mb-1">Usuário</label>
 
                 <input
                     type="text"
                     name="usuario"
-                    id="username"
-                    required
                     placeholder="Digite seu usuário"
-                    class="p-3 rounded-lg bg-gray-700 border border-gray-600 text-white input-focus outline-none transition">
+                    required
+                    class="p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
 
             </div>
 
             <div class="flex flex-col relative">
 
-                <label for="password" class="mb-1 text-gray-300">Senha</label>
+                <label class="mb-1">Senha</label>
 
                 <input
+                    id="senha"
                     type="password"
                     name="senha"
-                    id="password"
                     placeholder="Digite sua senha"
-                    class="p-3 rounded-lg bg-gray-700 border border-gray-600 text-white input-focus outline-none transition pr-10">
+                    class="p-3 pr-10 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
 
-                <i
-                    id="toggleSenha"
-                    class="fa-solid fa-eye absolute right-3 top-[43px] cursor-pointer text-gray-400 hover:text-white transition">
-                </i>
+                <button
+                    type="button"
+                    onclick="toggleSenha()"
+                    class="absolute right-3 top-10 text-gray-400 hover:text-white">
+
+                    <!-- ícone olho -->
+                    <svg id="iconeOlho" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.644C3.423 7.51 7.36 4.5 12 4.5s8.577 3.01 9.964 7.178a1.012 1.012 0 010 .644C20.577 16.49 16.64 19.5 12 19.5S3.423 16.49 2.036 12.322z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+
+                </button>
 
             </div>
 
@@ -242,26 +135,42 @@
     </div>
 
     <script>
-        const toggleSenha = document.getElementById("toggleSenha");
-        const senha = document.getElementById("password");
+        /* mostrar senha */
 
-        toggleSenha.addEventListener("click", function() {
+        function toggleSenha() {
 
-            if (senha.type === "password") {
+            const campo = document.getElementById("senha")
 
-                senha.type = "text";
-                toggleSenha.classList.remove("fa-eye");
-                toggleSenha.classList.add("fa-eye-slash");
-
+            if (campo.type === "password") {
+                campo.type = "text"
             } else {
-
-                senha.type = "password";
-                toggleSenha.classList.remove("fa-eye-slash");
-                toggleSenha.classList.add("fa-eye");
-
+                campo.type = "password"
             }
 
-        });
+        }
+
+        /* parametros url */
+
+        const params = new URLSearchParams(window.location.search)
+
+        const mensagens = {
+            login: "Faça login para acessar essa página.",
+            inatividade: "Sua sessão expirou por inatividade."
+        }
+
+        const msg = params.get("msg")
+
+        if (msg && mensagens[msg]) {
+            alert(mensagens[msg])
+        }
+
+        if (params.get("erro")) {
+            alert("Usuário ou senha incorretos.")
+        }
+
+        if (msg || params.get("erro")) {
+            window.history.replaceState({}, document.title, window.location.pathname)
+        }
     </script>
 
 </body>

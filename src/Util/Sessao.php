@@ -7,13 +7,19 @@ require __DIR__ . '/../../vendor/autoload.php';
 use models\Login;
 use models\Usuario;
 
-
 class Sessao
 {
+    // Padronizamos uma função privada para não repetir código
+    private static function garantirSessao()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+    }
 
     public static function iniciarSessao(Usuario $usuario)
     {
-        session_start();
+        self::garantirSessao(); // <--- Corrigido aqui
         $_SESSION['idUsuario'] = $usuario->getIdUsuario();
         $_SESSION['nome'] = $usuario->getNome();
         $_SESSION['departamento'] = $usuario->getDepartamento();
@@ -21,12 +27,37 @@ class Sessao
         $_SESSION['nomeUsuario'] = $usuario->getNomeUsuario();
         $_SESSION['statusUsuario'] = $usuario->getStatusUsuario();
         $_SESSION['fkEmpresa'] = $usuario->getFkEmpresa();
-        $_SESSION['idPerfil']       = $usuario->getFkPerfil();
+        $_SESSION['idPerfil'] = $usuario->getFkPerfil();
+    }
+
+    public static function destruirSessao()
+    {
+        self::garantirSessao();
+
+        // 1. Limpa todas as variáveis da memória (superglobal $_SESSION)
+        $_SESSION = [];
+
+        // 2. Se quiser ser rigoroso, apaga o cookie da sessão no navegador
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(
+                session_name(),
+                '',
+                time() - 42000,
+                $params["path"],
+                $params["domain"],
+                $params["secure"],
+                $params["httponly"]
+            );
+        }
+
+        // 3. Destrói o arquivo físico da sessão no servidor
+        session_destroy();
     }
 
     public static function verificarSessao()
     {
-        session_start();
+        self::garantirSessao(); // <--- Corrigido aqui
 
         if (isset($_SESSION['nomeUsuario'])) {
             return true;
@@ -37,9 +68,7 @@ class Sessao
 
     public static function verificarSessaoCompleta()
     {
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
+        self::garantirSessao();
 
         $campos = ['idUsuario', 'nome', 'departamento', 'cargo', 'nomeUsuario', 'statusUsuario'];
         foreach ($campos as $campo) {
@@ -55,9 +84,7 @@ class Sessao
 
     public static function retornarUsuarioLogado()
     {
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
+        self::garantirSessao();
 
         $idUsuario       = $_SESSION['idUsuario']      ?? null;
         $nome            = $_SESSION['nome']           ?? null;
@@ -88,25 +115,20 @@ class Sessao
 
     public static function recuperarMensagem()
     {
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
+        self::garantirSessao();
 
         if (!empty($_SESSION['mensagem'])) {
             $mensagem = $_SESSION['mensagem'];
-            unset($_SESSION['mensagem']); // Remove da sessão depois de recuperar
+            unset($_SESSION['mensagem']);
             return $mensagem;
         }
 
         return null;
     }
 
-
     public static function idusuario(): int
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+        self::garantirSessao();
 
         if (!isset($_SESSION['idUsuario'])) {
             header("Location: /syscheck");
@@ -118,6 +140,8 @@ class Sessao
 
     public static function idempresa(): int
     {
+        self::garantirSessao(); // <--- Adicionado garantia aqui
+
         if (!isset($_SESSION['fkEmpresa'])) {
             header("Location: /syscheck");
             exit();
@@ -125,33 +149,28 @@ class Sessao
 
         return (int) $_SESSION['fkEmpresa'];
     }
+
     public static function empresaLogada(): int
     {
+        self::garantirSessao(); // <--- Adicionado garantia aqui
         return $_SESSION['fkEmpresa'] ?? 0;
     }
 
     public static function nomeUsuario()
     {
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
-        return $_SESSION['nome'];
+        self::garantirSessao();
+        return $_SESSION['nome'] ?? 'Visitante';
     }
 
     public static function salvarMensagemNaSessao($mensagem)
     {
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
-
+        self::garantirSessao();
         $_SESSION['mensagem'] = $mensagem;
     }
 
     public static function mostrarMensagem()
     {
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
+        self::garantirSessao();
 
         if (!empty($_SESSION['mensagem'])) {
             echo '<script>
