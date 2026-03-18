@@ -10,8 +10,6 @@
 
 <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center p-8">
 
-
-    <!-- Barra superior -->
     <div class="w-full flex justify-center space-x-5 gap-6 p-6">
         <a href="/syscheck/checklist"
             class="bg-gray-500 hover:bg-gray-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
@@ -29,12 +27,10 @@
         </a>
     </div>
 
-    <!-- Card do formulário -->
     <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-3xl">
         <h1 class="text-2xl font-bold mb-6 text-center">Cadastro de item para checklist</h1>
 
         <form action="/syscheck/objeto/cadastrarobjeto" method="POST" class="space-y-6">
-            <!-- Descrição -->
             <div>
                 <label for="descricao" class="block mb-2 font-medium">Descrição</label>
                 <input
@@ -47,7 +43,6 @@
                     class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
 
-            <!-- Tipo do checklist -->
             <div>
                 <label for="tipo" class="block mb-2 font-medium">Tipo do checklist</label>
                 <select
@@ -64,7 +59,23 @@
                 </select>
             </div>
 
-            <!-- Status do item -->
+            <div>
+                <label for="fk_empresa" class="block mb-2 font-medium">Unidade</label>
+                <select
+                    id="fk_empresa"
+                    name="fk_empresa"
+                    required
+                    class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="" disabled selected>Selecione a unidade</option>
+
+                    <?php foreach ($listaUnidades as $unidade) { ?>
+                        <option value="<?= $unidade['id_empresa'] ?>">
+                            <?= $unidade['nome'] ?>
+                        </option>
+                    <?php } ?>
+
+                </select>
+            </div>
             <div>
                 <label for="statusitem" class="block mb-2 font-medium">Status do item</label>
                 <select
@@ -78,7 +89,6 @@
                 </select>
             </div>
 
-            <!-- Ações -->
             <div class="flex justify-end gap-3 pt-2">
                 <button
                     type="submit"
@@ -91,5 +101,20 @@
 
     <?php include_once __DIR__ . '/../../../public/components/footer.php'; ?>
 </body>
+<script>
+    // Pega os parâmetros da URL
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.has('sucesso')) {
+        alert("Objeto cadastrado com sucesso!");
+        // Limpa a URL para não repetir o alert se der F5
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    if (params.has('erro')) {
+        alert("Erro ao cadastrar o objeto.");
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+</script>
 
 </html>

@@ -36,46 +36,58 @@
         <form action="/syscheck/objeto/salvarAlteracaoObjeto" method="POST" class="space-y-6">
             <input type="hidden" name="idobjeto" value="<?= $objeto->getIdObjeto() ?>">
 
-            <!-- Descrição -->
             <div>
-                <label for="descricao" class="block mb-2 font-medium">Descrição</label>
-                <input type="text" id="descricao" name="descricao"
-                    value="<?= $objeto->getDescricaoObjeto() ?>"
-                    placeholder="Digite a descrição do objeto"
-                    class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                <label class="block mb-2 font-medium">Descrição</label>
+                <input type="text" name="descricao" value="<?= $objeto->getDescricaoObjeto() ?>" required
+                    class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white">
             </div>
 
-            <!-- Tipo do checklist -->
             <div>
-                <label for="fktipo" class="block mb-2 font-medium">Tipo do checklist</label>
-                <select name="fktipo" id="fktipo"
-                    class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                    <option value="" disabled>Selecione o tipo do item</option>
-                    <?php foreach ($listaTipos as $tipoObjeto) { ?>
-                        <option value="<?= $tipoObjeto->getIdTipoChecklist() ?>"
-                            <?= ($objeto->getFkTipoChecklist() == $tipoObjeto->getIdTipoChecklist()) ? "selected" : "" ?>>
-                            <?= $tipoObjeto->getDescricaoTipoChecklist() ?>
+                <label class="block mb-2 font-medium">Tipo do checklist</label>
+                <select name="fktipo" required class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white">
+                    <?php foreach ($listaTipos as $tipo) { ?>
+                        <option value="<?= $tipo->getIdTipoChecklist() ?>" <?= $tipo->getIdTipoChecklist() == $objeto->getFkTipoChecklist() ? 'selected' : '' ?>>
+                            <?= $tipo->getDescricaoTipoChecklist() ?>
                         </option>
                     <?php } ?>
                 </select>
             </div>
 
-            <!-- Status -->
             <div>
-                <label for="statusitem" class="block mb-2 font-medium">Status do item</label>
-                <select name="statusitem" id="statusitem"
-                    class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                    <option value="1" <?= ($objeto->getStatusObjeto() == 1) ? "selected" : "" ?>>Ativo</option>
-                    <option value="0" <?= ($objeto->getStatusObjeto() == 0) ? "selected" : "" ?>>Inativo</option>
+                <label class="block mb-2 font-medium">Unidade</label>
+                <select name="fk_empresa" required class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white">
+                    <?php foreach ($listaUnidades as $unidade) { ?>
+                        <option value="<?= $unidade['id_empresa'] ?>" <?= $unidade['id_empresa'] == $objeto->getFkEmpresa() ? 'selected' : '' ?>>
+                            <?= $unidade['nome'] ?>
+                        </option>
+                    <?php } ?>
                 </select>
             </div>
 
-            <!-- Botão -->
-            <button type="submit"
-                class="w-full bg-green-500 hover:bg-green-600 px-6 py-3 rounded-lg font-medium transition transform hover:scale-105">
+            <div>
+                <label class="block mb-2 font-medium">Status</label>
+                <select name="statusitem" required class="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 text-white">
+                    <option value="1" <?= $objeto->getStatusObjeto() == 1 ? 'selected' : '' ?>>Ativo</option>
+                    <option value="0" <?= $objeto->getStatusObjeto() == 0 ? 'selected' : '' ?>>Inativo</option>
+                </select>
+            </div>
+
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-semibold w-full">
                 Salvar Alterações
             </button>
         </form>
+
+        <script>
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('sucesso')) {
+                alert("Alterações salvas com sucesso!");
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+            if (params.has('erro')) {
+                alert("Erro ao atualizar o objeto.");
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        </script>
     </div>
 
     <?php include_once __DIR__ . '/../../../public/components/footer.php'; ?>

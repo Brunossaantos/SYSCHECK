@@ -26,10 +26,14 @@ class DaoObjeto
         $descricao = $objeto->getDescricaoObjeto();
         $fkTipo = $objeto->getFkTipoChecklist();
         $status = $objeto->getStatusObjeto();
+        $fkEmpresa = $objeto->getFkEmpresa(); // Certifique-se que o Model Objeto tem esse getter
 
         try {
-            $stmt = $this->conexao->prepare("INSERT INTO {$this->tbl_objetos} (DESCRICAO_OBJETO, FK_TIPO_CHECKLIST, STATUS_OBJETO) VALUES (?,?,?)");
-            $stmt->bind_param("sii", $descricao, $fkTipo, $status);
+            // Adicionada a coluna FK_EMPRESA e mais um placeholder "?"
+            $stmt = $this->conexao->prepare("INSERT INTO {$this->tbl_objetos} (DESCRICAO_OBJETO, FK_TIPO_CHECKLIST, STATUS_OBJETO, FK_EMPRESA) VALUES (?,?,?,?)");
+
+            // Ajustado para "siii" (String, Int, Int, Int)
+            $stmt->bind_param("siii", $descricao, $fkTipo, $status, $fkEmpresa);
 
             if ($stmt->execute()) {
                 return $stmt->insert_id;
@@ -42,10 +46,24 @@ class DaoObjeto
         }
     }
 
+    // Método extra para não precisar de DaoEmpresa
+    public function listarEmpresasSimples()
+    {
+        $empresas = [];
+        // Usamos query direta aqui para simplificar já que não há parâmetros externos
+        $result = $this->conexao->query("SELECT id_empresa, nome FROM tbl_empresas WHERE ativa = 1");
+
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $empresas[] = $row;
+            }
+        }
+        return $empresas;
+    }
     function selecionarObjeto($idObjeto)
     {
         try {
-            $stmt = $this->conexao->prepare("SELECT ID_OBJETO, DESCRICAO_OBJETO, FK_TIPO_CHECKLIST, STATUS_OBJETO FROM {$this->tbl_objetos} WHERE ID_OBJETO = ?");
+            $stmt = $this->conexao->prepare("SELECT ID_OBJETO, DESCRICAO_OBJETO, FK_TIPO_CHECKLIST, STATUS_OBJETO, FK_EMPRESA FROM {$this->tbl_objetos} WHERE ID_OBJETO = ?");
             $stmt->bind_param("i", $idObjeto);
 
             $stmt->execute();
@@ -53,7 +71,7 @@ class DaoObjeto
 
             if ($result->num_rows > 0) {
                 $row = $result->fetch_assoc();
-                return new Objeto($row['ID_OBJETO'], $row['DESCRICAO_OBJETO'], $row['FK_TIPO_CHECKLIST'], $row['STATUS_OBJETO']);
+                return new Objeto($row['ID_OBJETO'], $row['DESCRICAO_OBJETO'], $row['FK_TIPO_CHECKLIST'], $row['STATUS_OBJETO'], $row['FK_EMPRESA']);
             }
 
             return null;
@@ -69,10 +87,14 @@ class DaoObjeto
         $descricao = $objeto->getDescricaoObjeto();
         $fkTipo = $objeto->getFkTipoChecklist();
         $status = $objeto->getStatusObjeto();
+        $fkEmpresa = $objeto->getFkEmpresa(); // ADICIONE ESTA LINHA AQUI!
 
         try {
-            $stmt = $this->conexao->prepare("UPDATE {$this->tbl_objetos} SET DESCRICAO_OBJETO = ?, FK_TIPO_CHECKLIST = ?, STATUS_OBJETO = ? WHERE ID_OBJETO = ?");
-            $stmt->bind_param("siii", $descricao, $fkTipo, $status, $idObjeto);
+            // 1. Adicionamos o campo FK_EMPRESA = ? no SET
+            $stmt = $this->conexao->prepare("UPDATE {$this->tbl_objetos} SET DESCRICAO_OBJETO = ?, FK_TIPO_CHECKLIST = ?, STATUS_OBJETO = ?, FK_EMPRESA = ? WHERE ID_OBJETO = ?");
+
+            // 2. Ajustamos o bind_param para "siiii" (String, Int, Int, Int, Int)
+            $stmt->bind_param("siiii", $descricao, $fkTipo, $status, $fkEmpresa, $idObjeto);
 
             if ($stmt->execute()) {
                 return $stmt->affected_rows;
@@ -117,13 +139,20 @@ class DaoObjeto
     {
         $listaObjetos = [];
         try {
-            $stmt = $this->conexao->prepare("
-            SELECT ID_OBJETO, DESCRICAO_OBJETO, FK_TIPO_CHECKLIST, STATUS_OBJETO 
-            FROM {$this->tbl_objetos}
-            WHERE FK_EMPRESA = ?
-        ");
+            $sql = "SELECT ID_OBJETO, DESCRICAO_OBJETO, FK_TIPO_CHECKLIST, STATUS_OBJETO, FK_EMPRESA 
+                FROM {$this->tbl_objetos}";
 
-            $stmt->bind_param("i", $fkEmpresa);
+            // Só adiciona o WHERE se NÃO for acesso total (fkEmpresa não nulo)
+            if ($fkEmpresa !== null) {
+                $sql .= " WHERE FK_EMPRESA = ?";
+            }
+
+            $stmt = $this->conexao->prepare($sql);
+
+            if ($fkEmpresa !== null) {
+                $stmt->bind_param("i", $fkEmpresa);
+            }
+
             $stmt->execute();
             $result = $stmt->get_result();
 
@@ -132,14 +161,14 @@ class DaoObjeto
                     $row['ID_OBJETO'],
                     $row['DESCRICAO_OBJETO'],
                     $row['FK_TIPO_CHECKLIST'],
-                    $row['STATUS_OBJETO']
+                    $row['STATUS_OBJETO'],
+                    $row['FK_EMPRESA']
                 );
             }
-
             return $listaObjetos;
         } catch (Exception $e) {
             Util::inserirErro($e, "listarObjetos", $this->idUsuarioSessao);
-            return null;
+            return [];
         }
     }
 

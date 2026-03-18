@@ -8,13 +8,15 @@ class Objeto
     private $descricaoObjeto;
     private $fkTipoChecklist;
     private $statusObjeto;
+    private $fkEmpresa; // Novo atributo
 
-    function __construct($idObjeto, $descricaoObjeto, $fkTipoChecklist, $statusObjeto)
+    function __construct($idObjeto, $descricaoObjeto, $fkTipoChecklist, $statusObjeto, $fkEmpresa = 1)
     {
         $this->setIdObjeto($idObjeto);
         $this->setDescricaoObjeto($descricaoObjeto);
         $this->setFkTipoChecklist($fkTipoChecklist);
         $this->setStatusObjeto($statusObjeto);
+        $this->setFkEmpresa($fkEmpresa); // Novo setter
     }
 
     function setIdObjeto($idObjeto)
@@ -37,6 +39,12 @@ class Objeto
         $this->statusObjeto = $statusObjeto;
     }
 
+    // Novo Setter
+    function setFkEmpresa($fkEmpresa)
+    {
+        $this->fkEmpresa = $fkEmpresa;
+    }
+
     function getIdObjeto()
     {
         return $this->idObjeto;
@@ -57,13 +65,20 @@ class Objeto
         return $this->statusObjeto;
     }
 
+    // Novo Getter
+    function getFkEmpresa()
+    {
+        return $this->fkEmpresa;
+    }
+
     function toArray()
     {
         return [
             'idObjeto' => $this->getIdObjeto(),
             'descricaoObjeto' => $this->getDescricaoObjeto(),
             'tipoChecklist' => $this->getFkTipoChecklist(),
-            'statusObjeto' => $this->getStatusObjeto()
+            'statusObjeto' => $this->getStatusObjeto(),
+            'fkEmpresa' => $this->getFkEmpresa() // Adicionado ao array
         ];
     }
 }
