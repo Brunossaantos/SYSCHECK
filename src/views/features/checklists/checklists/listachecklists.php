@@ -187,14 +187,15 @@ foreach ($listaUsuarios as $usuario) {
                                     <?= (int)$checklist->getIdChecklist() ?>
                                 </a>
                             </td>
-                            <td class="py-2 px-4 border-b border-gray-700 border-r border-gray-700"><?= htmlspecialchars($checklist->getDataInicio(), ENT_QUOTES, 'UTF-8') ?></td>
-                            <td class="py-2 px-4 border-b border-gray-700 border-r border-gray-700"><?= htmlspecialchars($tipoNome, ENT_QUOTES, 'UTF-8') ?></td>
-                            <td class="py-2 px-4 border-b border-gray-700 border-r border-gray-700"><?= htmlspecialchars($objetoNome, ENT_QUOTES, 'UTF-8') ?></td>
-                            <td class="py-2 px-4 border-b border-gray-700 border-r border-gray-700"><?= htmlspecialchars($checklist->getDataFim(), ENT_QUOTES, 'UTF-8') ?></td>
-                            <td class="py-2 px-4 border-b border-gray-700 border-r border-gray-700"><?= htmlspecialchars($usuarioNome, ENT_QUOTES, 'UTF-8') ?></td>
+                            <td class="py-2 px-4 border-b border-gray-700 border-r border-gray-700"><?= htmlspecialchars($checklist->getDataInicio() ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+                            <td class="py-2 px-4 border-b border-gray-700 border-r border-gray-700"><?= htmlspecialchars($tipoNome ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+                            <td class="py-2 px-4 border-b border-gray-700 border-r border-gray-700"><?= htmlspecialchars($objetoNome ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+                            <td class="py-2 px-4 border-b border-gray-700 border-r border-gray-700"><?= htmlspecialchars($checklist->getDataFim() ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+                            <td class="py-2 px-4 border-b border-gray-700 border-r border-gray-700"><?= htmlspecialchars($usuarioNome ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+
                             <td class="py-2 px-4 border-b border-gray-700 border-r border-gray-700">
                                 <?php if ((int)$checklist->getStatusChecklist() === 1): ?>
-                                    <a href="/syscheck/etapaschecklist/continuarChecklist/<?= (int)$checklist->getIdChecklist() ?>" class="bg-yellow-500 hover:bg-yellow-600 w-40 h-14 flex items-center justify-center rounded-lg font-medium transition transform hover:scale-105">Em andamento</a>
+                                    <a href="/syscheck/etapaschecklist/continuarChecklist/<?= (int)$checklist->getIdChecklist() ?>" class="bg-yellow-500 hover:bg-yellow-600 w-40 h-14 flex items-center justify-center rounded-lg font-medium transition transform hover:scale-105 text-black">Em andamento</a>
                                 <?php else: ?>
                                     <a href="/syscheck/checklist/checklistFinalizado/<?= (int)$checklist->getIdChecklist() ?>" class="bg-green-500 hover:bg-green-600 w-40 h-14 flex items-center justify-center rounded-lg font-medium transition transform hover:scale-105">Finalizado</a>
                                 <?php endif; ?>

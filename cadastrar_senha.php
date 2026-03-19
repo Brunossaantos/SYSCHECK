@@ -30,14 +30,14 @@
             <!-- Senha -->
             <div>
                 <label for="password" class="block mb-2 font-medium">Senha</label>
-                <input type="password" id="password" name="senha" placeholder="Digite sua senha"
+                <input type="password" id="password" name="senha" placeholder="Digite sua senha" required
                     class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
             </div>
 
             <!-- Confirmar Senha -->
             <div>
                 <label for="conf_senha" class="block mb-2 font-medium">Confirmar Senha</label>
-                <input type="password" id="conf_senha" name="conf_senha" placeholder="Digite sua senha novamente"
+                <input type="password" id="conf_senha" name="conf_senha" placeholder="Digite sua senha novamente" required
                     class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
             </div>
 

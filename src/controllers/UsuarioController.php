@@ -143,47 +143,57 @@ class UsuarioController
             echo "Método de envio de dados incorreto";
         }
     }
-
     public function cadastrarSenha()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (($_POST['senha'] ?? '') === ($_POST['conf_senha'] ?? '')) {
+            $senha = $_POST['senha'] ?? '';
+            $confSenha = $_POST['conf_senha'] ?? '';
+
+            if ($senha === $confSenha && !empty($senha)) {
                 try {
-                    $usuario = new Usuario(
-                        $_POST['idUsuario'] ?? null,
-                        "",
-                        "",
-                        "",
-                        "",
-                        $_POST['senha'] ?? '',
-                        1,
-                        0,
-                        0,
-                        0
+                    // Instanciando o modelo Usuario com os 10 parâmetros
+                    $usuario = new \models\Usuario(
+                        $_POST['idUsuario'] ?? null, // 1. ID
+                        "",                          // 2. Nome
+                        "",                          // 3. Depto
+                        "",                          // 4. Cargo
+                        "",                          // 5. NomeUsuario
+                        $senha,                      // 6. Senha
+                        1,                           // 7. Status (Ativo)
+                        0,                           // 8. Checklist
+                        1,                           // 9. Empresa
+                        2                            // 10. Perfil
                     );
 
                     if ($this->rnUsuario->alterarSenhaUsuario($usuario) > 0) {
-                        Sessao::salvarMensagemNaSessao("Senha cadastrada com sucesso");
-                        header("Location: /syscheck");
+                        // MENSAGEM DE SUCESSO: Trava a tela com alert antes de redirecionar
+                        echo "<script>
+                            alert('Senha cadastrada com sucesso!');
+                            window.location.href = '/syscheck';
+                          </script>";
                         exit;
                     } else {
                         registrarLog("Erro ao cadastrar senha | UsuarioID: " . ($_POST['idUsuario'] ?? 'desconhecido'), "ERROR");
-                        Sessao::salvarMensagemNaSessao("Não foi possível cadastrar a senha.");
-                        header("Location: /syscheck/usuario/login");
+                        echo "<script>
+                            alert('❌ Erro: O banco de dados não pôde salvar a senha.');
+                            history.back();
+                          </script>";
                         exit;
                     }
                 } catch (\Throwable $e) {
                     registrarLog("Erro ao cadastrar senha: " . $e->getMessage(), "ERROR");
-                    echo "Erro ao cadastrar senha.";
+                    echo "Erro fatal ao processar cadastro.";
                 }
             } else {
-                Sessao::salvarMensagemNaSessao("Os campos senha e confirmação não são iguais.");
-                header("Location: /syscheck/usuario/login");
+                // Caso as senhas não coincidam
+                echo "<script>
+                    alert('⚠️ As senhas digitadas não são iguais!');
+                    history.back();
+                  </script>";
                 exit;
             }
         }
     }
-
     public function excluirUsuario($idUsuario)
     {
         try {

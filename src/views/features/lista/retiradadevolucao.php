@@ -127,8 +127,8 @@ $listaChecklists = $listaChecklists ?? [];
             <!-- Campo Nome -->
             <div class="form-group col-md-4">
                 <label for="nome">Nome</label>
-                <input type="text" id="nome" class="form-control" value="<?= htmlspecialchars($nome) ?>" readonly>
-                <input type="hidden" id="fkusuario" name="fkusuario" value="<?= htmlspecialchars($fkUsuario) ?>">
+                <input type="text" id="nome" class="form-control" value="<?= htmlspecialchars($nome ?? '') ?>" readonly>
+                <input type="hidden" id="fkusuario" name="fkusuario" value="<?= htmlspecialchars($fkUsuario ?? '') ?>">
             </div>
 
             <!-- Campo Empresa -->
@@ -171,7 +171,7 @@ $listaChecklists = $listaChecklists ?? [];
 
     </div>
 
-    <table class="table mt-4">
+    <table id="tabelaChecklists" class="table mt-4">
         <thead>
             <tr>
                 <th>Número</th>
@@ -184,24 +184,25 @@ $listaChecklists = $listaChecklists ?? [];
         </thead>
         <tbody>
             <?php
-            // Verifica se é um array e tem elementos antes de iterar
             if (!empty($listaChecklists) && is_array($listaChecklists)) {
                 foreach ($listaChecklists as $checklist) { ?>
                     <tr>
-                        <td><?= htmlspecialchars($checklist->getIdChecklist()) ?></td>
-                        <td><?= htmlspecialchars($checklist->getFkObjeto()) ?></td>
-                        <td><?= htmlspecialchars($checklist->getFkUsuario()) ?></td>
-                        <td><?= htmlspecialchars($checklist->getDataInicio()) ?></td>
-                        <td><?= htmlspecialchars($checklist->getDataFim()) ?></td>
+                        <td><?= htmlspecialchars($checklist->getIdChecklist() ?? '') ?></td>
+                        <td><?= htmlspecialchars($checklist->getFkObjeto() ?? '') ?></td>
+                        <td><?= htmlspecialchars($checklist->getFkUsuario() ?? '') ?></td>
+                        <td><?= htmlspecialchars($checklist->getDataInicio() ?? '') ?></td>
+                        <td><?= htmlspecialchars($checklist->getDataFim() ?? '') ?></td>
                         <td>
                             <?php
-                            // Exibir status com cor — ajusta conforme tipo retornado pelo getter
                             $status = $checklist->getStatusChecklist();
-                            $isPendente = (is_string($status) && strtolower($status) === 'pendente') || ($status == 1 && false); // mantenha a lógica conforme seu domínio
+                            // Protegendo a exibição do status também
+                            $statusTexto = $status ?? '';
+                            $isPendente = (is_string($statusTexto) && strtolower($statusTexto) === 'pendente');
+
                             if ($isPendente) {
-                                echo '<span style="color: red">' . htmlspecialchars($checklist->getStatusChecklist()) . '</span>';
+                                echo '<span style="color: red">' . htmlspecialchars($statusTexto) . '</span>';
                             } else {
-                                echo '<span style="color: green">' . htmlspecialchars($checklist->getStatusChecklist()) . '</span>';
+                                echo '<span style="color: green">' . htmlspecialchars($statusTexto) . '</span>';
                             }
                             ?>
                         </td>

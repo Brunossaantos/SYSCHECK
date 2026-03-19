@@ -3,31 +3,46 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-$tempoInatividade = 10800; // 30 minutos
-
-// No Router, usamos REQUEST_URI para saber o que o usuário digitou na URL
+$tempoInatividade = 10800; // 3 horas
 $urlAcessada = $_SERVER['REQUEST_URI'];
 
-// Verificamos se a URL contém a palavra "login"
+// --- 1. EXCEÇÕES (Páginas Livres) ---
 $ehPaginaLogin = (strpos($urlAcessada, 'login.php') !== false || strpos($urlAcessada, '/login') !== false);
+$ehPaginaPrimeiroAcesso = (strpos($urlAcessada, 'cadastrarSenha') !== false);
 
-// 1. Se for página de login, não faz nada e sai do script
-if ($ehPaginaLogin) {
+if ($ehPaginaLogin || $ehPaginaPrimeiroAcesso) {
     return;
 }
 
-// 2. Se NÃO estiver logado, manda para o login com aviso de "precisa logar"
+// --- 2. VERIFICAÇÃO DE AUTENTICAÇÃO ---
 if (!isset($_SESSION['idUsuario'])) {
     header("Location: /syscheck/login.php?msg=login");
     exit;
 }
 
-// 3. SE estiver logado, aí sim verificamos a inatividade
+// --- 3. BLOQUEIO DE PERFIL (ÁREA DA LISTA) ---
+if (strpos($urlAcessada, '/lista') !== false && strpos($urlAcessada, 'checklist') === false) {
+
+    $perfilUsuario = $_SESSION['idPerfil'] ?? null;
+
+    if (intval($perfilUsuario) !== 6) {
+        // Echo do script com encerramento imediato do PHP
+        echo "
+        <script>
+            alert('Acesso Negado! Esta área é exclusiva para o Perfil Veicular.');
+            window.location.href = '/syscheck/index2.php';
+        </script>";
+
+        // O exit é vital aqui para o PHP não enviar mais nada ao navegador
+        exit;
+    }
+}
+
+// --- 4. VERIFICAÇÃO DE INATIVIDADE ---
 if (isset($_SESSION['LAST_ACTIVITY'])) {
     $tempoPassado = time() - $_SESSION['LAST_ACTIVITY'];
 
     if ($tempoPassado > $tempoInatividade) {
-        // Sessão expirou de fato
         session_unset();
         session_destroy();
         header("Location: /syscheck/login.php?msg=inatividade");
@@ -35,5 +50,5 @@ if (isset($_SESSION['LAST_ACTIVITY'])) {
     }
 }
 
-// 4. Atualiza o tempo de atividade apenas se o usuário estiver logado e ativo
+// 5. Atualiza o timestamp de atividade
 $_SESSION['LAST_ACTIVITY'] = time();
