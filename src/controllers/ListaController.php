@@ -68,7 +68,7 @@ class ListaController
                     $checklist->setStatusChecklist("Concluído");
                     break;
                 default:
-                    $checklist->setStatusChecklist("Status desconhecido");
+                    $checklist->setStatusChecklist("Pendente");
             }
         }
 

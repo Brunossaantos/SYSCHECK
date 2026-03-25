@@ -46,10 +46,12 @@ class RnLista
         return (new DaoLista((new Conexao())->conectar(), Sessao::idusuario()))->selecionarUltimaMovimentacao($movimentacao);
     }
 
+    // Procure o método salvarMovimentacao e altere para usar o ID do array $movimentacao
     function salvarMovimentacao($movimentacao)
     {
         $statusAtual = $this->verificarStatus($movimentacao['veiculo']);
 
+        // Validação: usamos o ID do crachá para verificar se ele pode devolver
         $validacao = $this->validarUsuarioVeiculo(
             $movimentacao['veiculo'],
             $movimentacao['usuario']
@@ -63,17 +65,19 @@ class RnLista
             exit;
         }
 
+        // --- AQUI ESTÁ A CORREÇÃO ---
+        // Em vez de Sessao::idusuario(), passamos o ID de quem bateu o crachá:
+        $idDoCracha = $movimentacao['usuario'];
+        $dao = new DaoLista((new Conexao())->conectar(), $idDoCracha);
 
         switch ($statusAtual) {
             case 1: // Disponível → Retirada
-                (new DaoLista((new Conexao())->conectar(), Sessao::idusuario()))
-                    ->salvarMovimentacao($movimentacao);
+                $dao->salvarMovimentacao($movimentacao);
                 $novoStatus = 2;
                 break;
 
             case 2: // Ocupado → Devolução
-                (new DaoLista((new Conexao())->conectar(), Sessao::idusuario()))
-                    ->salvarDevolucao($movimentacao['veiculo']);
+                $dao->salvarDevolucao($movimentacao['veiculo']);
                 $novoStatus = 1;
                 break;
 
@@ -81,7 +85,7 @@ class RnLista
                 $novoStatus = 3;
         }
 
-        // Atualiza o status do veículo na tabela
+        // Atualiza o status do veículo
         $this->atualizarStatusVeiculo($movimentacao['veiculo'], $novoStatus);
 
         header("Location:/syscheck/checklist/iniciarChecklistVeicular/" . $movimentacao['usuario'] . "/" . $movimentacao['veiculo']);

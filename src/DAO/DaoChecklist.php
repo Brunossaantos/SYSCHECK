@@ -36,15 +36,16 @@ class DaoChecklist
     public function iniciarChecklist(Checklist $checklist): int
     {
         try {
-
             $stmt = $this->conexao->prepare("
             INSERT INTO {$this->tbl_checklists} 
             (FK_USUARIO, FK_TIPO, FK_OBJETO, DATA_INICIO, STATUS_CHECKLIST, fk_empresa)
             VALUES (?, ?, ?, ?, ?, ?)
         ");
 
-            $fkUsuario       = Sessao::idusuario();
-            $fkEmpresa       = Sessao::idempresa();
+            // CORREÇÃO: Usar as propriedades da classe ($this->), 
+            // que foram injetadas com o ID do crachá (49)
+            $fkUsuario       = $this->idUsuarioSessao;
+            $fkEmpresa       = $this->idEmpresaSessao;
 
             $fkTipo          = $checklist->getFkTipo();
             $fkObjeto        = $checklist->getFkObjeto();
@@ -259,10 +260,10 @@ class DaoChecklist
         return (int)$dados['checklist_veicular'] === 1;
     }
 
-   public function listarChecklistsVeiculares()
-{
-    // 1. Mudamos o SQL para fazer INNER JOIN e buscar as descrições/nomes
-    $sql = "
+    public function listarChecklistsVeiculares()
+    {
+        // 1. Mudamos o SQL para fazer INNER JOIN e buscar as descrições/nomes
+        $sql = "
         SELECT 
             c.*, 
             u.NOME AS NOME_USUARIO, 
@@ -275,35 +276,35 @@ class DaoChecklist
         ORDER BY c.ID_CHECKLIST DESC
     ";
 
-    $stmt = $this->conexao->prepare($sql);
+        $stmt = $this->conexao->prepare($sql);
 
-    if (!$stmt) {
-        throw new Exception($this->conexao->error);
+        if (!$stmt) {
+            throw new Exception($this->conexao->error);
+        }
+
+        $stmt->bind_param("i", $this->idEmpresaSessao);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $lista = [];
+
+        while ($row = $result->fetch_assoc()) {
+            // 2. No lugar dos IDs (FK_USUARIO e FK_OBJETO), 
+            // passamos os Nomes que vieram do JOIN para o Model
+            $lista[] = new \models\Checklist(
+                $row['ID_CHECKLIST'],
+                $row['NOME_USUARIO'], // Antes era FK_USUARIO
+                null,
+                $row['FK_TIPO'],
+                $row['NOME_VEICULO'], // Antes era FK_OBJETO
+                $row['DATA_INICIO'],
+                $row['DATA_FIM'],
+                $row['STATUS_CHECKLIST']
+            );
+        }
+
+        return $lista;
     }
-
-    $stmt->bind_param("i", $this->idEmpresaSessao);
-    $stmt->execute();
-
-    $result = $stmt->get_result();
-    $lista = [];
-
-    while ($row = $result->fetch_assoc()) {
-        // 2. No lugar dos IDs (FK_USUARIO e FK_OBJETO), 
-        // passamos os Nomes que vieram do JOIN para o Model
-        $lista[] = new \models\Checklist(
-            $row['ID_CHECKLIST'],
-            $row['NOME_USUARIO'], // Antes era FK_USUARIO
-            null,
-            $row['FK_TIPO'],
-            $row['NOME_VEICULO'], // Antes era FK_OBJETO
-            $row['DATA_INICIO'],
-            $row['DATA_FIM'],
-            $row['STATUS_CHECKLIST']
-        );
-    }
-
-    return $lista;
-}
     // =========================
     // FILTRAGEM E LISTAGEM
     // =========================

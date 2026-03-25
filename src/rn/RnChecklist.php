@@ -141,4 +141,14 @@ class RnChecklist
     {
         return $this->dao->listarChecklistsVeiculares();
     }
+    /**
+     * Verifica se existe um checklist aberto para o usuário
+     * @param int $fkUsuario
+     * @return \models\Checklist|null
+     */
+    public function verificarChecklistPorUsuario(int $fkUsuario): ?\models\Checklist
+    {
+        // Repassa a busca para o DAO que já codificamos antes
+        return $this->dao->verificarChecklistPorUsuario($fkUsuario);
+    }
 }

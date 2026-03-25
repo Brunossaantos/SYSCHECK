@@ -133,24 +133,62 @@ class ChecklistController
     }
     function iniciarChecklistVeicular($fkUsuario, $fkObjeto)
     {
-        $fkTipo = 1; // ID válido para veicular
-        $dataInicio = (new DateTime())->format('d/m/Y H:i:s');
+        // 1. Instância da RN com o ID do crachá (contexto correto)
+        $rnChecklist = new \rn\RnChecklist((int)$fkUsuario, $this->idEmpresaSessao);
 
-        $usuarioObj = (new RnUsuario(Sessao::idusuario()))->selecionarUsuario($fkUsuario);
+        // 2. BUSCA: Existe um checklist aberto (Status 1) para esse usuário?
+        $checklistPendente = $rnChecklist->verificarChecklistPorUsuario((int)$fkUsuario);
 
-        $checklist = new Checklist(
-            1,
-            $usuarioObj,
-            $fkUsuario,
-            $fkTipo,       // ✅ agora sempre válido
-            $fkObjeto,
-            $dataInicio,
-            "",
-            1
-        );
+        // Verificamos se o checklist achado é do mesmo veículo que está sendo bipado
+        if ($checklistPendente && $checklistPendente->getFkObjeto() == $fkObjeto) {
 
-        $idChecklist = $this->rnChecklist->iniciarChecklist($checklist);
+            // --- FLUXO DE DEVOLUÇÃO (FECHAMENTO) ---
+            $dataFim = (new DateTime())->format('d/m/Y H:i:s');
 
+            // 1. Atualiza o objeto Checklist
+            $checklistPendente->setDataFim($dataFim);
+            $checklistPendente->setStatusChecklist(2); // 2 = Concluído
+
+            // 2. Chama o UPDATE no banco (Tabela de Checklists)
+            $rnChecklist->atualizarChecklist($checklistPendente);
+
+            // 3. ATUALIZAÇÃO DA MOVIMENTAÇÃO (tbl_lista_uso_veiculo)
+            // Verifique o nome correto da sua classe de movimentação. 
+            // Se o erro persistir, comente as 3 linhas abaixo até criarmos a classe certa.
+            /*
+        $rnUso = new \rn\RnListaUsoVeiculo(); 
+        $usoAberto = $rnUso->buscarUsoPendente((int)$fkUsuario, (int)$fkObjeto);
+        if ($usoAberto) {
+            $usoAberto->setDataHoraDevolucao($dataFim);
+            $usoAberto->setStatusUso(2); 
+            $rnUso->atualizarUso($usoAberto);
+        }
+        */
+        } else {
+
+            // --- FLUXO DE SAÍDA (ABERTURA) ---
+            $fkTipo = 1;
+            $dataInicio = (new DateTime())->format('d/m/Y H:i:s');
+
+            // Buscamos o objeto usuário para o Model
+            $usuarioObj = (new \rn\RnUsuario(\Util\Sessao::idusuario()))->selecionarUsuario($fkUsuario);
+
+            $checklist = new \models\Checklist(
+                1, // ID temporário
+                $usuarioObj,
+                (int)$fkUsuario,
+                $fkTipo,
+                $fkObjeto,
+                $dataInicio,
+                "", // dataFim vazia
+                1   // status 1 = Aberto
+            );
+
+            // Chama o INSERT no banco
+            $rnChecklist->iniciarChecklist($checklist);
+        }
+
+        // Redireciona para a lista
         header("Location:/syscheck/lista/");
         exit;
     }
@@ -659,7 +697,7 @@ class ChecklistController
             ->selecionarUsuario($checklist->getFkUsuario());*/
 
         // 1. Inicia a variável vazia para evitar o erro "Undefined variable" na View
-        $listaHorimetros = []; 
+        $listaHorimetros = [];
 
         // 2. Inverte a lógica: Se o ID NÃO for 1 (Veicular) e NÃO for 6 (TI), ele puxa o horímetro
         if (!in_array($tipo->getIdTipoChecklist(), [1, 6])) {
