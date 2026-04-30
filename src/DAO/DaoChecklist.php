@@ -33,44 +33,43 @@ class DaoChecklist
 
 
 
-    public function iniciarChecklist(Checklist $checklist): int
-    {
-        try {
-            $stmt = $this->conexao->prepare("
+   public function iniciarChecklist(Checklist $checklist): int
+{
+    try {
+        $stmt = $this->conexao->prepare("
             INSERT INTO {$this->tbl_checklists} 
-            (FK_USUARIO, FK_TIPO, FK_OBJETO, DATA_INICIO, STATUS_CHECKLIST, fk_empresa)
-            VALUES (?, ?, ?, ?, ?, ?)
+            (FK_USUARIO, FK_TIPO, FK_OBJETO, DATA_INICIO, STATUS_CHECKLIST, FK_EMPRESA, FK_USO_VEICULO)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         ");
-
-            // CORREÇÃO: Usar as propriedades da classe ($this->), 
-            // que foram injetadas com o ID do crachá (49)
-            $fkUsuario       = $this->idUsuarioSessao;
-            $fkEmpresa       = $this->idEmpresaSessao;
-
-            $fkTipo          = $checklist->getFkTipo();
-            $fkObjeto        = $checklist->getFkObjeto();
-            $dataInicio      = $checklist->getDataInicio();
-            $statusChecklist = $checklist->getStatusChecklist();
-
-            $stmt->bind_param(
-                "iiisii",
-                $fkUsuario,
-                $fkTipo,
-                $fkObjeto,
-                $dataInicio,
-                $statusChecklist,
-                $fkEmpresa
-            );
-
-            if ($stmt->execute()) {
-                return $stmt->insert_id;
-            }
-            return -1;
-        } catch (Exception $e) {
-            Util::inserirErro($e, "iniciarChecklist", $this->idUsuarioSessao);
-            return -2;
+ 
+        $fkUsuario       = $this->idUsuarioSessao;
+        $fkEmpresa       = $this->idEmpresaSessao;
+        $fkTipo          = $checklist->getFkTipo();
+        $fkObjeto        = $checklist->getFkObjeto();
+        $dataInicio      = $checklist->getDataInicio();
+        $statusChecklist = $checklist->getStatusChecklist();
+        $fkUsoVeiculo    = $checklist->getFkUsoVeiculo(); // ✅ NOVO
+ 
+        $stmt->bind_param(
+            "iiisiii",
+            $fkUsuario,
+            $fkTipo,
+            $fkObjeto,
+            $dataInicio,
+            $statusChecklist,
+            $fkEmpresa,
+            $fkUsoVeiculo
+        );
+ 
+        if ($stmt->execute()) {
+            return $stmt->insert_id;
         }
+        return -1;
+    } catch (Exception $e) {
+        Util::inserirErro($e, "iniciarChecklist", $this->idUsuarioSessao);
+        return -2;
     }
+}
 
     public function selecionarChecklist(int $idChecklist): ?Checklist
     {
@@ -260,27 +259,24 @@ class DaoChecklist
         return (int)$dados['checklist_veicular'] === 1;
     }
 
-   public function listarChecklistsVeiculares()
+public function listarChecklistsVeiculares()
 {
     $sql = "
         SELECT 
-            c.ID_CHECKLIST,
-            c.FK_TIPO,
-            c.STATUS_CHECKLIST,
-            c.DATA_INICIO,
+            l.ID_USO_VEICULO,
+            l.STATUS_USO,
+            l.DATA_HORA,
+            l.DATA_HORA_DEVOLUCAO,
             u.NOME AS NOME_USUARIO,
-            o.DESCRICAO_OBJETO AS NOME_VEICULO,
-            l.DATA_HORA_DEVOLUCAO  -- ✅ vem da tbl_lista_uso_veiculo
-        FROM tbl_checklists c
-        INNER JOIN tbl_usuarios u ON c.FK_USUARIO = u.ID_USUARIO
-        INNER JOIN tbl_objetos o ON c.FK_OBJETO = o.ID_OBJETO
-        LEFT JOIN tbl_lista_uso_veiculo l 
-            ON l.FK_VEICULO = c.FK_OBJETO 
-            AND l.FK_USUARIO = c.FK_USUARIO
-            AND l.DATA_HORA = c.DATA_INICIO  -- liga pelo mesmo início
-        WHERE c.FK_TIPO = 1 
-        AND c.FK_EMPRESA = ?
-        ORDER BY c.ID_CHECKLIST DESC
+            o.DESCRICAO_OBJETO AS NOME_VEICULO
+        FROM tbl_lista_uso_veiculo l
+        INNER JOIN tbl_usuarios u ON u.ID_USUARIO = l.FK_USUARIO
+        INNER JOIN tbl_objetos o ON o.ID_OBJETO = l.FK_VEICULO
+        WHERE l.FK_VEICULO IN (
+            SELECT ID_OBJETO FROM tbl_objetos WHERE FK_TIPO_CHECKLIST = 1
+        )
+        AND u.FK_EMPRESA = ?
+        ORDER BY l.ID_USO_VEICULO DESC
     ";
 
     $stmt = $this->conexao->prepare($sql);
@@ -297,14 +293,14 @@ class DaoChecklist
 
     while ($row = $result->fetch_assoc()) {
         $lista[] = new \models\Checklist(
-            $row['ID_CHECKLIST'],
+            $row['ID_USO_VEICULO'],
             $row['NOME_USUARIO'],
             null,
-            $row['FK_TIPO'],
+            null,
             $row['NOME_VEICULO'],
-            $row['DATA_INICIO'],
-            $row['DATA_HORA_DEVOLUCAO'], // ✅ data de devolução correta
-            $row['STATUS_CHECKLIST']
+            $row['DATA_HORA'],
+            $row['DATA_HORA_DEVOLUCAO'],
+            (int) $row['STATUS_USO']
         );
     }
 

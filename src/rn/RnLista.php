@@ -87,7 +87,7 @@ class RnLista
             Sessao::salvarMensagemNaSessao(
                 "Veículo em uso por {$validacao['nome']}. Somente ele pode devolver."
             );
-            header("Location:/syscheck/lista");
+            header("Location:/syscheck/checklist/iniciarChecklistVeicular/{$movimentacao['usuario']}/{$movimentacao['veiculo']}");
             exit;
         }
 
@@ -157,4 +157,10 @@ class RnLista
 
         return true;
     }
+    public function buscarUltimoIdUso($fkVeiculo, $fkUsuario)
+{
+    return (new DaoLista((new Conexao())->conectar(), Sessao::idusuario()))
+        ->buscarUltimoIdUso($fkVeiculo, $fkUsuario);
+}
+ 
 }

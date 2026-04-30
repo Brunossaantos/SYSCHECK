@@ -12,25 +12,28 @@ class Checklist
     private $dataInicio;
     private $dataFim;
     private $statusChecklist;
+    private $fkUsoVeiculo; // ✅ NOVO — vínculo com tbl_lista_uso_veiculo
 
     public function __construct(
-        $idChecklist = null,
-        $fkUsuario = null,
-        $usuario = null,
-        $fkTipo = null,
-        $fkObjeto = null,
-        $dataInicio = null,
-        $dataFim = null,
-        $statusChecklist = null
+        $idChecklist     = null,
+        $fkUsuario       = null,
+        $usuario         = null,
+        $fkTipo          = null,
+        $fkObjeto        = null,
+        $dataInicio      = null,
+        $dataFim         = null,
+        $statusChecklist = null,
+        $fkUsoVeiculo    = null  // ✅ NOVO
     ) {
-        $this->idChecklist = $idChecklist;
-        $this->fkUsuario = $fkUsuario;
-        $this->usuario = $usuario;
-        $this->fkTipo = $fkTipo;
-        $this->fkObjeto = $fkObjeto;
-        $this->dataInicio = $dataInicio;
-        $this->dataFim = $dataFim;
+        $this->idChecklist     = $idChecklist;
+        $this->fkUsuario       = $fkUsuario;
+        $this->usuario         = $usuario;
+        $this->fkTipo          = $fkTipo;
+        $this->fkObjeto        = $fkObjeto;
+        $this->dataInicio      = $dataInicio;
+        $this->dataFim         = $dataFim;
         $this->statusChecklist = $statusChecklist;
+        $this->fkUsoVeiculo    = $fkUsoVeiculo; // ✅ NOVO
     }
 
     // =========================
@@ -38,36 +41,40 @@ class Checklist
     // =========================
     function setIdChecklist($idChecklist)
     {
-        $this->idChecklist = $idChecklist;
+        $this->idChecklist     = $idChecklist;
     }
     function setFkUsuario($fkUsuario)
     {
-        $this->fkUsuario = $fkUsuario;
+        $this->fkUsuario       = $fkUsuario;
     }
     function setUsuario($usuario)
     {
-        $this->usuario = $usuario;
-    } // NOVO
+        $this->usuario         = $usuario;
+    }
     function setFkTipo($fkTipo)
     {
-        $this->fkTipo = $fkTipo;
+        $this->fkTipo          = $fkTipo;
     }
     function setFkObjeto($fkObjeto)
     {
-        $this->fkObjeto = $fkObjeto;
+        $this->fkObjeto        = $fkObjeto;
     }
     function setDataInicio($dataInicio)
     {
-        $this->dataInicio = $dataInicio;
+        $this->dataInicio      = $dataInicio;
     }
     function setDataFim($dataFim)
     {
-        $this->dataFim = $dataFim;
+        $this->dataFim         = $dataFim;
     }
     function setStatusChecklist($status)
     {
         $this->statusChecklist = $status;
     }
+    function setFkUsoVeiculo($fkUsoVeiculo)
+    {
+        $this->fkUsoVeiculo    = $fkUsoVeiculo;
+    } // ✅ NOVO
 
     // =========================
     // GETTERS
@@ -83,7 +90,7 @@ class Checklist
     function getUsuario()
     {
         return $this->usuario;
-    } // NOVO
+    }
     function getFkTipo()
     {
         return $this->fkTipo;
@@ -104,4 +111,8 @@ class Checklist
     {
         return $this->statusChecklist;
     }
+    function getFkUsoVeiculo()
+    {
+        return $this->fkUsoVeiculo;
+    } // ✅ NOVO
 }

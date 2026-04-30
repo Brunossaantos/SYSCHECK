@@ -1,0 +1,6 @@
+13:40:41 | FK_VEICULO=89 | DAO\DaoLista::salvarDevolucao -> rn\RnLista::salvarMovimentacao -> controllers\ListaController::salvarMovimentacao
+14:52:21 | FK_VEICULO=88 | DAO\DaoLista::salvarDevolucao -> rn\RnLista::salvarMovimentacao -> controllers\ListaController::salvarMovimentacao
+15:13:20 | FK_VEICULO=88 | DAO\DaoLista::salvarDevolucao -> rn\RnLista::salvarMovimentacao -> controllers\ListaController::salvarMovimentacao
+15:14:18 | FK_VEICULO=88 | DAO\DaoLista::salvarDevolucao -> rn\RnLista::salvarMovimentacao -> controllers\ListaController::salvarMovimentacao
+15:42:48 | FK_VEICULO=88 | DAO\DaoLista::salvarDevolucao -> rn\RnLista::salvarMovimentacao -> controllers\ListaController::salvarMovimentacao
+15:46:10 | FK_VEICULO=88 | DAO\DaoLista::salvarDevolucao -> rn\RnLista::salvarMovimentacao -> controllers\ListaController::salvarMovimentacao

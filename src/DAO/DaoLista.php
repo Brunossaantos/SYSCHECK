@@ -205,14 +205,14 @@ class DaoLista
      * busca o registro em aberto e preenche DATA_HORA_DEVOLUCAO + STATUS_USO = 1.
      * Cobre tanto NULL quanto string vazia '' no campo DATA_HORA_DEVOLUCAO.
      */
-  function salvarDevolucao($fkVeiculo)
-{
-    $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-    $chamadas = array_map(fn($t) => ($t['class'] ?? '') . '::' . ($t['function'] ?? ''), $trace);
-    file_put_contents('C:/xampp/htdocs/SYSCHECK/debug_devolucao.txt', date('H:i:s') . " | FK_VEICULO=$fkVeiculo | " . implode(' -> ', $chamadas) . "\n", FILE_APPEND);
+    function salvarDevolucao($fkVeiculo)
+    {
+        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        $chamadas = array_map(fn($t) => ($t['class'] ?? '') . '::' . ($t['function'] ?? ''), $trace);
+        file_put_contents('C:/xampp/htdocs/SYSCHECK/debug_devolucao.txt', date('H:i:s') . " | FK_VEICULO=$fkVeiculo | " . implode(' -> ', $chamadas) . "\n", FILE_APPEND);
 
-    try {
-    // ... resto do código
+        try {
+            // ... resto do código
             $stmt = $this->conexao->prepare("
                 SELECT ID_USO_VEICULO 
                 FROM {$this->tbl_lista_uso} 
@@ -298,6 +298,30 @@ class DaoLista
             return $result->fetch_assoc() ?: null;
         } catch (Exception $e) {
             Util::inserirErro($e, "buscarUsuarioUltimaMovimentacao", $this->idUsuarioSessao);
+            return null;
+        }
+    }
+    function buscarUltimoIdUso($fkVeiculo, $fkUsuario)
+    {
+        try {
+            $stmt = $this->conexao->prepare("
+            SELECT ID_USO_VEICULO 
+            FROM {$this->tbl_lista_uso} 
+            WHERE FK_VEICULO = ? 
+            AND FK_USUARIO = ?
+            ORDER BY ID_USO_VEICULO DESC 
+            LIMIT 1
+        ");
+            $stmt->bind_param("ii", $fkVeiculo, $fkUsuario);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result->num_rows === 0) return null;
+
+            $row = $result->fetch_assoc();
+            return (int) $row['ID_USO_VEICULO'];
+        } catch (Exception $e) {
+            Util::inserirErro($e, "buscarUltimoIdUso", $this->idUsuarioSessao);
             return null;
         }
     }

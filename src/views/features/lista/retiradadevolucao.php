@@ -179,7 +179,7 @@ $listaChecklists = $listaChecklists ?? [];
                 <th>Usuário</th>
                 <th>Data inicio</th>
                 <th>Data de devolução</th>
-                <th>Status Checklist</th>
+                <th>Status</th>
             </tr>
         </thead>
         <tbody>
@@ -195,15 +195,14 @@ $listaChecklists = $listaChecklists ?? [];
                         <td>
                             <?php
                             $status = $checklist->getStatusChecklist();
-                            // Protegendo a exibição do status também
-                            $statusTexto = $status ?? '';
-                            $isPendente = (is_string($statusTexto) && strtolower($statusTexto) === 'pendente');
 
-                            if ($isPendente) {
-                                echo '<span style="color: red">' . htmlspecialchars($statusTexto) . '</span>';
-                            } else {
-                                echo '<span style="color: green">' . htmlspecialchars($statusTexto) . '</span>';
-                            }
+if ($status === 'Em uso') {
+    echo '<span style="color: red">Em uso</span>';
+} elseif ($status === 'Devolvido') {
+    echo '<span style="color: green">Devolvido</span>';
+} else {
+    echo '<span style="color: gray">-</span>';
+}
                             ?>
                         </td>
                     </tr>
@@ -231,17 +230,31 @@ $listaChecklists = $listaChecklists ?? [];
 <script>
     $(document).ready(function() {
         $('#tabelaChecklists').DataTable({
-            pageLength: 10, // quantidade por página
+            pageLength: 10,
             lengthMenu: [5, 10, 25, 50],
             ordering: true,
             order: [
                 [0, 'desc']
-            ], // ordena pelo ID (Número) do mais recente para o mais antigo
+            ],
             searching: true,
             info: true,
             paging: true,
             language: {
-                url: "//cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json"
+                emptyTable: "Nenhum dado disponível na tabela",
+                info: "Mostrando _START_ até _END_ de _TOTAL_ registros",
+                infoEmpty: "Mostrando 0 até 0 de 0 registros",
+                infoFiltered: "(filtrados de _MAX_ registros no total)",
+                lengthMenu: "_MENU_ resultados por página",
+                loadingRecords: "Carregando...",
+                processing: "Processando...",
+                search: "Pesquisar",
+                zeroRecords: "Nenhum registro encontrado",
+                paginate: {
+                    first: "Primeiro",
+                    last: "Último",
+                    next: "Próximo",
+                    previous: "Anterior"
+                }
             }
         });
     });

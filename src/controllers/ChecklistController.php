@@ -136,34 +136,40 @@ class ChecklistController
         $rnChecklist = new \rn\RnChecklist((int)$fkUsuario, $this->idEmpresaSessao);
         $rnLista     = new \rn\RnLista();
 
-        // Verifica o status atual do veículo na tbl_lista_uso_veiculo
         $statusVeiculo = $rnLista->verificarStatus((int)$fkObjeto);
+        $dataInicio    = (new DateTime())->format('d/m/Y H:i:s');
+        $usuarioObj    = (new \rn\RnUsuario(\Util\Sessao::idusuario()))->selecionarUsuario($fkUsuario);
+        $idUsoVeiculo  = $rnLista->buscarUltimoIdUso((int)$fkObjeto, (int)$fkUsuario);
 
         if ($statusVeiculo == 1) {
 
-            // ✅ Veículo acabou de ser DEVOLVIDO → fecha o checklist aberto com DATA_FIM
-            $checklistPendente = $rnChecklist->verificarChecklistPorUsuario((int)$fkUsuario);
-
-            if ($checklistPendente && $checklistPendente->getFkObjeto() == $fkObjeto) {
-                $checklistPendente->setDataFim((new DateTime())->format('d/m/Y H:i:s'));
-                $checklistPendente->setStatusChecklist(3); // 3 = Concluído
-                $rnChecklist->atualizarChecklist($checklistPendente);
-            }
-        } else {
-
-            // ✅ Veículo acabou de ser RETIRADO → abre novo checklist sem DATA_FIM
-            $dataInicio = (new DateTime())->format('d/m/Y H:i:s');
-            $usuarioObj = (new \rn\RnUsuario(\Util\Sessao::idusuario()))->selecionarUsuario($fkUsuario);
-
+            // ✅ DEVOLUÇÃO → abre novo checklist de devolução sem fechar o anterior
             $checklist = new \models\Checklist(
                 1,
                 $usuarioObj,
                 (int)$fkUsuario,
-                1,          // fkTipo = 1 (veicular)
+                1,
                 $fkObjeto,
                 $dataInicio,
-                "",         // DATA_FIM vazia — só preenchida na devolução
-                1           // STATUS = 1 (Aberto)
+                "",
+                1,
+                $idUsoVeiculo
+            );
+
+            $rnChecklist->iniciarChecklist($checklist);
+        } else {
+
+            // ✅ RETIRADA → abre novo checklist de retirada
+            $checklist = new \models\Checklist(
+                1,
+                $usuarioObj,
+                (int)$fkUsuario,
+                1,
+                $fkObjeto,
+                $dataInicio,
+                "",
+                1,
+                $idUsoVeiculo
             );
 
             $rnChecklist->iniciarChecklist($checklist);
@@ -433,12 +439,8 @@ class ChecklistController
             return;
         }
 
-        // ✅ Só seta DATA_FIM se NÃO for checklist veicular (tipo 1)
-        // Para veicular, DATA_FIM só é preenchida na devolução (2ª leitura do crachá)
-        if ((int)$checklist->getFkTipo() !== 1) {
-            $checklist->setDataFim((new \DateTime())->format('d/m/Y H:i:s'));
-        }
-
+        // ✅ Seta DATA_FIM para todos os tipos incluindo veicular (tipo 1)
+        $checklist->setDataFim((new \DateTime())->format('d/m/Y H:i:s'));
         $checklist->setStatusChecklist(3);
 
         $atualizarChecklist = $this->rnChecklist->atualizarChecklist($checklist);
@@ -471,7 +473,6 @@ class ChecklistController
             echo "Falha ao atualizar checklist";
         }
     }
-
     private function enviarEmail($idChecklist)
     {
         $checklist = $this->rnChecklist->selecionarChecklist($idChecklist);
@@ -526,7 +527,10 @@ class ChecklistController
                 case 1: // VEICULAR
                     $email->addAddress('priscila.braz@udlog.com.br', 'Priscila');
                     $email->addAddress('jessika.rodrigues@udlog.com.br', 'Jessika');
-                    $email->addAddress('ronaldo.cruz@udlog.com.br', 'Ronaldo');
+                    
+                    if ((int)$checklist->getFkObjeto() === 157) {
+                        $email->addAddress('ronaldo.cruz@udlog.com.br', 'Ronaldo');
+                    }
                     break;
                 case 2: // TI
                     $email->addAddress('Flavio.carvalho@udlog.com.br', 'Flavio');

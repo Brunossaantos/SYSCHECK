@@ -57,16 +57,18 @@ class ListaController
             Sessao::idempresa()
         ))->listarChecklistsVeiculares();
 
+        // ✅ Status baseado no STATUS_USO da tbl_lista_uso_veiculo
+        // 1 = Devolvido | 2 = Em uso
         foreach ($listaChecklists as $checklist) {
             switch ($checklist->getStatusChecklist()) {
                 case 1:
-                    $checklist->setStatusChecklist("Pendente");
+                    $checklist->setStatusChecklist("Devolvido");
                     break;
-                case 3:
-                    $checklist->setStatusChecklist("Concluído");
+                case 2:
+                    $checklist->setStatusChecklist("Em uso");
                     break;
                 default:
-                    $checklist->setStatusChecklist("Pendente");
+                    $checklist->setStatusChecklist("-");
             }
         }
 
