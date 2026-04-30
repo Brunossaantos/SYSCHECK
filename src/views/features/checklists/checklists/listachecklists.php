@@ -220,7 +220,7 @@ foreach ($listaUsuarios as $usuario) {
                 ], // ordenar pelo número do checklist do maior para o menor
                 scrollX: false, // desativa rolagem horizontal
                 language: {
-                    url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json"
+                    url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json"
                 },
                 columnDefs: [{
                         orderable: false,

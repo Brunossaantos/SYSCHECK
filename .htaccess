@@ -10,12 +10,13 @@ Options -Indexes
 
 # bloquear acesso a arquivos sensíveis
 <FilesMatch "\.(env|log|ini|conf|sql)$">
-    Order allow,deny
-    Deny from all
+    Require all denied
 </FilesMatch>
 
 # bloquear acesso direto às pastas internas
-RewriteRule ^(controllers|models|rn|views|functions|logs)/ - [F,L]
+RewriteRule ^src/views/public/ - [L]
+RewriteRule ^src/views/fotos_chamados/ - [L]
+RewriteRule ^src/(controllers|models|rn|functions|logs)/ - [F,L]
 
 # =============================
 # ROUTER DO SISTEMA

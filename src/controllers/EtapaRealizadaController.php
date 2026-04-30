@@ -34,19 +34,31 @@ class EtapaRealizadaController
         }
     }
 
-    function reprovarEtapa($idChecklist, $fktipo, $numeroEtapa, $observacao = "")
+    function reprovarEtapa()
     {
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        $idChecklist = $data['idChecklist'];
+        $fktipo = $data['fkTipo'];
+        $numeroEtapa = $data['numeroEtapa'];
+        $observacao = $data['observacao'];
+
         $rnEtapasChecklist = new RnEtapasChecklist(Sessao::idusuario());
 
         $etapa = $rnEtapasChecklist->seleionarEtapaChecklist($fktipo, $numeroEtapa);
-        $etapaRealizada = new EtapaRealizada(1, $idChecklist, $etapa->getIdEtapaChecklist(), $numeroEtapa, 2, $observacao);
+
+        $etapaRealizada = new EtapaRealizada(
+            1,
+            $idChecklist,
+            $etapa->getIdEtapaChecklist(),
+            $numeroEtapa,
+            2,
+            $observacao
+        );
 
         $idEtapaRealizada = $this->rnEtapaRealizada->inserirEtapaRealizada($etapaRealizada);
 
-        if ($idEtapaRealizada > 0) {
-            $quantEtapas = count($rnEtapasChecklist->listarEtapasChecklist($fktipo));
-            header("Location: /syscheck/etapaschecklist/executarChecklist/" . $idChecklist . "/" . $fktipo . "/" . $numeroEtapa + 1);
-        }
+        echo $idEtapaRealizada > 0 ? "OK" : "ERRO";
     }
 
     function reprovarChecklist($idChecklist, $fktipo, $numeroEtapa)

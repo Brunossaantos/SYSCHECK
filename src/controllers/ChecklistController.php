@@ -133,62 +133,42 @@ class ChecklistController
     }
     function iniciarChecklistVeicular($fkUsuario, $fkObjeto)
     {
-        // 1. Instância da RN com o ID do crachá (contexto correto)
         $rnChecklist = new \rn\RnChecklist((int)$fkUsuario, $this->idEmpresaSessao);
+        $rnLista     = new \rn\RnLista();
 
-        // 2. BUSCA: Existe um checklist aberto (Status 1) para esse usuário?
-        $checklistPendente = $rnChecklist->verificarChecklistPorUsuario((int)$fkUsuario);
+        // Verifica o status atual do veículo na tbl_lista_uso_veiculo
+        $statusVeiculo = $rnLista->verificarStatus((int)$fkObjeto);
 
-        // Verificamos se o checklist achado é do mesmo veículo que está sendo bipado
-        if ($checklistPendente && $checklistPendente->getFkObjeto() == $fkObjeto) {
+        if ($statusVeiculo == 1) {
 
-            // --- FLUXO DE DEVOLUÇÃO (FECHAMENTO) ---
-            $dataFim = (new DateTime())->format('d/m/Y H:i:s');
+            // ✅ Veículo acabou de ser DEVOLVIDO → fecha o checklist aberto com DATA_FIM
+            $checklistPendente = $rnChecklist->verificarChecklistPorUsuario((int)$fkUsuario);
 
-            // 1. Atualiza o objeto Checklist
-            $checklistPendente->setDataFim($dataFim);
-            $checklistPendente->setStatusChecklist(2); // 2 = Concluído
-
-            // 2. Chama o UPDATE no banco (Tabela de Checklists)
-            $rnChecklist->atualizarChecklist($checklistPendente);
-
-            // 3. ATUALIZAÇÃO DA MOVIMENTAÇÃO (tbl_lista_uso_veiculo)
-            // Verifique o nome correto da sua classe de movimentação. 
-            // Se o erro persistir, comente as 3 linhas abaixo até criarmos a classe certa.
-            /*
-        $rnUso = new \rn\RnListaUsoVeiculo(); 
-        $usoAberto = $rnUso->buscarUsoPendente((int)$fkUsuario, (int)$fkObjeto);
-        if ($usoAberto) {
-            $usoAberto->setDataHoraDevolucao($dataFim);
-            $usoAberto->setStatusUso(2); 
-            $rnUso->atualizarUso($usoAberto);
-        }
-        */
+            if ($checklistPendente && $checklistPendente->getFkObjeto() == $fkObjeto) {
+                $checklistPendente->setDataFim((new DateTime())->format('d/m/Y H:i:s'));
+                $checklistPendente->setStatusChecklist(3); // 3 = Concluído
+                $rnChecklist->atualizarChecklist($checklistPendente);
+            }
         } else {
 
-            // --- FLUXO DE SAÍDA (ABERTURA) ---
-            $fkTipo = 1;
+            // ✅ Veículo acabou de ser RETIRADO → abre novo checklist sem DATA_FIM
             $dataInicio = (new DateTime())->format('d/m/Y H:i:s');
-
-            // Buscamos o objeto usuário para o Model
             $usuarioObj = (new \rn\RnUsuario(\Util\Sessao::idusuario()))->selecionarUsuario($fkUsuario);
 
             $checklist = new \models\Checklist(
-                1, // ID temporário
+                1,
                 $usuarioObj,
                 (int)$fkUsuario,
-                $fkTipo,
+                1,          // fkTipo = 1 (veicular)
                 $fkObjeto,
                 $dataInicio,
-                "", // dataFim vazia
-                1   // status 1 = Aberto
+                "",         // DATA_FIM vazia — só preenchida na devolução
+                1           // STATUS = 1 (Aberto)
             );
 
-            // Chama o INSERT no banco
             $rnChecklist->iniciarChecklist($checklist);
         }
 
-        // Redireciona para a lista
         header("Location:/syscheck/lista/");
         exit;
     }
@@ -453,7 +433,12 @@ class ChecklistController
             return;
         }
 
-        $checklist->setDataFim((new \DateTime())->format('d/m/Y H:i:s'));
+        // ✅ Só seta DATA_FIM se NÃO for checklist veicular (tipo 1)
+        // Para veicular, DATA_FIM só é preenchida na devolução (2ª leitura do crachá)
+        if ((int)$checklist->getFkTipo() !== 1) {
+            $checklist->setDataFim((new \DateTime())->format('d/m/Y H:i:s'));
+        }
+
         $checklist->setStatusChecklist(3);
 
         $atualizarChecklist = $this->rnChecklist->atualizarChecklist($checklist);
@@ -486,6 +471,7 @@ class ChecklistController
             echo "Falha ao atualizar checklist";
         }
     }
+
     private function enviarEmail($idChecklist)
     {
         $checklist = $this->rnChecklist->selecionarChecklist($idChecklist);
@@ -530,7 +516,7 @@ class ChecklistController
             $email->SMTPAuth   = true;
             $email->Username   = $_ENV['SMTP_USER'];
             $email->Password   = $_ENV['SMTP_PASS'];
-            $email->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+            $email->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $email->Port       = $_ENV['SMTP_PORT'];
             $email->CharSet    = $_ENV['SMTP_CHARSET'];
 
@@ -543,7 +529,7 @@ class ChecklistController
                     $email->addAddress('ronaldo.cruz@udlog.com.br', 'Ronaldo');
                     break;
                 case 2: // TI
-                    $email->addAddress('suporte.ti@udlog.com.br', 'TI');
+                    $email->addAddress('Flavio.carvalho@udlog.com.br', 'Flavio');
                     break;
                 case 3: // EMPILHADEIRAS
                     $email->addAddress('priscila.braz@udlog.com.br', 'Priscila');

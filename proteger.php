@@ -21,7 +21,7 @@ if (!isset($_SESSION['idUsuario'])) {
 }
 
 // --- 3. BLOQUEIO DE PERFIL (ÁREA DA LISTA) ---
-if (strpos($urlAcessada, '/lista') !== false && strpos($urlAcessada, 'checklist') === false) {
+/*if (strpos($urlAcessada, '/lista') !== false && strpos($urlAcessada, 'checklist') === false) {
 
     $perfilUsuario = $_SESSION['idPerfil'] ?? null;
 
@@ -37,7 +37,7 @@ if (strpos($urlAcessada, '/lista') !== false && strpos($urlAcessada, 'checklist'
         exit;
     }
 }
-
+*/
 // --- 4. VERIFICAÇÃO DE INATIVIDADE ---
 if (isset($_SESSION['LAST_ACTIVITY'])) {
     $tempoPassado = time() - $_SESSION['LAST_ACTIVITY'];

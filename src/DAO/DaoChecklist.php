@@ -260,51 +260,56 @@ class DaoChecklist
         return (int)$dados['checklist_veicular'] === 1;
     }
 
-    public function listarChecklistsVeiculares()
-    {
-        // 1. Mudamos o SQL para fazer INNER JOIN e buscar as descrições/nomes
-        $sql = "
+   public function listarChecklistsVeiculares()
+{
+    $sql = "
         SELECT 
-            c.*, 
-            u.NOME AS NOME_USUARIO, 
-            o.DESCRICAO_OBJETO AS NOME_VEICULO
+            c.ID_CHECKLIST,
+            c.FK_TIPO,
+            c.STATUS_CHECKLIST,
+            c.DATA_INICIO,
+            u.NOME AS NOME_USUARIO,
+            o.DESCRICAO_OBJETO AS NOME_VEICULO,
+            l.DATA_HORA_DEVOLUCAO  -- ✅ vem da tbl_lista_uso_veiculo
         FROM tbl_checklists c
         INNER JOIN tbl_usuarios u ON c.FK_USUARIO = u.ID_USUARIO
         INNER JOIN tbl_objetos o ON c.FK_OBJETO = o.ID_OBJETO
+        LEFT JOIN tbl_lista_uso_veiculo l 
+            ON l.FK_VEICULO = c.FK_OBJETO 
+            AND l.FK_USUARIO = c.FK_USUARIO
+            AND l.DATA_HORA = c.DATA_INICIO  -- liga pelo mesmo início
         WHERE c.FK_TIPO = 1 
         AND c.FK_EMPRESA = ?
         ORDER BY c.ID_CHECKLIST DESC
     ";
 
-        $stmt = $this->conexao->prepare($sql);
+    $stmt = $this->conexao->prepare($sql);
 
-        if (!$stmt) {
-            throw new Exception($this->conexao->error);
-        }
-
-        $stmt->bind_param("i", $this->idEmpresaSessao);
-        $stmt->execute();
-
-        $result = $stmt->get_result();
-        $lista = [];
-
-        while ($row = $result->fetch_assoc()) {
-            // 2. No lugar dos IDs (FK_USUARIO e FK_OBJETO), 
-            // passamos os Nomes que vieram do JOIN para o Model
-            $lista[] = new \models\Checklist(
-                $row['ID_CHECKLIST'],
-                $row['NOME_USUARIO'], // Antes era FK_USUARIO
-                null,
-                $row['FK_TIPO'],
-                $row['NOME_VEICULO'], // Antes era FK_OBJETO
-                $row['DATA_INICIO'],
-                $row['DATA_FIM'],
-                $row['STATUS_CHECKLIST']
-            );
-        }
-
-        return $lista;
+    if (!$stmt) {
+        throw new \Exception($this->conexao->error);
     }
+
+    $stmt->bind_param("i", $this->idEmpresaSessao);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+    $lista  = [];
+
+    while ($row = $result->fetch_assoc()) {
+        $lista[] = new \models\Checklist(
+            $row['ID_CHECKLIST'],
+            $row['NOME_USUARIO'],
+            null,
+            $row['FK_TIPO'],
+            $row['NOME_VEICULO'],
+            $row['DATA_INICIO'],
+            $row['DATA_HORA_DEVOLUCAO'], // ✅ data de devolução correta
+            $row['STATUS_CHECKLIST']
+        );
+    }
+
+    return $lista;
+}
     // =========================
     // FILTRAGEM E LISTAGEM
     // =========================
