@@ -26,4 +26,5 @@ return array(
     'GrahamCampbell\\ResultType\\' => array($vendorDir . '/graham-campbell/result-type/src'),
     'Dotenv\\' => array($vendorDir . '/vlucas/phpdotenv/src'),
     'DAO\\' => array($baseDir . '/src/DAO'),
+    'Controller\\' => array($baseDir . '/src/controllers'),
 );

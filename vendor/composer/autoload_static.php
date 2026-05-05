@@ -72,6 +72,10 @@ class ComposerStaticInit8d070178755c320c69f93ee4800660ef
             'Dotenv\\' => 7,
             'DAO\\' => 4,
         ),
+        'C' => 
+        array (
+            'Controller\\' => 11,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -154,6 +158,10 @@ class ComposerStaticInit8d070178755c320c69f93ee4800660ef
         'DAO\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src/DAO',
+        ),
+        'Controller\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/src/controllers',
         ),
     );
 

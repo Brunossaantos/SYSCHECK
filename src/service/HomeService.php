@@ -174,9 +174,9 @@ class HomeService
         ];
 
         $linkRelatorios = [
-            ['texto' => 'Aprovados', 'url' => '/syscheck/src/views/features/Relatorios/index.php', 'cor' => self::CORES['ACAO']],
-            ['texto' => 'Reprovados', 'url' => '/syscheck/src/views/features/Relatorios/index_reprovados.php', 'cor' => self::CORES['ACAO']]
-        ];
+    ['texto' => 'Relatórios', 'url' => '/syscheck/relatorios/index',     'cor' => self::CORES['ACAO']],
+    ['texto' => 'Uso',        'url' => '/syscheck/relatorios/index_uso', 'cor' => self::CORES['ACAO']]
+];
 
         $linkUsuarios = [['texto' => 'Gerenciar', 'url' => '/syscheck/usuario', 'cor' => self::CORES['ACAO']]];
         $linkListaVeicular = [['texto' => 'Abrir lista', 'url' => '/syscheck/lista', 'cor' => self::CORES['ACAO']]];

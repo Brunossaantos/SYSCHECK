@@ -6,6 +6,7 @@ require __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/functions/log.php';
 require_once __DIR__ . '/proteger.php';
 
+
 //controladores
 
 use controllers\ChamadoController;
@@ -21,6 +22,7 @@ use controllers\TesteUnitarioController;
 use controllers\GerenciamentoChecklistsController;
 use controllers\InterfaceController;
 use controllers\CombateIncendioController;
+use Controller\RelatorioController;
 
 //regras de negócio
 use rn\RnUsuario;
@@ -91,6 +93,9 @@ if (!empty($url)) {
             break;
         case 'combateincendio':
             $controller = new CombateIncendioController((new RnCombateIncendio(1)));
+            break;
+        case 'relatorios':
+            $controller = new RelatorioController();
             break;
         default:
             $controller = null;

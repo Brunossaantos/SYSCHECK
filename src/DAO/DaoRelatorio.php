@@ -133,4 +133,112 @@ class DaoRelatorio
 
         return $relatorios;
     }
+      public function gerarRelatorioUso($idEquip = null, $dataInicio = null, $dataFim = null): array
+    {
+        $filtroEquip = '';
+        if (!empty($idEquip)) {
+            $idEquip     = $this->conn->real_escape_string($idEquip);
+            $filtroEquip = "AND v.FK_OBJETO = '{$idEquip}'";
+        }
+ 
+        $filtroDatas = '';
+        if (!empty($dataInicio) && !empty($dataFim)) {
+            $dataInicio  = $this->conn->real_escape_string($dataInicio);
+            $dataFim     = $this->conn->real_escape_string($dataFim);
+            $filtroDatas = "AND STR_TO_DATE(v.DATA_INICIO, '%d/%m/%Y %H:%i:%s') BETWEEN '{$dataInicio} 00:00:00' AND '{$dataFim} 23:59:59'";
+        }
+ 
+        // Exclui checklists do tipo VEICULAR (1) e CHECKLIST TI (6)
+        $filtroTipo = "AND v.FK_TIPO NOT IN (1, 6)";
+ 
+        // --------------------------------------------------
+        // 1. Histórico detalhado — inclui "em uso" (HORIMETRO_FINAL NULL)
+        // --------------------------------------------------
+        $sqlDetalhado = "
+            SELECT
+                v.DATA_INICIO,
+                o.DESCRICAO_OBJETO                              AS EQUIPAMENTO,
+                u.NOME                                         AS OPERADOR,
+                v.HORIMETRO_INICIAL,
+                v.HORIMETRO_FINAL,
+                CASE
+                    WHEN v.HORIMETRO_FINAL IS NULL THEN NULL
+                    ELSE (v.HORIMETRO_FINAL - v.HORIMETRO_INICIAL)
+                END                                            AS HORAS_USO
+            FROM v_checklist_horimetro v
+            INNER JOIN tbl_objetos  o ON o.ID_OBJETO  = v.FK_OBJETO
+            INNER JOIN tbl_usuarios u ON u.ID_USUARIO = v.FK_USUARIO
+            WHERE 1=1
+            {$filtroTipo}
+            {$filtroDatas}
+            {$filtroEquip}
+            ORDER BY STR_TO_DATE(v.DATA_INICIO, '%d/%m/%Y %H:%i:%s') ASC
+        ";
+ 
+        // --------------------------------------------------
+        // 2. Total por equipamento — apenas finalizados
+        // --------------------------------------------------
+        $sqlResumo = "
+            SELECT
+                o.DESCRICAO_OBJETO                              AS EQUIPAMENTO,
+                COUNT(*)                                        AS TOTAL_USOS,
+                SUM(v.HORIMETRO_FINAL - v.HORIMETRO_INICIAL)   AS TOTAL_HORAS
+            FROM v_checklist_horimetro v
+            INNER JOIN tbl_objetos o ON o.ID_OBJETO = v.FK_OBJETO
+            WHERE v.HORIMETRO_FINAL IS NOT NULL
+            {$filtroTipo}
+            {$filtroDatas}
+            {$filtroEquip}
+            GROUP BY v.FK_OBJETO, o.DESCRICAO_OBJETO
+            ORDER BY TOTAL_HORAS DESC
+        ";
+ 
+        // --------------------------------------------------
+        // 3. Resumo por dia — apenas finalizados
+        // --------------------------------------------------
+        $sqlPorDia = "
+            SELECT
+                DATE(STR_TO_DATE(v.DATA_INICIO, '%d/%m/%Y %H:%i:%s'))   AS DATA,
+                COUNT(DISTINCT v.FK_OBJETO)                              AS EQUIPAMENTOS_EM_USO,
+                COUNT(*)                                                 AS TOTAL_USOS,
+                SUM(v.HORIMETRO_FINAL - v.HORIMETRO_INICIAL)            AS TOTAL_HORAS_DIA
+            FROM v_checklist_horimetro v
+            WHERE v.HORIMETRO_FINAL IS NOT NULL
+            {$filtroTipo}
+            {$filtroDatas}
+            {$filtroEquip}
+            GROUP BY DATE(STR_TO_DATE(v.DATA_INICIO, '%d/%m/%Y %H:%i:%s'))
+            ORDER BY DATA ASC
+        ";
+ 
+        $detalhado = [];
+        $result = $this->conn->query($sqlDetalhado);
+        if ($result) {
+            while ($row = $result->fetch_object()) {
+                $detalhado[] = $row;
+            }
+        }
+ 
+        $resumo = [];
+        $result = $this->conn->query($sqlResumo);
+        if ($result) {
+            while ($row = $result->fetch_object()) {
+                $resumo[] = $row;
+            }
+        }
+ 
+        $porDia = [];
+        $result = $this->conn->query($sqlPorDia);
+        if ($result) {
+            while ($row = $result->fetch_object()) {
+                $porDia[] = $row;
+            }
+        }
+ 
+        return [
+            'detalhado' => $detalhado,
+            'resumo'    => $resumo,
+            'porDia'    => $porDia,
+        ];
+    }
 }

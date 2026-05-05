@@ -15,6 +15,17 @@ class RelatorioController
         $this->dao = new DaoRelatorio();
     }
 
+    public function index(): void
+    {
+        require_once __DIR__ . '/../views/features/Relatorios/index.php';
+    }
+
+    public function index_uso(): void
+    {
+        require_once __DIR__ . '/../views/features/Relatorios/index_uso.php';
+    }
+
+
     /** Lista todos os tipos de checklist ativos */
     public function listarTipos(): array
     {
@@ -49,5 +60,9 @@ class RelatorioController
     public function gerarRelatorioItensReprovados($descricaoEquip = null, $dataInicio = null, $dataFim = null): array
     {
         return $this->dao->gerarRelatorioItensReprovados($descricaoEquip, $dataInicio, $dataFim);
+    }
+    public function gerarRelatorioUso($idEquip = null, $dataInicio = null, $dataFim = null): array
+    {
+        return $this->dao->gerarRelatorioUso($idEquip, $dataInicio, $dataFim);
     }
 }

@@ -50,8 +50,7 @@ class ObjetosChecklistController
     {
         $listaObjetos = (new RnObjeto(Sessao::idusuario()))->listarObjetos();
         $listaTipos = (new RnTipoChecklist(Sessao::idusuario()))->retornarListaTiposChecklist();
-
-        //recuperar lista de objetos
+        $listaEmpresas = (new RnObjeto(Sessao::idusuario()))->listarEmpresasSimples();
 
         require_once __DIR__ . '/../views/features/checklists/objetos/listarobjetos.php';
     }

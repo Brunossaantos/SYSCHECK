@@ -252,14 +252,14 @@
                     let width = img.width;
                     let height = img.height;
 
-                    let totalPixels = width * height;
+                    /*let totalPixels = width * height;
                     let maxPixels = 3000000;
 
                     if (totalPixels > maxPixels) {
                         let ratio = Math.sqrt(maxPixels / totalPixels);
                         width = Math.round(width * ratio);
                         height = Math.round(height * ratio);
-                    }
+                    }*/
 
                     canvas.width = width;
                     canvas.height = height;
