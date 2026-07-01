@@ -33,43 +33,43 @@ class DaoChecklist
 
 
 
-   public function iniciarChecklist(Checklist $checklist): int
-{
-    try {
-        $stmt = $this->conexao->prepare("
+    public function iniciarChecklist(Checklist $checklist): int
+    {
+        try {
+            $stmt = $this->conexao->prepare("
             INSERT INTO {$this->tbl_checklists} 
             (FK_USUARIO, FK_TIPO, FK_OBJETO, DATA_INICIO, STATUS_CHECKLIST, FK_EMPRESA, FK_USO_VEICULO)
             VALUES (?, ?, ?, ?, ?, ?, ?)
         ");
- 
-        $fkUsuario       = $this->idUsuarioSessao;
-        $fkEmpresa       = $this->idEmpresaSessao;
-        $fkTipo          = $checklist->getFkTipo();
-        $fkObjeto        = $checklist->getFkObjeto();
-        $dataInicio      = $checklist->getDataInicio();
-        $statusChecklist = $checklist->getStatusChecklist();
-        $fkUsoVeiculo    = $checklist->getFkUsoVeiculo(); // ✅ NOVO
- 
-        $stmt->bind_param(
-            "iiisiii",
-            $fkUsuario,
-            $fkTipo,
-            $fkObjeto,
-            $dataInicio,
-            $statusChecklist,
-            $fkEmpresa,
-            $fkUsoVeiculo
-        );
- 
-        if ($stmt->execute()) {
-            return $stmt->insert_id;
+
+            $fkUsuario       = $this->idUsuarioSessao;
+            $fkEmpresa       = $this->idEmpresaSessao;
+            $fkTipo          = $checklist->getFkTipo();
+            $fkObjeto        = $checklist->getFkObjeto();
+            $dataInicio      = $checklist->getDataInicio();
+            $statusChecklist = $checklist->getStatusChecklist();
+            $fkUsoVeiculo    = $checklist->getFkUsoVeiculo(); // ✅ NOVO
+
+            $stmt->bind_param(
+                "iiisiii",
+                $fkUsuario,
+                $fkTipo,
+                $fkObjeto,
+                $dataInicio,
+                $statusChecklist,
+                $fkEmpresa,
+                $fkUsoVeiculo
+            );
+
+            if ($stmt->execute()) {
+                return $stmt->insert_id;
+            }
+            return -1;
+        } catch (Exception $e) {
+            Util::inserirErro($e, "iniciarChecklist", $this->idUsuarioSessao);
+            return -2;
         }
-        return -1;
-    } catch (Exception $e) {
-        Util::inserirErro($e, "iniciarChecklist", $this->idUsuarioSessao);
-        return -2;
     }
-}
 
     public function selecionarChecklist(int $idChecklist): ?Checklist
     {
@@ -259,9 +259,9 @@ class DaoChecklist
         return (int)$dados['checklist_veicular'] === 1;
     }
 
-public function listarChecklistsVeiculares()
-{
-    $sql = "
+    public function listarChecklistsVeiculares()
+    {
+        $sql = "
         SELECT 
             l.ID_USO_VEICULO,
             l.STATUS_USO,
@@ -279,33 +279,33 @@ public function listarChecklistsVeiculares()
         ORDER BY l.ID_USO_VEICULO DESC
     ";
 
-    $stmt = $this->conexao->prepare($sql);
+        $stmt = $this->conexao->prepare($sql);
 
-    if (!$stmt) {
-        throw new \Exception($this->conexao->error);
+        if (!$stmt) {
+            throw new \Exception($this->conexao->error);
+        }
+
+        $stmt->bind_param("i", $this->idEmpresaSessao);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+        $lista  = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $lista[] = new \models\Checklist(
+                $row['ID_USO_VEICULO'],
+                $row['NOME_USUARIO'],
+                null,
+                null,
+                $row['NOME_VEICULO'],
+                $row['DATA_HORA'],
+                $row['DATA_HORA_DEVOLUCAO'],
+                (int) $row['STATUS_USO']
+            );
+        }
+
+        return $lista;
     }
-
-    $stmt->bind_param("i", $this->idEmpresaSessao);
-    $stmt->execute();
-
-    $result = $stmt->get_result();
-    $lista  = [];
-
-    while ($row = $result->fetch_assoc()) {
-        $lista[] = new \models\Checklist(
-            $row['ID_USO_VEICULO'],
-            $row['NOME_USUARIO'],
-            null,
-            null,
-            $row['NOME_VEICULO'],
-            $row['DATA_HORA'],
-            $row['DATA_HORA_DEVOLUCAO'],
-            (int) $row['STATUS_USO']
-        );
-    }
-
-    return $lista;
-}
     // =========================
     // FILTRAGEM E LISTAGEM
     // =========================
@@ -313,33 +313,52 @@ public function listarChecklistsVeiculares()
     public function filtrarChecklists(array $filtros = []): array
     {
         try {
-            $permissaoService = new \service\PermissaoService(
-                $this->conexao,
-                $this->idUsuarioSessao,
-                $this->idEmpresaSessao
+            // Usuários liberados para visualizar checklists de todas as empresas
+            $usuariosQueVeemTodasEmpresas = [25];
+
+            $usuarioVeTodasEmpresas = in_array(
+                (int)$this->idUsuarioSessao,
+                $usuariosQueVeemTodasEmpresas,
+                true
             );
 
-            $usuariosPermitidos = $permissaoService->getUsuariosPermitidos();
-
-            if (empty($usuariosPermitidos)) {
-                return [];
-            }
-
-            $placeholdersUsuarios = implode(',', array_fill(0, count($usuariosPermitidos), '?'));
+            $params = [];
+            $types  = "";
 
             $sql = "
             SELECT NUMERO_CHECKLIST, USUARIO, TIPO, OBJETO, DATA_INICIO, DATA_FIM, STATUS_CHECKLIST, FK_USUARIO
             FROM {$this->view_checklists}
-            WHERE FK_EMPRESA = ?
-            AND FK_USUARIO IN ($placeholdersUsuarios)
+            WHERE 1 = 1
         ";
 
-            $params = [$this->idEmpresaSessao];
-            $types  = "i";
+            // Usuários comuns continuam vendo apenas a empresa/usuários permitidos
+            if (!$usuarioVeTodasEmpresas) {
+                $permissaoService = new \service\PermissaoService(
+                    $this->conexao,
+                    $this->idUsuarioSessao,
+                    $this->idEmpresaSessao
+                );
 
-            foreach ($usuariosPermitidos as $idUsuario) {
-                $params[] = $idUsuario;
+                $usuariosPermitidos = $permissaoService->getUsuariosPermitidos();
+
+                if (empty($usuariosPermitidos)) {
+                    return [];
+                }
+
+                $placeholdersUsuarios = implode(',', array_fill(0, count($usuariosPermitidos), '?'));
+
+                $sql .= "
+                AND FK_EMPRESA = ?
+                AND FK_USUARIO IN ($placeholdersUsuarios)
+            ";
+
+                $params[] = $this->idEmpresaSessao;
                 $types .= "i";
+
+                foreach ($usuariosPermitidos as $idUsuario) {
+                    $params[] = $idUsuario;
+                    $types .= "i";
+                }
             }
 
             // Aplicar filtros opcionais
@@ -379,14 +398,24 @@ public function listarChecklistsVeiculares()
                 $types .= "s";
             }
 
+            if (!empty($filtros['empresa']) && $filtros['empresa'] != 0) {
+                $sql .= " AND FK_EMPRESA = ?";
+                $params[] = $filtros['empresa'];
+                $types .= "i";
+            }
+
             $sql .= " ORDER BY NUMERO_CHECKLIST DESC";
 
             $stmt = $this->conexao->prepare($sql);
+
             if (!$stmt) {
                 throw new \Exception("Erro na SQL: " . $this->conexao->error . " | SQL: " . $sql);
             }
 
-            $stmt->bind_param($types, ...$params);
+            if (!empty($params)) {
+                $stmt->bind_param($types, ...$params);
+            }
+
             $stmt->execute();
 
             $result = $stmt->get_result();
@@ -394,16 +423,17 @@ public function listarChecklistsVeiculares()
 
             while ($row = $result->fetch_assoc()) {
                 $checklists[] = new \models\Checklist(
-                    $row['NUMERO_CHECKLIST'], // idChecklist
-                    $row['FK_USUARIO'],       // fkUsuario
-                    $row['USUARIO'] ?? '',    // usuario
-                    $row['TIPO'],             // fkTipo
-                    $row['OBJETO'],           // fkObjeto
-                    $row['DATA_INICIO'],      // dataInicio
-                    $row['DATA_FIM'],         // dataFim
-                    $row['STATUS_CHECKLIST']  // statusChecklist
+                    $row['NUMERO_CHECKLIST'],
+                    $row['FK_USUARIO'],
+                    $row['USUARIO'] ?? '',
+                    $row['TIPO'],
+                    $row['OBJETO'],
+                    $row['DATA_INICIO'],
+                    $row['DATA_FIM'],
+                    $row['STATUS_CHECKLIST']
                 );
             }
+
             return $checklists;
         } catch (\Exception $e) {
             \Util\Util::inserirErro($e, "filtrarChecklists", $this->idUsuarioSessao);

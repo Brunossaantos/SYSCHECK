@@ -517,23 +517,23 @@ class ChecklistController
             $email->SMTPAuth   = true;
             $email->Username   = $_ENV['SMTP_USER'];
             $email->Password   = $_ENV['SMTP_PASS'];
-            $email->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $email->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
             $email->Port       = $_ENV['SMTP_PORT'];
             $email->CharSet    = $_ENV['SMTP_CHARSET'];
 
-            $email->setFrom('suporte.ti@udlog.com.br', 'Syscheck');
+            $email->setFrom('suporte.ti@envios.udlog.com.br', 'Syscheck');
 
             switch ((int)$fkResponsavel) {
                 case 1: // VEICULAR
                     $email->addAddress('priscila.braz@udlog.com.br', 'Priscila');
                     $email->addAddress('jessika.rodrigues@udlog.com.br', 'Jessika');
-                    
+
                     if ((int)$checklist->getFkObjeto() === 157) {
                         $email->addAddress('ronaldo.cruz@udlog.com.br', 'Ronaldo');
                     }
                     break;
                 case 2: // TI
-                    $email->addAddress('Flavio.carvalho@udlog.com.br', 'Flavio');
+                    $email->addAddress('flavio.carvalho@udlog.com.br', 'Flavio');
                     break;
                 case 3: // EMPILHADEIRAS
                     $email->addAddress('priscila.braz@udlog.com.br', 'Priscila');

@@ -207,10 +207,6 @@ class DaoLista
      */
     function salvarDevolucao($fkVeiculo)
     {
-        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-        $chamadas = array_map(fn($t) => ($t['class'] ?? '') . '::' . ($t['function'] ?? ''), $trace);
-        file_put_contents('C:/xampp/htdocs/SYSCHECK/debug_devolucao.txt', date('H:i:s') . " | FK_VEICULO=$fkVeiculo | " . implode(' -> ', $chamadas) . "\n", FILE_APPEND);
-
         try {
             // ... resto do código
             $stmt = $this->conexao->prepare("

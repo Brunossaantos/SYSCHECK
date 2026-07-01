@@ -214,7 +214,10 @@ class DaoEtapasChecklist
                                                     NUMERO_ETAPA,
                                                     FOTO_OBRIGATORIA,
                                                     CAMPO_ADICIONAL,
-                                                    STATUS_ETAPA FROM {$this->tbl_etapas_checklists} WHERE FK_TIPO_CHECKLIST = ? ORDER By NUMERO_ETAPA ASC");
+                                                    STATUS_ETAPA FROM {$this->tbl_etapas_checklists} 
+                                                    WHERE FK_TIPO_CHECKLIST = ? 
+                                                    AND STATUS_ETAPA = 1
+                                                    ORDER BY NUMERO_ETAPA ASC");
 
             $stmt->bind_param("i", $fkTipoChecklist);
             $stmt->execute();

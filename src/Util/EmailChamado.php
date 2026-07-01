@@ -19,12 +19,12 @@ class EmailChamado
             $mail->SMTPAuth   = true;
             $mail->Username   = $_ENV['SMTP_USER'];
             $mail->Password   = $_ENV['SMTP_PASS'];
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
             $mail->Port = $_ENV['SMTP_PORT'];
             $mail->CharSet    = $_ENV['SMTP_CHARSET'];
 
             // Remetente
-            $mail->setFrom('suporte.ti@udlog.com.br', 'Chamados Syscheck');
+            $mail->setFrom('suporte.ti@envios.udlog.com.br', 'Chamados Syscheck');
 
             // Destinatários
             $mail->addAddress('priscila.braz@udlog.com.br', 'Priscila');

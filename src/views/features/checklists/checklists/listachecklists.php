@@ -39,7 +39,7 @@ $tipoFiltro    = htmlspecialchars($_GET['tipo'] ?? '', ENT_QUOTES, 'UTF-8');
 $objetoFiltro  = htmlspecialchars($_GET['objeto'] ?? '', ENT_QUOTES, 'UTF-8');
 $usuarioFiltro = htmlspecialchars($_GET['usuario'] ?? '', ENT_QUOTES, 'UTF-8');
 $statusFiltro  = htmlspecialchars($_GET['status'] ?? '0', ENT_QUOTES, 'UTF-8');
-
+$empresaFiltro = htmlspecialchars($_GET['empresa'] ?? '0', ENT_QUOTES, 'UTF-8');
 // =====================
 // Array de filtros para DAO
 $filtros = [
@@ -48,7 +48,8 @@ $filtros = [
     'objeto'       => $objetoFiltro,
     'usuario'      => $usuarioFiltro,
     'status'       => $statusFiltro,
-    'data_inicio'  => $data_inicio
+    'data_inicio'  => $data_inicio,
+    'empresa'      => $empresaFiltro
 ];
 
 // =====================
@@ -149,6 +150,38 @@ foreach ($listaUsuarios as $usuario) {
 
     <h1 class="text-3xl font-bold mb-8 text-center">Consultar Checklists</h1>
 
+    <form method="GET" class="w-full max-w-4xl mx-auto bg-gray-800/80 border border-gray-700 rounded-xl p-5 mb-8">
+        <div class="flex flex-col md:flex-row md:items-end md:justify-center gap-4">
+
+            <div class="w-full md:w-64">
+                <label for="empresa" class="block text-sm font-medium text-gray-300 mb-1">
+                    Empresa
+                </label>
+
+                <select
+                    name="empresa"
+                    id="empresa"
+                    class="w-full bg-gray-700 text-white border border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="0" <?= $empresaFiltro == 0 ? 'selected' : '' ?>>Todas</option>
+                    <option value="1" <?= $empresaFiltro == 1 ? 'selected' : '' ?>>Matriz</option>
+                    <option value="2" <?= $empresaFiltro == 2 ? 'selected' : '' ?>>Filial</option>
+                </select>
+            </div>
+
+            <button
+                type="submit"
+                class="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-lg font-semibold">
+                Filtrar
+            </button>
+
+            <a
+                href="/syscheck/checklist/listarChecklists"
+                class="bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded-lg font-semibold text-center">
+                Limpar
+            </a>
+
+        </div>
+    </form>
     <!-- Tabela -->
     <div class="w-full max-w-full animate-fadeIn">
         <table id="checklistTable" class="min-w-full table-auto bg-gray-800 rounded-2xl overflow-hidden">
@@ -164,11 +197,7 @@ foreach ($listaUsuarios as $usuario) {
                 </tr>
             </thead>
             <tbody>
-                <?php if (empty($listaChecklists)): ?>
-                    <tr>
-                        <td colspan="7" class="text-center text-gray-400 py-6">Nenhum checklist encontrado.</td>
-                    </tr>
-                <?php else: ?>
+                <?php if (!empty($listaChecklists)): ?>
                     <?php foreach ($listaChecklists as $checklist):
                         $fkUsuario = $checklist->getFkUsuario();
                         $usuarioNome = isset($usuariosPorId[$fkUsuario]) ? $usuariosPorId[$fkUsuario]->getNome() : $fkUsuario;

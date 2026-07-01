@@ -1,40 +1,10 @@
-[2026-04-30 11:52:20] [ERROR] Falha no login | Usuario: qnp | IP: 10.80.0.5
-[2026-04-30 13:47:09] [ERROR] [Deprecated] Usuário: KAIO | str_replace(): Passing null to parameter #2 ($replace) of type array|string is deprecated | Arquivo: C:\xampp\htdocs\SYSCHECK\src\controllers\ChecklistController.php | Linha: 550
-[2026-04-30 14:23:19] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | syntax error, unexpected identifier "i" | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 286
-[2026-04-30 14:23:20] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | syntax error, unexpected identifier "i" | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 286
-[2026-04-30 14:23:21] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | syntax error, unexpected identifier "i" | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 286
-[2026-04-30 14:23:21] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | syntax error, unexpected identifier "i" | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 286
-[2026-04-30 14:23:50] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | Unknown column 'FK_TIPO_OBJETO' in 'where clause' | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 281
-[2026-04-30 14:23:53] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | Unknown column 'FK_TIPO_OBJETO' in 'where clause' | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 281
-[2026-04-30 14:23:53] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | Unknown column 'FK_TIPO_OBJETO' in 'where clause' | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 281
-[2026-04-30 14:23:53] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | Unknown column 'FK_TIPO_OBJETO' in 'where clause' | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 281
-[2026-04-30 14:23:54] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | Unknown column 'FK_TIPO_OBJETO' in 'where clause' | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 281
-[2026-04-30 14:23:54] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | Unknown column 'FK_TIPO_OBJETO' in 'where clause' | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 281
-[2026-04-30 14:28:24] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | Unknown column 'FK_TIPO_OBJETO' in 'where clause' | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 282
-[2026-04-30 14:28:25] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | Unknown column 'FK_TIPO_OBJETO' in 'where clause' | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 282
-[2026-04-30 14:28:26] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | Unknown column 'FK_TIPO_OBJETO' in 'where clause' | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 282
-[2026-04-30 14:28:26] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | Unknown column 'FK_TIPO_OBJETO' in 'where clause' | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 282
-[2026-04-30 14:28:27] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | Unknown column 'FK_TIPO_OBJETO' in 'where clause' | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 282
-[2026-04-30 14:28:28] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | Unknown column 'FK_TIPO_OBJETO' in 'where clause' | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 282
-[2026-04-30 14:28:29] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | Unknown column 'FK_TIPO_OBJETO' in 'where clause' | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 282
-[2026-04-30 14:28:29] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | Unknown column 'FK_TIPO_OBJETO' in 'where clause' | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 282
-[2026-04-30 14:28:30] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | Unknown column 'FK_TIPO_OBJETO' in 'where clause' | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 282
-[2026-04-30 14:28:30] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | Unknown column 'FK_TIPO_OBJETO' in 'where clause' | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 282
-[2026-04-30 14:28:32] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | Unknown column 'FK_TIPO_OBJETO' in 'where clause' | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 282
-[2026-04-30 14:28:32] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | Unknown column 'FK_TIPO_OBJETO' in 'where clause' | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 282
-[2026-04-30 14:28:32] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | Unknown column 'FK_TIPO_OBJETO' in 'where clause' | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 282
-[2026-04-30 14:28:33] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | Unknown column 'FK_TIPO_OBJETO' in 'where clause' | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 282
-[2026-04-30 14:28:33] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | Unknown column 'FK_TIPO_OBJETO' in 'where clause' | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 282
-[2026-04-30 14:28:33] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | Unknown column 'FK_TIPO_OBJETO' in 'where clause' | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 282
-[2026-04-30 14:28:33] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | Unknown column 'FK_TIPO_OBJETO' in 'where clause' | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 282
-[2026-04-30 14:28:34] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | Unknown column 'FK_TIPO_OBJETO' in 'where clause' | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 282
-[2026-04-30 14:28:34] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | Unknown column 'FK_TIPO_OBJETO' in 'where clause' | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 282
-[2026-04-30 14:28:34] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | Unknown column 'FK_TIPO_OBJETO' in 'where clause' | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 282
-[2026-04-30 14:28:41] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | Unknown column 'FK_TIPO_OBJETO' in 'where clause' | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 282
-[2026-04-30 14:28:53] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | Unknown column 'FK_TIPO_OBJETO' in 'where clause' | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 282
-[2026-04-30 14:28:53] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | Unknown column 'FK_TIPO_OBJETO' in 'where clause' | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 282
-[2026-04-30 14:45:07] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | syntax error, unexpected token "<", expecting "function" or "const" | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 262
-[2026-04-30 14:45:08] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | syntax error, unexpected token "<", expecting "function" or "const" | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 262
-[2026-04-30 14:45:08] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | syntax error, unexpected token "<", expecting "function" or "const" | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 262
-[2026-04-30 14:45:09] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | syntax error, unexpected token "<", expecting "function" or "const" | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 262
-[2026-04-30 14:45:10] [ERROR] EXCEÇÃO NÃO TRATADA | Usuário: QPN | syntax error, unexpected token "<", expecting "function" or "const" | Arquivo: C:\xampp\htdocs\SYSCHECK\src\DAO\DaoChecklist.php | Linha: 262
+[22/06/2026 08:00:21] Usuario: MARCOS ROBERTO ANDRADE DE OLIV | Arquivo: C:\xampp\htdocs\SYSCHECK\vendor\phpmailer\phpmailer\src\PHPMailer.php | Linha: 2093 | Local: enviarEmail | Erro: SMTP Error: data not accepted.
+[22/06/2026 11:48:23] Usuario: TESTE | Arquivo: C:\xampp\htdocs\SYSCHECK\vendor\phpmailer\phpmailer\src\PHPMailer.php | Linha: 2093 | Local: enviarEmail | Erro: SMTP Error: data not accepted.
+[22/06/2026 12:04:31] Usuario: TESTE | Arquivo: C:\xampp\htdocs\SYSCHECK\vendor\phpmailer\phpmailer\src\PHPMailer.php | Linha: 2093 | Local: enviarEmail | Erro: SMTP Error: data not accepted.
+[2026-06-24 10:12:01] [ERROR] Falha no login | Usuario: bruno.carvalho | IP: 10.80.0.5
+[2026-06-29 08:00:17] [ERROR] Falha no login | Usuario: Elizângela.Regina | IP: 10.80.0.94
+[2026-06-29 09:23:56] [ERROR] Falha no login | Usuario: Dorival.jose | IP: 10.80.0.192
+[2026-06-29 09:24:06] [ERROR] Falha no login | Usuario: Dorival.jose | IP: 10.80.0.192
+[2026-06-30 07:49:40] [ERROR] Falha no login | Usuario: Diego.fernando | IP: 10.80.0.147
+[2026-07-01 09:45:32] [ERROR] Falha no login | Usuario: Dorival.jose | IP: 10.80.0.192
+[2026-07-01 09:45:40] [ERROR] Falha no login | Usuario: Dorival.jose | IP: 10.80.0.192
